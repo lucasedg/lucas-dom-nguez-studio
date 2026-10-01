@@ -21,7 +21,7 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "Lucas Domínguez Studio — Marcas que se hacen ver" },
       {
         property: "og:description",
-        content: "Transformamos ideas en marcas e experiencias digitales que se reconocen.",
+        content: "Transformamos ideas en marcas y experiencias digitales que se reconocen.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
