@@ -8,3 +8,8 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+## Project architecture
+
+- Keep the studio homepage as a single editorial narrative on `/`; internal navigation uses section anchors because the sections form one continuous story.
+- Keep project imagery in the central `projects` catalog so temporary visuals can be replaced without changing page composition.
