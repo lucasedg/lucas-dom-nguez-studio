@@ -1,178 +1,38 @@
 # Lucas Domínguez Studio
 
-Create a completely new website from scratch for LUCAS DOMÍNGUEZ STUDIO.
-This is an independent premium creative studio based in Málaga, Spain.
-IMPORTANT:
-This is a completely new project. Do not reuse any previous project, application, design system or content.
-The website must feel like a high-end independent creative studio, not a generic agency template and not a typical graphic designer portfolio.
-CORE POSITIONING:
-Lucas Domínguez Studio transforms ideas into recognizable brands and digital experiences.
-Main statement:
-"TRANSFORMAMOS IDEAS EN MARCAS QUE SE HACEN VER."
-The studio works across:
-• Branding
-• Visual Identity
-• Graphic Design
-• Creative Direction
-• Brand Presence
-• Digital Design
-• UX/UI
-• Web
-VISUAL DIRECTION:
-Create a sophisticated editorial and cinematic experience.
-Aesthetic:
-- premium
-- minimal
-- editorial
-- artistic
-- human
-- modern
-- confident
-Color palette:
-#0A0A0A — black
-#111111 — deep black
-#F3EFE7 — warm ivory
-#E7E0D5 — cream
-#B08A4A — muted champagne/gold
-#FAFAF8 — white
-Gold should only be an accent.
-Typography:
-- elegant editorial serif such as Cormorant Garamond
-- modern sans-serif such as Inter or Manrope
-Avoid:
-- purple gradients
-- blue SaaS aesthetics
-- excessive glassmorphism
-- generic rounded cards
-- 3D blobs
-- startup/dashboard aesthetics
-- generic agency templates
-The website should feel closer to a premium editorial/fashion/creative studio experience.
-SITE STRUCTURE:
-1. HERO
-Full-screen black hero.
-Large headline:
-TRANSFORMAMOS
-IDEAS
-EN MARCAS
-QUE SE HACEN VER.
-Small studio label:
-LUCAS DOMÍNGUEZ STUDIO
-Supporting text:
-"Diseñamos marcas, identidades y experiencias digitales para convertir ideas en presencias que se reconocen."
-Buttons:
-VER PROYECTOS →
-CONOCER EL ESTUDIO →
-Use elegant text reveals and cinematic entrance animations.
-2. STUDIO
-Headline:
-DETRÁS DE CADA MARCA
-HAY UNA PERSONA.
-Introduce Lucas as the founder and designer.
-Use a temporary sophisticated black-and-white male editorial portrait because the real portrait has not been uploaded yet.
-Do not invent personal history.
-3. WHAT WE TRANSFORM
-Create a scroll-driven visual section:
-UNA IDEA → EN UNA IDENTIDAD
-UN LOGOTIPO → EN UN SISTEMA DE MARCA
-UN NEGOCIO → EN UNA PRESENCIA
-UNA PRESENCIA → EN UNA EXPERIENCIA DIGITAL
-UNA MARCA → EN UNA EXPERIENCIA COHERENTE
-This section should be highly visual and educational.
-4. SERVICES
-Headline:
-NO SOLO HACEMOS LOGOS.
-Show:
-BRANDING
-IDENTIDAD VISUAL
-DISEÑO & COMUNICACIÓN
-DIGITAL
-DIRECCIÓN CREATIVA
-Use an interactive editorial list rather than standard cards.
-5. SELECTED WORK
-Create an immersive portfolio section.
-Projects:
-BUBA
-HOTEL ALMA ROSA
-CÓDIGO PERRO
-FLORECER
-VAIRO
-Do not invent statistics, awards, testimonials or fake results.
-The real project images have not been uploaded yet.
-Use sophisticated temporary editorial visuals that represent:
-- fashion/streetwear for BUBA
-- boutique hotel/hospitality for Hotel Alma Rosa
-- digital/social media for Código Perro
-- sportswear/fashion for Florecer
-- premium digital/web experience for Vairo
-The temporary images must be easy to replace later.
-Do not use empty image boxes.
-6. PROCESS
-DESCUBRIMOS
-CONCEPTUALIZAMOS
-DISEÑAMOS
-APLICAMOS
-EVOLUCIONAMOS
-Use scroll animation and a subtle gold progress line.
-7. FINAL CTA
-"TODA MARCA
-COMIENZA
-CON UNA IDEA."
-"Quizás la siguiente empiece aquí."
-Button:
-INICIAR UN PROYECTO →
-8. FOOTER
-Lucas Domínguez Studio
-Málaga, Spain
-Branding
-Visual Identity
-Creative Direction
-Digital
-MOTION:
-Use polished, restrained motion.
-Use:
-- text reveals
-- image reveals
-- scroll-triggered animation
-- subtle parallax
-- clip-path transitions
-- scale transitions
-- elegant hover states
-- smooth section transitions
-The page should feel like one continuous visual story rather than separate blocks.
-Do not over-animate.
-RESPONSIVE:
-Design desktop and mobile intentionally.
-Mobile must not simply be a scaled-down desktop version.
-Remove custom cursor on mobile.
-PERFORMANCE:
-Use optimized images, lazy loading and GPU-friendly animations.
-Use semantic HTML and accessible contrast.
-IMPORTANT:
-Build the ACTUAL working website now.
-Do not only create a design brief or describe what should be built.
-Create the components, layouts, navigation, animations and responsive behavior.
-Use temporary visual assets where real assets are missing.
-Structure the project so I can later replace the placeholder images with my real portfolio assets without redesigning the website.
-Start building the website now.
+Web editorial de un estudio creativo independiente en Málaga. React 19, TanStack Start, Vite, TypeScript y Tailwind CSS 4, con renderizado en servidor.
 
-This project was built with [Lovable](https://lovable.dev).
+## Desarrollo
 
-## Build with Lovable
-
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/b9bb8c34-d134-4324-af10-1183f0c5ceed).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
-
-## Development
-
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+El repositorio conserva `bun.lock` como único archivo de bloqueo. Para instalar versiones reproducibles, utiliza `bun install --frozen-lockfile`. Con las dependencias instaladas:
 
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
 npm run dev
+npm run lint
+npm run build
 ```
+
+## Publicación en Vercel
+
+Web pública: https://lucas-dominguez-studio.vercel.app/
+
+Proyecto: `lucas-dominguez-studio`, equipo `lucas-projects-b5321fbd`. La primera publicación se realizó mediante Vercel Drop con una copia del código local el 3 de octubre de 2026. No está conectada a despliegues automáticos desde GitHub; los cambios locales requieren un nuevo despliegue.
+
+El plugin `nitro()` de Vite prepara el renderizado en servidor para Vercel y detecta ese entorno automáticamente. Se puede verificar el paquete de despliegue localmente con:
+
+```sh
+NITRO_PRESET=vercel npm run build
+```
+
+El resultado queda en `.vercel/output`. Para publicar la versión local actual, utiliza la CLI de Vercel desde una sesión autenticada. Para despliegues desde GitHub, primero deben subirse los cambios locales al repositorio y después importarlo en Vercel como TanStack Start. Mantén `bun.lock` y la instalación reproducible con `bun install --frozen-lockfile`.
+
+## Contenido del sitio
+
+- `src/routes/index.tsx`: página, servicios, contacto y catálogo `projects`. Sustituye las imágenes y sus dimensiones en el catálogo para actualizar el portfolio.
+- `src/assets/`: imágenes locales temporales, incluido el retrato.
+- `src/styles.css`: colores, tipografía, responsive y movimiento.
+- `src/routes/__root.tsx`: documento y fuentes.
+
+El contacto prepara un correo dirigido a `hola@lucasdominguez.studio` en la aplicación del visitante. No utiliza un servicio de envío. Verifica esa dirección antes de publicar.
+
+Las transiciones ligadas al scroll utilizan CSS cuando el navegador lo admite, con presentación estática como alternativa. Se respeta la preferencia de movimiento reducido. La navegación se mantiene en una sola página mediante anclas y los proyectos se amplían en un diálogo accesible.

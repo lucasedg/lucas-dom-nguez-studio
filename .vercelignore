@@ -1,0 +1,9 @@
+backups/
+.git/
+.codex/
+.agents/
+.env*
+src/assets/studio-portrait-ld-v1.png
+src/assets/studio-ld-background-v1.png
+
+motion/
