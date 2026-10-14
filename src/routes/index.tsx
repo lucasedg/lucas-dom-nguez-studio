@@ -13,7 +13,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 
-import studioLogo from "@/assets/ld-transparent.png";
+import studioSculpture from "@/assets/studio-sculptural-hero.jpg";
 import lucasPortrait from "@/assets/lucas-sobre-mi.png";
 import almaRosaImage from "@/assets/alma-rosa/web.jpg";
 import almaRosaIdentity from "@/assets/alma-rosa/identidad.jpg";
@@ -629,28 +629,18 @@ function Header() {
   );
 }
 
-function LogoSignature() {
-  return (
-    <div className="logo-signature" aria-hidden="true">
-      <div className="logo-motion">
-        <img
-          className="logo-developed"
-          src={studioLogo}
-          width={1106}
-          height={1422}
-          alt=""
-          fetchPriority="high"
-        />
-      </div>
-    </div>
-  );
-}
-
 function Hero() {
   return (
     <section id="inicio" className="hero-scroll-scene">
-      <div className="hero-stage hero brand-hero cinema-surface">
-        <LogoSignature />
+      <div className="hero-stage hero brand-hero cinema-surface sculptural-hero">
+        <img
+          className="sculptural-hero-art"
+          src={studioSculpture}
+          width={1536}
+          height={1024}
+          alt="Monograma LD en metal grafito suspendido entre láminas de cristal y una pieza tipográfica en relieve"
+          fetchPriority="high"
+        />
         <Header />
         <div className="brand-hero-grid">
           <div className="brand-hero-copy">

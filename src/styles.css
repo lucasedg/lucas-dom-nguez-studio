@@ -3259,3 +3259,45 @@ html {
   .hero-stage .logo-signature { height: clamp(110px, 20svh, 150px); }
   .hero-stage .hero-disciplines { margin-top: 16px; padding-top: 12px; }
 }
+
+/* Approved sculptural artwork, with live accessible headline and controls. */
+.hero-scroll-scene .sculptural-hero {
+  background: #07191b;
+  padding: 8rem max(1.25rem, 4vw) 6rem;
+  min-height: 100svh;
+}
+.sculptural-hero-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  pointer-events: none;
+}
+.sculptural-hero .brand-hero-grid { grid-template-columns: 43% 57%; min-height: 65svh; }
+.sculptural-hero .brand-headline { font-size: clamp(3rem, 5.5vw, 6rem); }
+.sculptural-hero .brand-hero-copy { text-shadow: 0 2px 18px rgb(7 20 22 / 35%); }
+.sculptural-hero .hero-disciplines { margin-top: 2rem; }
+@media (max-width: 1100px) {
+  .hero-scroll-scene .sculptural-hero { padding: 76px 20px 92px; }
+  .sculptural-hero-art {
+    position: relative;
+    display: block;
+    width: calc(100% + 40px);
+    max-width: none;
+    margin: 0 -20px 16px;
+    height: clamp(240px, 36svh, 400px);
+    object-fit: cover;
+    object-position: right center;
+    mask-image: linear-gradient(transparent, black 5%, black 86%, transparent);
+  }
+  .sculptural-hero .brand-hero-grid { display: block; min-height: 0; }
+  .sculptural-hero .brand-hero-copy { text-align: center; max-width: 600px; margin-inline: auto; }
+  .sculptural-hero .brand-headline { font-size: clamp(2.9rem, 9vw, 4.5rem); }
+  .sculptural-hero .brand-actions { justify-content: center; }
+}
+@media (max-width: 767px) and (max-height: 740px) {
+  .sculptural-hero-art { height: 210px; }
+  .sculptural-hero .hero-disciplines { margin-top: 16px; }
+}
