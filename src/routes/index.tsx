@@ -1303,6 +1303,22 @@ function ProjectQualifier() {
                 />
               </label>
             </details>
+            <label className="flex items-start gap-3 text-xs leading-relaxed">
+              <input
+                type="checkbox"
+                name="Privacidad"
+                value="Aceptada"
+                required
+                className="mt-0.5 h-4 w-4 shrink-0 accent-current"
+              />
+              <span>
+                He leído la{" "}
+                <a className="underline underline-offset-4" href="/privacidad" target="_blank">
+                  política de privacidad
+                </a>{" "}
+                y acepto que uses mis datos para responder a mi mensaje.
+              </span>
+            </label>
             <button type="submit" className="qualifier-submit">
               Enviar mensaje <ArrowUpRight className="h-5 w-5" aria-hidden="true" />
             </button>
@@ -1337,9 +1353,20 @@ function Footer() {
           <span>Dirección creativa</span>
           <span>Digital</span>
         </div>
-        <p className="text-[10px] text-studio-ivory/35 md:col-span-2">
-          © {new Date().getFullYear()} — Todos los derechos reservados.
-        </p>
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[10px] text-studio-ivory/45 md:col-span-2">
+          <p>© {new Date().getFullYear()} — Todos los derechos reservados.</p>
+          <nav aria-label="Información legal" className="flex flex-wrap gap-x-5 gap-y-2">
+            <a href="/aviso-legal" className="hover:text-studio-ivory">
+              Aviso legal
+            </a>
+            <a href="/privacidad" className="hover:text-studio-ivory">
+              Privacidad
+            </a>
+            <a href="/cookies" className="hover:text-studio-ivory">
+              Cookies
+            </a>
+          </nav>
+        </div>
         <GraphicMotionControl />
       </div>
     </footer>
