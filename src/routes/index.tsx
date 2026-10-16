@@ -13,8 +13,8 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 
-import studioLogo from "@/assets/ld-transparent.png";
-import lucasPortrait from "@/assets/lucas-sobre-mi.png";
+import studioLogo from "@/assets/ld-transparent.webp";
+import lucasPortrait from "@/assets/lucas-sobre-mi.webp";
 import almaRosaImage from "@/assets/alma-rosa/web.jpg";
 import almaRosaIdentity from "@/assets/alma-rosa/identidad.jpg";
 import bubaCover from "@/assets/buba/cover.jpg";
@@ -42,23 +42,58 @@ import vioraCampaign from "@/assets/viora/campana.jpg";
 import vioraInterface from "@/assets/viora/interfaz.jpg";
 import vioraApplication from "@/assets/viora/aplicacion.jpg";
 
+const SITE_URL = "https://lucas-dominguez-studio.vercel.app";
+const SITE_TITLE = "Lucas Domínguez Studio — Diseño de imagen de marca en Málaga";
+const SITE_DESCRIPTION =
+  "Soy Lucas Domínguez, diseñador gráfico en Málaga. En mi estudio diseño la imagen de tu marca: estrategia, identidad visual y comunicación.";
+const SHARE_TITLE = "Lucas Domínguez Studio — Marcas que se hacen ver";
+const SHARE_DESCRIPTION =
+  "Diseño la imagen de tu marca para que tenga una identidad propia y reconocible.";
+const SHARE_IMAGE = `${SITE_URL}/og-image.jpg`;
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  name: "Lucas Domínguez Studio",
+  description: SITE_DESCRIPTION,
+  url: SITE_URL,
+  image: SHARE_IMAGE,
+  email: "lucase.dominguezguridi@gmail.com",
+  telephone: "+34622688942",
+  founder: { "@type": "Person", name: "Lucas Domínguez", jobTitle: "Diseñador gráfico" },
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Málaga",
+    addressRegion: "Andalucía",
+    addressCountry: "ES",
+  },
+  areaServed: "ES",
+  sameAs: ["https://www.instagram.com/lucasdominguez.studio/"],
+};
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Lucas Domínguez Studio — Diseño de imagen de marca en Málaga" },
+      { title: SITE_TITLE },
+      { name: "description", content: SITE_DESCRIPTION },
+      { property: "og:site_name", content: "Lucas Domínguez Studio" },
+      { property: "og:locale", content: "es_ES" },
+      { property: "og:url", content: `${SITE_URL}/` },
+      { property: "og:title", content: SHARE_TITLE },
+      { property: "og:description", content: SHARE_DESCRIPTION },
+      { property: "og:image", content: SHARE_IMAGE },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
       {
-        name: "description",
-        content:
-          "Soy Lucas Domínguez, diseñador gráfico en Málaga. En mi agencia diseño la imagen de tu marca: estrategia, identidad visual y comunicación.",
+        property: "og:image:alt",
+        content: "Lucas Domínguez Studio — Diseño marcas con carácter",
       },
-      { property: "og:title", content: "Lucas Domínguez Studio — Marcas que se hacen ver" },
-      {
-        property: "og:description",
-        content: "Diseño la imagen de tu marca para que tenga una identidad propia y reconocible.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: SHARE_TITLE },
+      { name: "twitter:description", content: SHARE_DESCRIPTION },
+      { name: "twitter:image", content: SHARE_IMAGE },
     ],
+    links: [{ rel: "canonical", href: `${SITE_URL}/` }],
+    scripts: [{ type: "application/ld+json", children: JSON.stringify(structuredData) }],
   }),
   component: StudioPage,
 });
