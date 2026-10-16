@@ -3301,3 +3301,89 @@ html {
   .sculptural-hero-art { height: 210px; }
   .sculptural-hero .hero-disciplines { margin-top: 16px; }
 }
+
+/* Concise mobile reading, with full plan details available on demand. */
+.mobile-content-only { display: none; }
+@media (max-width: 767px) {
+  .creative-plan > .mobile-content-desktop,
+  .brand-actions > .mobile-content-desktop,
+  .mobile-content-desktop,
+  .sculptural-hero .hero-kicker,
+  .sculptural-hero .hero-disciplines { display: none; }
+  .mobile-content-only { display: block; }
+  .sculptural-hero .brand-actions { margin-top: 24px; }
+  .sculptural-hero .brand-intro { margin-inline: auto; font-size: 16px; }
+  .sculptural-hero .brand-actions .glass-button-primary { min-width: 190px; }
+  .about-copy > .mobile-content-only { font-size: 17px; line-height: 1.6; }
+  .plan-mobile-details { margin: 16px 0 24px; }
+  .plan-mobile-details summary { cursor: pointer; min-height: 44px; padding-block: 12px; font-weight: 600; }
+  .plan-mobile-details summary:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+  .plan-mobile-details ul { margin-block: 12px 0; }
+}
+
+/* Mobile art direction: a full-width scene with a clear reading area below. */
+@media (max-width: 767px) {
+  .hero-scroll-scene .hero-stage.sculptural-hero {
+    padding-top: max(64px, calc(48px + env(safe-area-inset-top)));
+    padding-bottom: 104px;
+  }
+  .sculptural-hero .sculptural-hero-art {
+    height: clamp(300px, 53svh, 580px);
+    width: calc(100% + 40px);
+    margin: -12px -20px -36px;
+    object-position: 87% center;
+    mask-image: linear-gradient(transparent, black 8%, black 74%, transparent 100%);
+  }
+  .sculptural-hero .brand-hero-grid { position: relative; z-index: 1; }
+  .sculptural-hero .brand-headline { font-size: clamp(2.65rem, 10vw, 3.6rem); }
+  .sculptural-hero .brand-actions { margin-top: 20px; }
+}
+@media (max-width: 767px) and (max-height: 700px) {
+  .sculptural-hero .sculptural-hero-art { height: 44svh; min-height: 240px; }
+}
+
+/* Original LD sits directly on a continuous graphite surface. */
+.hero-scroll-scene .hero-stage.graphite-hero {
+  background: radial-gradient(ellipse at 74% 35%, #515253 0%, #303234 38%, #191c1e 80%);
+  isolation: isolate;
+}
+.graphite-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: .12;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23fff' filter='url(%23grain)' d='M0 0h180v180H0z'/%3E%3C/svg%3E");
+}
+.graphite-logo-scene {
+  position: absolute;
+  inset: 10% 4% 10% 50%;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+.graphite-logo {
+  width: auto;
+  height: 100%;
+  max-width: 100%;
+  max-height: 70svh;
+  object-fit: contain;
+  filter: drop-shadow(16px 24px 10px rgb(0 0 0 / 52%)) drop-shadow(2px 3px 2px rgb(0 0 0 / 35%));
+}
+@media (max-width: 1100px) {
+  .graphite-logo-scene { position: relative; inset: auto; height: 43svh; margin: 0 auto 24px; }
+}
+@media (max-width: 767px) {
+  .hero-scroll-scene .hero-stage.graphite-hero {
+    background: radial-gradient(ellipse at 55% 27%, #535557 0%, #343739 38%, #1b1f21 83%);
+    padding-top: max(84px, calc(60px + env(safe-area-inset-top)));
+  }
+  .graphite-logo-scene { height: clamp(260px, 44svh, 470px); margin-bottom: 24px; }
+  .graphite-logo { max-width: 85%; filter: drop-shadow(12px 18px 8px rgb(0 0 0 / 55%)); }
+  .graphite-hero .brand-headline { font-size: clamp(2.65rem, 10vw, 3.6rem); }
+}
+@media (max-width: 767px) and (max-height: 700px) {
+  .graphite-logo-scene { height: 34svh; min-height: 210px; margin-bottom: 12px; }
+}
+.graphite-hero .brand-headline em { color: #D59B7D; }

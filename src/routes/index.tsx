@@ -13,7 +13,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 
-import studioSculpture from "@/assets/studio-sculptural-hero.jpg";
+import studioLogo from "@/assets/ld-transparent.png";
 import lucasPortrait from "@/assets/lucas-sobre-mi.png";
 import almaRosaImage from "@/assets/alma-rosa/web.jpg";
 import almaRosaIdentity from "@/assets/alma-rosa/identidad.jpg";
@@ -632,15 +632,17 @@ function Header() {
 function Hero() {
   return (
     <section id="inicio" className="hero-scroll-scene">
-      <div className="hero-stage hero brand-hero cinema-surface sculptural-hero">
-        <img
-          className="sculptural-hero-art"
-          src={studioSculpture}
-          width={1536}
-          height={1024}
-          alt="Monograma LD en metal grafito suspendido entre láminas de cristal y una pieza tipográfica en relieve"
-          fetchPriority="high"
-        />
+      <div className="hero-stage hero brand-hero cinema-surface sculptural-hero graphite-hero">
+        <div className="graphite-logo-scene">
+          <img
+            className="graphite-logo"
+            src={studioLogo}
+            width={1106}
+            height={1422}
+            alt="LD, monograma de Lucas Domínguez Studio en metal con relieve"
+            fetchPriority="high"
+          />
+        </div>
         <Header />
         <div className="brand-hero-grid">
           <div className="brand-hero-copy">
@@ -648,15 +650,18 @@ function Hero() {
             <h1 className="brand-headline">
               Diseño marcas <em>con carácter.</em>
             </h1>
-            <p className="brand-intro">
+            <p className="brand-intro mobile-content-desktop">
               Diseño tu logo, tu identidad visual y las piezas que necesitas para presentar tu
               negocio.
             </p>
+            <p className="brand-intro mobile-content-only">Identidad visual, web y contenido.</p>
             <div className="brand-actions">
               <a href="#proyectos" className="glass-button glass-button-primary">
-                Ver mis trabajos <ArrowUpRight aria-hidden="true" />
+                <span className="mobile-content-desktop">Ver mis trabajos</span>
+                <span className="mobile-content-only">Ver proyectos</span>{" "}
+                <ArrowUpRight aria-hidden="true" />
               </a>
-              <a href="#contacto" className="glass-button">
+              <a href="#contacto" className="glass-button mobile-content-desktop">
                 Cuéntame tu proyecto <ArrowUpRight aria-hidden="true" />
               </a>
             </div>
@@ -755,16 +760,20 @@ function Studio() {
             </figure>
           </Reveal>
           <Reveal className="about-copy" delay={160}>
-            <p className="about-intro">
+            <p className="about-intro mobile-content-desktop">
               Tu marca tiene una historia. Mi trabajo es darle una imagen propia.
             </p>
-            <p>
+            <p className="mobile-content-desktop">
               Soy Lucas Domínguez, diseñador gráfico en Málaga. En mi estudio diseño identidades de
               marca y las piezas que les dan vida.
             </p>
-            <p>
+            <p className="mobile-content-desktop">
               Trabajo contigo de principio a fin: escucho tu idea, defino su dirección y cuido cada
               detalle.
+            </p>
+            <p className="mobile-content-only">
+              Diseño tu identidad de marca y las piezas que le dan vida. Trabajo contigo de
+              principio a fin.
             </p>
             <a className="about-link" href="#contacto">
               Hablemos de tu marca <ArrowUpRight size={20} aria-hidden="true" />
@@ -814,11 +823,19 @@ function Services() {
                 </p>
                 <p className="creative-plan-units">{plan.units}</p>
 
-                <ul>
+                <ul className="mobile-content-desktop">
                   {plan.features.map((feature) => (
                     <li key={feature}>{feature}</li>
                   ))}
                 </ul>
+                <details className="plan-mobile-details mobile-content-only">
+                  <summary>Qué incluye</summary>
+                  <ul>
+                    {plan.features.map((feature) => (
+                      <li key={feature}>{feature}</li>
+                    ))}
+                  </ul>
+                </details>
                 <a
                   className="creative-plan-cta"
                   href={`/?plan=${encodeURIComponent(plan.name)}#contacto`}
