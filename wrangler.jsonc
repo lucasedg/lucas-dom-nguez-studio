@@ -3,6 +3,8 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "lucas-dom-nguez-studio",
   "compatibility_date": "2026-10-01",
+  // Builds the site right before every deploy, so CI works even with an empty build command.
+  "build": { "command": "npm run build" },
   "assets": {
     "directory": "./.output/public",
     "html_handling": "auto-trailing-slash",
