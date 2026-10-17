@@ -19,7 +19,8 @@ export default defineConfig({
         filter: ({ path }) => !path.includes("?"),
       },
     }),
-    nitro(),
+    /* On Cloudflare CI Nitro would switch to its worker preset; the site ships there as static files instead. */
+    nitro(process.env["WORKERS_CI"] || process.env["CF_PAGES"] ? { preset: "node-server" } : {}),
     viteReact(),
     tailwindcss(),
   ],

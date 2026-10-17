@@ -1,0 +1,11 @@
+{
+  // Cloudflare Workers (static assets only): the prerendered site in .output/public.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "lucas-dom-nguez-studio",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./.output/public",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "none"
+  }
+}
