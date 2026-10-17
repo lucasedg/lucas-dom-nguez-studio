@@ -1436,6 +1436,39 @@ function MotionGraphic({ variant = "orbit" }: { variant?: "orbit" | "tiles" | "s
   );
 }
 
+const bandItems = [
+  "Branding",
+  "Identidad visual",
+  "Diseño web",
+  "UX/UI",
+  "Motion graphics",
+  "Campañas",
+  "Contenido para redes",
+  "Dirección creativa",
+];
+
+/* Band that keeps running between the hero and the work: what the studio does. */
+function ServicesBand() {
+  const row = bandItems.map((item) => (
+    <span key={item}>
+      {item}
+      <i aria-hidden="true" />
+    </span>
+  ));
+  return (
+    <section className="services-band" data-motion aria-label="Servicios del estudio">
+      <div className="services-band-strip">
+        <div className="services-band-track">
+          <div className="services-band-row">{row}</div>
+          <div className="services-band-row" aria-hidden="true">
+            {row}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function MotionShowcase() {
   return (
     <section className="motion-showcase" data-motion aria-labelledby="motion-title">
@@ -1493,6 +1526,7 @@ function StudioPage() {
       <CinematicCursor />
       <ScrollDrop />
       <Hero />
+      <ServicesBand />
       <Work />
       <MotionShowcase />
       <Services />

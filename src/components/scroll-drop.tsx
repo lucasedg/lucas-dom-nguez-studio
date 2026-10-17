@@ -8,21 +8,10 @@ import { useEffect, useRef } from "react";
  */
 const MOBILE = "(max-width: 767px)";
 // Elements the route crosses under, alternating sides (top to bottom of the page).
-const CROSSINGS = [
-  ".hero-mark",
-  ".brand-intro",
-  ".section-title",
-  ".project-card-caption",
-  ".motion-showcase h2",
-  ".creative-plan",
-  ".service-guide-help",
-  ".about-title",
-  ".about-copy",
-  ".process-step",
-  ".cta-title",
-  ".contact-card",
-].join(",");
-const BALL = 13;
+// Only a few stretches zigzag (projects and process); elsewhere it runs down one margin.
+const CROSSINGS = ["#proyectos .project-card-caption", ".process-step"].join(",");
+const BALL = 14;
+const DROP_LIFE = 900; // ms a paint drop takes to fade away
 const MARGIN = 24;
 
 type Route = { x: Float32Array; y: Float32Array; s: Float32Array; n: number; docH: number };
@@ -37,13 +26,15 @@ function buildRoute(W: number, start: { x: number; y: number }): Route {
   bottoms.sort((a, b) => a - b);
   const rows: number[] = [];
   for (const b of bottoms) if (b - (rows.at(-1) ?? start.y) > 150) rows.push(b);
+  // Even number of crossings so the route always ends back on the right margin.
+  if (rows.length % 2) rows.pop();
 
   // Control points: logo → down the left → across → down the right → across …
   const left = MARGIN;
   const right = W - MARGIN;
   const pts: [number, number][] = [[start.x, start.y]];
-  let side = left;
-  pts.push([left, start.y + 60]);
+  let side = right;
+  pts.push([right, start.y + 160]);
   for (const y of rows) {
     const next = side === left ? right : left;
     pts.push([side, y - 60], [(side + next) / 2, y], [next, y + 60]);
@@ -131,6 +122,9 @@ export function ScrollDrop() {
     let symbol: HTMLElement | null = null;
     let origin = { x: 0, y: 0, size: 26 };
     let dpr = 1;
+    let drops: { x: number; y: number; r: number; born: number }[] = [];
+    let travelled = 0;
+    let seed = 7;
 
     const enabled = () =>
       mq.matches && !reduce.matches && page?.getAttribute("data-graphics-paused") !== "true";
@@ -184,22 +178,32 @@ export function ScrollDrop() {
       const [hx, hy] = at(route, pos);
       const headY = hy - sy;
 
-      // Trail: tapering, fading stroke behind the ball along the route.
-      const trail = 70 + Math.min(520, speed * 9);
-      const dir = vel >= 0 ? -1 : 1; // behind the motion
-      const seg = 22;
-      ctx.lineCap = "round";
-      for (let i = seg; i > 0; i--) {
-        const a = at(route, pos + (dir * (trail * i)) / seg);
-        const b = at(route, pos + (dir * (trail * (i - 1))) / seg);
-        const k = 1 - i / seg; // 0 at the tip, 1 at the ball
-        ctx.strokeStyle = `rgba(255, 91, 20, ${(0.08 + 0.75 * k * k) * grow})`;
-        ctx.lineWidth = Math.max(0.8, r * 1.9 * k * k);
-        ctx.beginPath();
-        ctx.moveTo(a[0], a[1] - sy);
-        ctx.lineTo(b[0], b[1] - sy);
-        ctx.stroke();
+      // Paint drops: shed behind the ball while it moves, each fading and shrinking.
+      const now = performance.now();
+      travelled += speed;
+      if (grow > 0.5 && speed > 0.6 && travelled > 14) {
+        travelled = 0;
+        seed = (seed * 16807) % 2147483647;
+        const n = seed / 2147483647;
+        const back = at(route, pos - Math.sign(vel) * (r + 4));
+        drops.push({
+          x: back[0] + (n - 0.5) * r * 1.4,
+          y: back[1] + (n - 0.5) * r * 0.6,
+          r: r * (0.28 + 0.42 * n) * Math.min(1, 0.45 + speed / 22),
+          born: now,
+        });
+        if (drops.length > 90) drops.shift();
       }
+      drops = drops.filter((d) => now - d.born < DROP_LIFE);
+      for (const d of drops) {
+        const age = (now - d.born) / DROP_LIFE;
+        ctx.globalAlpha = (1 - age) * 0.9;
+        ctx.fillStyle = "#ff5b14";
+        ctx.beginPath();
+        ctx.arc(d.x, d.y - sy, Math.max(0.5, d.r * (1 - age * 0.55)), 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
 
       // Ball, slightly stretched along the motion when fast.
       const ahead = at(route, pos + (vel >= 0 ? 1 : -1) * 4);
@@ -222,7 +226,7 @@ export function ScrollDrop() {
       ctx.arc(hx - r * 0.32, headY - r * 0.34, r * 0.3, 0, Math.PI * 2);
       ctx.fill();
 
-      if (Math.abs(target - pos) > 0.3 || speed > 0.05 || m < 1) {
+      if (Math.abs(target - pos) > 0.3 || speed > 0.05 || m < 1 || drops.length) {
         raf = requestAnimationFrame(frame);
       }
     };

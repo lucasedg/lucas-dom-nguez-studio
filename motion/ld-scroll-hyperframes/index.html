@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>LD · gota de pintura y banda de servicios (móvil)</title>
+    <script src="assets/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Montserrat";
+        font-weight: 100 900;
+        src: url("assets/montserrat-latin-wght-normal.woff2") format("woff2");
+      }
+      @font-face {
+        font-family: "Bebas Neue";
+        src: url("assets/bebas-neue-latin-400-normal.woff2") format("woff2");
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body,
+      #root {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #1d1d1d;
+      }
+      #root {
+        position: relative;
+        font-family: "Montserrat", sans-serif;
+        color: #f7f5f2;
+      }
+      #scene {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+      }
+      #page {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1080px;
+      }
+      .hero {
+        height: 1250px;
+        padding: 70px 60px;
+        background: radial-gradient(ellipse at 60% 30%, #2a2a2a, #1d1d1d 60%);
+      }
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 26px;
+      }
+      #logo-mark {
+        width: 76px;
+        height: 76px;
+        background: #ff5b14;
+      }
+      .logo b {
+        font-weight: 800;
+        letter-spacing: 0.18em;
+        font-size: 30px;
+      }
+      .hero h1 {
+        margin-top: 560px;
+        font: 400 150px/0.95 "Bebas Neue";
+        text-align: center;
+      }
+      .hero h1 em {
+        font-style: normal;
+        color: #ff5b14;
+      }
+      .band-wrap {
+        position: relative;
+        height: 260px;
+        background: #1d1d1d;
+      }
+      .band {
+        position: absolute;
+        left: -60px;
+        right: -60px;
+        top: 70px;
+        height: 120px;
+        background: #ff5b14;
+        transform: rotate(-3deg);
+        overflow: hidden;
+        box-shadow: 0 24px 50px rgb(0 0 0 / 35%);
+      }
+      .band-track {
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: flex;
+        white-space: nowrap;
+        height: 120px;
+        align-items: center;
+        font: 400 74px/1 "Bebas Neue";
+        color: #1d1d1d;
+        letter-spacing: 0.02em;
+      }
+      .band-track span {
+        padding-right: 40px;
+      }
+      .band-track i {
+        display: inline-block;
+        width: 22px;
+        height: 22px;
+        margin-right: 40px;
+        border-radius: 50%;
+        background: #1d1d1d;
+        vertical-align: middle;
+      }
+      .light {
+        background: #f7f5f2;
+        color: #1d1d1d;
+        padding: 120px 60px;
+      }
+      .light h2,
+      .dark h2 {
+        font: 400 130px/1 "Bebas Neue";
+      }
+      .card {
+        margin-top: 70px;
+        height: 560px;
+        border-radius: 34px;
+        background: linear-gradient(140deg, #2b2b2b, #111);
+        box-shadow: 0 30px 60px rgb(0 0 0 / 25%);
+      }
+      .caption {
+        margin-top: 28px;
+        font: 400 64px/1 "Bebas Neue";
+      }
+      .dark {
+        background: #1d1d1d;
+        padding: 120px 60px 400px;
+      }
+      .dark h2 em {
+        font-style: normal;
+        color: #ff5b14;
+      }
+      .plan {
+        margin-top: 60px;
+        height: 420px;
+        border-radius: 34px;
+        background: #262626;
+        box-shadow: 0 30px 60px rgb(0 0 0 / 45%);
+      }
+      #drop {
+        position: absolute;
+        inset: 0;
+        width: 1080px;
+        height: 1920px;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="8"
+      data-fps="30"
+      data-width="1080"
+      data-height="1920"
+    >
+      <section id="scene" class="clip" data-start="0" data-duration="8" data-track-index="0">
+        <div id="page">
+          <div class="hero">
+            <div class="logo"><div id="logo-mark"></div><b>LUCAS DOMINGUEZ</b></div>
+            <h1>DISEÑO MARCAS<br /><em>CON CARÁCTER.</em></h1>
+          </div>
+          <div class="band-wrap">
+            <div class="band"><div class="band-track" id="band-track"></div></div>
+          </div>
+          <div class="light">
+            <h2>PROYECTOS</h2>
+            <div class="card"></div>
+            <p class="caption">BUBA</p>
+            <div class="card"></div>
+            <p class="caption">VIORA</p>
+          </div>
+          <div class="dark">
+            <h2>DISEÑO PARA TU MARCA.<br /><em>MES A MES.</em></h2>
+            <div class="plan"></div>
+            <div class="plan"></div>
+          </div>
+        </div>
+        <canvas id="drop" width="1080" height="1920"></canvas>
+      </section>
+    </div>
+    <script>
+      (function () {
+        var W = 1080;
+        var H = 1920;
+        var BALL = 30;
+        var MARGIN = 52;
+
+        /* Band copy: what the studio does, repeated so the loop is seamless. */
+        var items = ["Branding", "Identidad visual", "Diseño web", "Motion graphics", "Contenido para redes", "Packaging"];
+        var track = document.getElementById("band-track");
+        var html = "";
+        for (var rep = 0; rep < 4; rep++)
+          items.forEach(function (it) {
+            html += "<span>" + it + "</span><i></i>";
+          });
+        track.innerHTML = html;
+        var segment = track.scrollWidth / 4;
+
+        /* Scroll profile (page offset in px) as a pure function of time. */
+        var keys = [
+          [0, 0],
+          [0.7, 0],
+          [2.3, 1350],
+          [3.1, 1350],
+          [5.1, 2900],
+          [6.3, 3150],
+          [8, 3150],
+        ];
+        function ease(u) {
+          return u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2;
+        }
+        function scrollAt(t) {
+          for (var i = 0; i < keys.length - 1; i++) {
+            var a = keys[i];
+            var b = keys[i + 1];
+            if (t <= b[0]) return a[1] + (b[1] - a[1]) * ease((t - a[0]) / (b[0] - a[0] || 1));
+          }
+          return keys[keys.length - 1][1];
+        }
+
+        /* Route: right margin, with ONE zigzag stretch through the projects. */
+        var ZIG_FROM = 1900;
+        var ZIG_TO = 3000;
+        function routeX(py) {
+          var right = W - MARGIN;
+          if (py < ZIG_FROM || py > ZIG_TO) return right;
+          var u = (py - ZIG_FROM) / (ZIG_TO - ZIG_FROM); // 0..1 over the stretch
+          var swing = 0.5 - 0.5 * Math.cos(u * Math.PI * 4); // two crossings and back
+          return right - swing * (W - 2 * MARGIN);
+        }
+        var logo = { x: 98, y: 108 };
+        function ballAt(t) {
+          var sc = scrollAt(t);
+          var m = Math.min(1, sc / 500);
+          var mm = m * m * (3 - 2 * m);
+          var py = sc + logo.y + (H * 0.45 - logo.y) * mm;
+          var x = logo.x + (routeX(py) - logo.x) * mm;
+          return { x: x, py: py, r: 38 + (BALL - 38) * mm, sc: sc };
+        }
+        function hash(n) {
+          var h = Math.imul(n | 0, 2654435761) >>> 0;
+          h = Math.imul(h ^ (h >>> 15), 2246822507) >>> 0;
+          return ((h ^ (h >>> 13)) >>> 0) / 4294967295;
+        }
+
+        var ctx = document.getElementById("drop").getContext("2d");
+        var clock = { t: 0 };
+        var LIFE = 0.9;
+        var STEP = 1 / 30;
+        function paint() {
+          var t = clock.t;
+          var sc = scrollAt(t);
+          document.getElementById("page").style.transform = "translateY(" + -sc + "px)";
+          track.style.transform = "translateX(" + -((t * 160) % segment) + "px)";
+          document.getElementById("logo-mark").style.opacity = String(1 - Math.min(1, sc / 120));
+
+          ctx.clearRect(0, 0, W, H);
+          /* Paint drops: shed behind the ball while it moves, each one fading out. */
+          var first = Math.max(0, Math.floor((t - LIFE) / STEP));
+          for (var k = first; k * STEP <= t; k++) {
+            var te = k * STEP;
+            var p0 = ballAt(te);
+            var p1 = ballAt(te + STEP);
+            var speed = Math.hypot(p1.x - p0.x, p1.py - p0.py);
+            if (speed < 6 || p0.sc < 60) continue;
+            var age = (t - te) / LIFE;
+            var n = hash(k);
+            var size = p0.r * (0.25 + 0.45 * n) * Math.min(1, speed / 40) * (1 - age * 0.6);
+            var jitter = (hash(k + 999) - 0.5) * p0.r * 1.2;
+            var bx = p0.x + jitter;
+            var by = p0.py - sc;
+            ctx.globalAlpha = Math.max(0, 1 - age) * 0.9;
+            ctx.fillStyle = "#ff5b14";
+            ctx.beginPath();
+            ctx.arc(bx, by, Math.max(1, size), 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.globalAlpha = 1;
+          /* The ball. */
+          var b = ballAt(t);
+          var nb = ballAt(Math.max(0, t - STEP));
+          var v = Math.hypot(b.x - nb.x, b.py - nb.py);
+          var ang = Math.atan2(b.py - nb.py, b.x - nb.x);
+          var st = 1 + Math.min(0.35, v / 120);
+          var by0 = b.py - sc;
+          ctx.save();
+          ctx.translate(b.x, by0);
+          ctx.rotate(ang);
+          ctx.scale(st, 1 / Math.sqrt(st));
+          ctx.shadowColor = "rgba(255,91,20,0.5)";
+          ctx.shadowBlur = 30;
+          ctx.fillStyle = "#ff5b14";
+          ctx.beginPath();
+          if (sc < 1) ctx.rect(-38, -38, 76, 76);
+          else ctx.arc(0, 0, b.r, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+          if (sc >= 1) {
+            ctx.fillStyle = "rgba(255,226,205,0.55)";
+            ctx.beginPath();
+            ctx.arc(b.x - b.r * 0.32, by0 - b.r * 0.34, b.r * 0.3, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+
+        var tl = gsap.timeline({ paused: true });
+        tl.to(clock, { t: 8, duration: 8, ease: "none", onUpdate: paint }, 0);
+        window.__timelines = window.__timelines || {};
+        window.__timelines["main"] = tl;
+        tl.seek(0);
+        paint();
+      })();
+    </script>
+  </body>
+</html>
