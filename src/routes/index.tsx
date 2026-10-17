@@ -20,7 +20,6 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { BrandIntro, BrandLogo, HeroBrandMark, LogoMotion } from "@/components/brand";
-import { ScrollDrop } from "@/components/scroll-drop";
 import { SmoothDetails } from "@/components/smooth-details";
 
 import lucasPortrait from "@/assets/lucas-sobre-mi.webp";
@@ -1524,7 +1523,6 @@ function StudioPage() {
     <main className="studio-page" tabIndex={-1}>
       <BrandIntro />
       <CinematicCursor />
-      <ScrollDrop />
       <Hero />
       <ServicesBand />
       <Work />
