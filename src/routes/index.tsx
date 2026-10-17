@@ -42,7 +42,7 @@ import vioraCampaign from "@/assets/viora/campana.jpg";
 import vioraInterface from "@/assets/viora/interfaz.jpg";
 import vioraApplication from "@/assets/viora/aplicacion.jpg";
 
-const SITE_URL = "https://lucas-dominguez-studio.vercel.app";
+const SITE_URL = "https://lucasdominguezstudio.es";
 const SITE_TITLE = "Lucas Domínguez Studio — Diseño de imagen de marca en Málaga";
 const SITE_DESCRIPTION =
   "Soy Lucas Domínguez, diseñador gráfico en Málaga. En mi estudio diseño la imagen de tu marca: estrategia, identidad visual y comunicación.";

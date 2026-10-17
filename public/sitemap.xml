@@ -1,7 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://lucas-dominguez-studio.vercel.app/</loc>
-    <lastmod>2026-10-16</lastmod>
+    <loc>https://lucasdominguezstudio.es/</loc>
+    <lastmod>2026-10-17</lastmod>
+  </url>
+  <url>
+    <loc>https://lucasdominguezstudio.es/aviso-legal</loc>
+    <lastmod>2026-10-17</lastmod>
+  </url>
+  <url>
+    <loc>https://lucasdominguezstudio.es/privacidad</loc>
+    <lastmod>2026-10-17</lastmod>
+  </url>
+  <url>
+    <loc>https://lucasdominguezstudio.es/cookies</loc>
+    <lastmod>2026-10-17</lastmod>
   </url>
 </urlset>

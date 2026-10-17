@@ -5,7 +5,7 @@ export const LEGAL_OWNER = {
   location: "Arroyo de la Miel, Benalmádena (Málaga), España",
   email: "lucase.dominguezguridi@gmail.com",
   phone: "+34 622 688 942",
-  site: "https://lucas-dominguez-studio.vercel.app",
+  site: "https://lucasdominguezstudio.es",
 };
 
 export const LEGAL_UPDATED = "16 de octubre de 2026";
