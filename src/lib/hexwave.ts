@@ -13,8 +13,6 @@ export type HexWaveOptions = {
   cy?: number;
   /** Hexagon radius in canvas px (defaults to a size that scales with the viewport). */
   cell?: number;
-  /** Floor light driven by the ball (overrides the time-based default). */
-  light?: { amount: number; radius: number };
 };
 
 function hash(i: number, j: number) {
@@ -56,22 +54,14 @@ export function drawHexWave(
   const impact = opts.impact ?? 1.1;
   const cx = opts.cx ?? W / 2;
   const cy = opts.cy ?? H / 2;
-  const R = opts.cell ?? Math.max(14, Math.min(W, H) / 38);
+  const R = opts.cell ?? Math.max(5, Math.min(W, H) / 120);
 
   ctx.globalCompositeOperation = "source-over";
   ctx.fillStyle = "#050505";
   ctx.fillRect(0, 0, W, H);
 
   const k = t - impact;
-  /* Before the hit: the falling ball lights the floor below it, more and tighter as it nears. */
-  const fall = k < 0 ? clamp01((t - (impact - 0.95)) / 0.95) : 1;
-  const floorLight = opts.light
-    ? opts.light.amount
-    : k < 0
-      ? fall * fall
-      : Math.max(0, 1 - k / 0.5);
-  const floorRad = opts.light ? opts.light.radius : Math.min(W, H) * (0.42 - 0.2 * fall);
-  if (k < 0 && floorLight <= 0) return;
+  if (k < 0) return;
 
   const maxR = Math.hypot(Math.max(cx, W - cx), Math.max(cy, H - cy)) + R * 6;
   const fronts: { F: number; band: number; amp: number }[] = [];
@@ -85,30 +75,23 @@ export function drawHexWave(
     if (amp > 0) {
       fronts.push({
         F: maxR * 1.08 * (1 - Math.pow(1 - p, 2.6)),
-        band: maxR * (0.05 + 0.16 * p),
+        band: R * 5 + R * 20 * p,
         amp,
       });
     }
   }
 
   /* Impact flash. */
-  if (k >= 0 && k < 0.45) {
+  if (k < 0.45) {
     const fl = Math.pow(1 - k / 0.45, 2);
-    const g0 = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.min(W, H) * 0.55);
-    g0.addColorStop(0, `rgba(255,190,140,${(0.5 * fl).toFixed(3)})`);
-    g0.addColorStop(0.4, `rgba(255,91,20,${(0.18 * fl).toFixed(3)})`);
+    const g0 = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(W, H) * 0.7);
+    g0.addColorStop(0, `rgba(255,190,140,${(0.55 * fl).toFixed(3)})`);
+    g0.addColorStop(0.35, `rgba(255,91,20,${(0.22 * fl).toFixed(3)})`);
     g0.addColorStop(1, "rgba(255,91,20,0)");
     ctx.fillStyle = g0;
     ctx.fillRect(0, 0, W, H);
   }
-  if (floorLight > 0) {
-    const g2 = ctx.createRadialGradient(cx, cy, 0, cx, cy, floorRad * 1.3);
-    g2.addColorStop(0, `rgba(255,91,20,${(0.28 * floorLight).toFixed(3)})`);
-    g2.addColorStop(1, "rgba(255,91,20,0)");
-    ctx.fillStyle = g2;
-    ctx.fillRect(0, 0, W, H);
-  }
-  if (!fronts.length && floorLight <= 0) return;
+  if (!fronts.length) return;
 
   /* Soft bloom under the cells, riding each front. */
   ctx.globalCompositeOperation = "lighter";
@@ -133,7 +116,7 @@ export function drawHexWave(
   const vh = 1.5 * R;
   const rows = Math.ceil(H / vh) + 2;
   const cols = Math.ceil(W / hw) + 2;
-  const outer = Math.max(fronts[0] ? fronts[0].F + R * 3 : 0, floorLight > 0 ? floorRad * 1.6 : 0);
+  const outer = (fronts[0]?.F ?? 0) + R * 3;
 
   for (let j = -1; j < rows; j++) {
     const y0 = j * vh;
@@ -153,33 +136,29 @@ export function drawHexWave(
           fq.amp * smooth(-R * 3, 0, delta) * Math.exp(-Math.max(0, delta) / (fq.band * 0.34));
         if (v > I) I = v;
       }
-      if (floorLight > 0) {
-        const lit = 0.42 * floorLight * Math.exp(-(d * d) / (floorRad * floorRad));
-        if (lit > I) I = lit;
-      }
       if (I < 0.012) continue;
 
       const n = hash(i, j);
       I = Math.min(1, I * (0.72 + 0.56 * n));
 
       /* Cells lift outward at the front, like a ripple under glass. */
-      const push = I * R * 0.3;
+      const push = I * R * 0.7;
       const x = x0 + (d > 0 ? dx / d : 0) * push;
       const y = y0 + (d > 0 ? dy / d : 0) * push;
 
       /* Orange between the cells: a glowing hex, then the dark cell inset on top. */
       ctx.beginPath();
-      hexPath(ctx, x, y, R * 0.99);
+      hexPath(ctx, x, y, R * 1.02);
       ctx.fillStyle = glow(I);
       ctx.fill();
 
       /* The cell melts into the black as the glow fades, so no edge is left behind. */
       const m = smooth(0, 0.35, I);
       ctx.beginPath();
-      hexPath(ctx, x, y, R * (0.9 - 0.16 * Math.pow(I, 0.75)));
-      ctx.fillStyle = `rgba(${Math.round(5 + (20 + 18 * n) * m)},${Math.round(
+      hexPath(ctx, x, y, R * (1 - 0.42 * Math.pow(I, 0.75)));
+      ctx.fillStyle = `rgb(${Math.round(5 + (20 + 18 * n) * m)},${Math.round(
         5 + (12 + 10 * n) * m,
-      )},${Math.round(5 + 5 * m)},${smooth(0, 0.25, I).toFixed(3)})`;
+      )},${Math.round(5 + 5 * m)})`;
       ctx.fill();
     }
   }

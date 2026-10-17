@@ -6,7 +6,6 @@
     <title>LD intro · bola, onda hexagonal y logo</title>
     <script src="assets/gsap.min.js"></script>
     <script src="assets/hexwave.js"></script>
-    <script src="assets/ballmotion.js"></script>
     <style>
       @font-face {
         font-family: "Montserrat";
@@ -20,7 +19,6 @@
         --bone: #f7f5f2;
         --steel: #c9cdd2;
         --void: #050505;
-        --mark: 280px;
       }
       * {
         margin: 0;
@@ -42,24 +40,22 @@
         background: var(--void);
         font-family: "Montserrat", system-ui, sans-serif;
       }
-      #scene,
+      #scene {
+        position: absolute;
+        inset: 0;
+      }
       #world {
         position: absolute;
         inset: 0;
       }
-      /* The floor is a tilted plane: the camera looks down at it from above, slightly angled. */
-      #floor {
-        position: absolute;
-        left: -480px;
-        top: -300px;
-        width: 2880px;
-        height: 1800px;
-      }
       #wave {
-        display: block;
+        position: absolute;
+        inset: 0;
         width: 100%;
         height: 100%;
+        display: block;
       }
+      /* Hero frame: logo centred, name under it. */
       #lockup {
         position: absolute;
         inset: 0;
@@ -70,43 +66,34 @@
         gap: 34px;
         padding: 120px 160px;
       }
-      #slot {
-        position: relative;
-        width: var(--mark);
-        height: var(--mark);
-      }
-      #shadow {
-        position: absolute;
-        inset: 0;
-        border-radius: 50%;
-        background: radial-gradient(closest-side, rgb(0 0 0 / 92%), rgb(0 0 0 / 55%) 55%, rgb(0 0 0 / 0%));
-      }
-      .ghost,
       #mark {
+        position: relative;
+        width: 280px;
+        height: 280px;
+      }
+      #body {
         position: absolute;
         inset: 0;
-      }
-      .ghost {
-        border-radius: 50%;
-        background: radial-gradient(circle at 40% 35%, rgb(255 140 80 / 80%), rgb(255 91 20 / 60%) 55%, rgb(255 91 20 / 0%) 72%);
       }
       #ball {
         position: absolute;
         inset: 0;
+        display: block;
         border-radius: 50%;
         background: var(--orange);
-        box-shadow: 0 0 80px rgb(255 91 20 / 45%);
+        box-shadow: 0 0 90px rgb(255 91 20 / 55%);
       }
-      /* Sphere shading: key light top-left, warm core shadow bottom-right, rim and a specular dot. */
       #ball-shade {
         position: absolute;
         inset: 0;
-        border-radius: 50%;
-        background:
-          radial-gradient(circle at 31% 25%, rgb(255 255 255 / 90%) 0%, rgb(255 255 255 / 0%) 9%),
-          radial-gradient(circle at 36% 30%, rgb(255 196 160 / 85%) 0%, rgb(255 140 80 / 35%) 24%, rgb(255 91 20 / 0%) 46%),
-          radial-gradient(circle at 70% 76%, rgb(120 26 0 / 0%) 30%, rgb(120 26 0 / 55%) 62%, rgb(60 10 0 / 75%) 100%),
-          radial-gradient(circle at 50% 50%, rgb(0 0 0 / 0%) 62%, rgb(255 150 90 / 35%) 70%, rgb(0 0 0 / 0%) 72%);
+        border-radius: inherit;
+        background: radial-gradient(
+          circle at 34% 28%,
+          rgb(255 220 196 / 95%) 0%,
+          rgb(255 140 80 / 35%) 26%,
+          rgb(0 0 0 / 0%) 52%,
+          rgb(90 20 0 / 50%) 100%
+        );
       }
       #mark svg {
         position: absolute;
@@ -149,25 +136,18 @@
       id="root"
       data-composition-id="main"
       data-start="0"
-      data-duration="6.4"
+      data-duration="5.6"
       data-fps="30"
       data-width="1920"
       data-height="1080"
     >
-      <section id="scene" class="clip" data-start="0" data-duration="6.4" data-track-index="0">
+      <section id="scene" class="clip" data-start="0" data-duration="5.6" data-track-index="0">
         <div id="world">
-          <div id="floor" data-layout-allow-overflow="true">
-            <canvas id="wave" width="2880" height="1800"></canvas>
-          </div>
+          <canvas id="wave" width="1920" height="1080" data-layout-allow-overflow="true"></canvas>
           <div id="lockup">
-            <div id="slot">
-              <div id="shadow"></div>
-              <div class="ghost" id="ghost-1"></div>
-              <div class="ghost" id="ghost-2"></div>
-              <div class="ghost" id="ghost-3"></div>
-              <div id="mark">
-                <div id="ball"></div>
-                <div id="ball-shade"></div>
+            <div id="mark">
+              <div id="body">
+                <div id="ball"><div id="ball-shade"></div></div>
                 <svg viewBox="-60 -60 320 320" aria-hidden="true">
                   <polygon id="l1" points="0,56 40,56 40,160 144,160 144,200 0,200" />
                   <polygon id="l2" points="56,0 200,0 200,144 160,144 160,40 56,40" />
@@ -184,128 +164,116 @@
     </div>
     <script>
       (function () {
-        var DUR = 6.4;
-        var IMPACT = window.LDBall.times.impact;
-        var MARK = 280;
-        var TILT = 36; // degrees the floor leans away from the camera
-
-        var slot = document.getElementById("slot");
-        var lockup = document.getElementById("lockup");
-        var floor = document.getElementById("floor");
+        var DUR = 5.6;
+        var IMPACT = 1.1;
         var canvas = document.getElementById("wave");
         var ctx = canvas.getContext("2d");
-        var CW = canvas.width;
-        var CH = canvas.height;
+        var W = canvas.width;
+        var H = canvas.height;
 
-        /* Contact point = centre of the logo slot (layout only, never transforms). */
-        var C = {
-          x: lockup.offsetLeft + slot.offsetLeft + MARK / 2,
-          y: lockup.offsetTop + slot.offsetTop + MARK / 2,
-        };
-        /* Pivot the floor around the contact point so the wave starts exactly under the ball. */
-        var O = { x: C.x - floor.offsetLeft, y: C.y - floor.offsetTop };
-        floor.style.transformOrigin = O.x + "px " + O.y + "px";
-        floor.style.transform = "perspective(1700px) rotateX(" + TILT + "deg)";
-
-        var mark = document.getElementById("mark");
-        var shadow = document.getElementById("shadow");
-        var ghosts = [1, 2, 3].map(function (i) {
-          return document.getElementById("ghost-" + i);
-        });
-
-        function ballTransform(b) {
-          return (
-            "translate(" + b.x.toFixed(2) + "px," + b.y.toFixed(2) + "px) scale(" +
-            (b.s * b.sx).toFixed(4) + "," + (b.s * b.sy).toFixed(4) + ")"
-          );
-        }
-
-        /* Everything below is a pure function of timeline time: redraw on every seek. */
+        /* The wave is a pure function of timeline time: redraw on every seek. */
         var clock = { t: 0 };
         function paint() {
-          var t = clock.t;
-          var b = window.LDBall.at(t, { rise: 140, width: 1920 });
+          window.LDHexWave.draw(ctx, W, H, clock.t, { impact: IMPACT, cx: W / 2, cy: origin });
+        }
 
-          mark.style.opacity = b.o.toFixed(3);
-          mark.style.transform = ballTransform(b);
-
-          /* Speed echoes: where the ball was a few hundredths of a second ago. */
-          for (var i = 0; i < ghosts.length; i++) {
-            var g = window.LDBall.at(Math.max(0, t - 0.028 * (i + 1)), { rise: 140, width: 1920 });
-            var a = b.speed > 0.25 && t < IMPACT ? (0.32 / (i + 1)) * b.speed * b.o : 0;
-            ghosts[i].style.opacity = a.toFixed(3);
-            ghosts[i].style.transform = ballTransform(g);
-          }
-
-          var sh = b.shadow;
-          shadow.style.opacity = sh.o.toFixed(3);
-          shadow.style.filter = "blur(" + sh.blur.toFixed(1) + "px)";
-          shadow.style.transform =
-            "translate(" + sh.dx.toFixed(1) + "px," + (sh.dy + 42).toFixed(1) + "px) scale(" +
-            (sh.scale * b.sx).toFixed(3) + "," + (sh.scale * 0.42).toFixed(3) + ")";
-
-          window.LDHexWave.draw(ctx, CW, CH, t, {
-            impact: IMPACT,
-            cx: O.x,
-            cy: O.y,
-            cell: 19,
-            light: { amount: b.light.amount, radius: (b.light.radiusK * MARK) / 2 },
-          });
+        /* Perspective approach: on-screen size is proportional to 1/z. */
+        var cam = { z: 18 };
+        var ball = document.getElementById("mark");
+        /* The wave starts exactly where the ball hits: the centre of the mark (layout, not transforms). */
+        var origin = ball.offsetTop + ball.offsetHeight / 2 + document.getElementById("lockup").offsetTop;
+        function place() {
+          var s = 1 / cam.z;
+          var drift = cam.z - 1;
+          ball.style.transform =
+            "translate(" + (-drift * 9).toFixed(2) + "px," + (-drift * 6).toFixed(2) + "px) scale(" + s.toFixed(4) + ")";
         }
 
         var tl = gsap.timeline({ paused: true });
         tl.to(clock, { t: DUR, duration: DUR, ease: "none", onUpdate: paint }, 0);
 
-        /* Impact shake on the whole world. */
+        /* 1 · The ball comes at us. */
+        tl.fromTo("#ball", { opacity: 0 }, { opacity: 1, duration: 0.25, ease: "sine.out" }, 0.15);
+        tl.fromTo(cam, { z: 18 }, { z: 1, duration: 0.95, ease: "power1.in", onUpdate: place }, 0.15);
+
+        /* 2 · Impact against the glass: splat, flash (canvas), camera shake. */
+        tl.fromTo(
+          "#body",
+          { scale: 1 },
+          { scale: 1.34, duration: 0.12, ease: "power4.out" },
+          IMPACT,
+        );
+        tl.to("#body", { scale: 0.6, duration: 1.1, ease: "elastic.out(1, 0.45)" }, IMPACT + 0.12);
         tl.fromTo(
           "#world",
           { x: 0, y: 0 },
           {
             keyframes: [
-              { x: 6, y: -6, duration: 0.05 },
-              { x: -5, y: 5, duration: 0.06 },
+              { x: 7, y: -5, duration: 0.05 },
+              { x: -6, y: 4, duration: 0.06 },
               { x: 3, y: -2, duration: 0.07 },
-              { x: 0, y: 0, duration: 0.12 },
+              { x: 0, y: 0, duration: 0.1 },
             ],
             ease: "power2.out",
           },
           IMPACT,
         );
 
-        /* Once the wave has left the frame, the ball becomes the badge. */
-        var MORPH = 3.4;
-        tl.fromTo("#ball", { borderRadius: "50%" }, { borderRadius: "0%", duration: 0.6, ease: "power2.inOut" }, MORPH);
-        tl.fromTo("#ball", { rotation: -90 }, { rotation: 0, duration: 0.65, ease: "power3.out" }, MORPH);
+        /* 3 · Once the wave has left the frame, the ball becomes the badge. */
         tl.fromTo(
           "#ball",
-          { boxShadow: "0 0 80px rgba(255,91,20,0.45)" },
-          { boxShadow: "0 0 0px rgba(255,91,20,0)", duration: 0.6, ease: "sine.inOut" },
-          MORPH,
+          { borderRadius: "50%" },
+          { borderRadius: "0%", duration: 0.6, ease: "power2.inOut" },
+          2.6,
         );
-        tl.fromTo("#ball-shade", { opacity: 1 }, { opacity: 0, duration: 0.3, ease: "sine.inOut" }, MORPH - 0.15);
-        tl.fromTo("#l1", { x: -150, y: 150, opacity: 0 }, { x: 0, y: 0, opacity: 1, duration: 0.7, ease: "expo.out" }, MORPH + 0.4);
-        tl.fromTo("#l2", { x: 150, y: -150, opacity: 0 }, { x: 0, y: 0, opacity: 1, duration: 0.7, ease: "expo.out" }, MORPH + 0.46);
+        tl.fromTo("#ball", { rotation: -90 }, { rotation: 0, duration: 0.65, ease: "power3.out" }, 2.6);
+        tl.fromTo(
+          "#ball",
+          { boxShadow: "0 0 90px rgba(255,91,20,0.55)" },
+          { boxShadow: "0 0 0px rgba(255,91,20,0)", duration: 0.6, ease: "sine.inOut" },
+          2.6,
+        );
+        tl.fromTo("#ball-shade", { opacity: 1 }, { opacity: 0, duration: 0.4, ease: "sine.in" }, 2.65);
+        tl.fromTo(
+          "#l1",
+          { x: -150, y: 150, opacity: 0 },
+          { x: 0, y: 0, opacity: 1, duration: 0.7, ease: "expo.out" },
+          3.0,
+        );
+        tl.fromTo(
+          "#l2",
+          { x: 150, y: -150, opacity: 0 },
+          { x: 0, y: 0, opacity: 1, duration: 0.7, ease: "expo.out" },
+          3.06,
+        );
 
-        /* Name tracks in under the symbol (per glyph, no reflow), then stillness. */
+        /* 4 · Name tracks in under the symbol, then stillness. */
+        /* Tracking-in without reflow: each glyph travels in from a wider spread. */
         var nameEl = document.getElementById("name-main");
         var text = nameEl.textContent;
         nameEl.textContent = "";
         var glyphs = [];
         for (var c = 0; c < text.length; c++) {
-          var gl = document.createElement("span");
-          gl.className = "glyph";
-          gl.textContent = text[c] === " " ? " " : text[c];
-          nameEl.appendChild(gl);
-          glyphs.push(gl);
+          var g = document.createElement("span");
+          g.className = "glyph";
+          g.textContent = text[c] === " " ? "\u00a0" : text[c];
+          nameEl.appendChild(g);
+          glyphs.push(g);
         }
         var mid = (glyphs.length - 1) / 2;
         glyphs.forEach(function (g, idx) {
-          tl.fromTo(g, { x: (idx - mid) * 14, opacity: 0 }, { x: 0, opacity: 1, duration: 0.9, ease: "power3.out" }, MORPH + 0.75);
+          tl.fromTo(
+            g,
+            { x: (idx - mid) * 14, opacity: 0 },
+            { x: 0, opacity: 1, duration: 0.9, ease: "power3.out" },
+            3.35,
+          );
         });
-        tl.fromTo("#name-studio", { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "sine.out" }, MORPH + 1.0);
+        tl.fromTo("#name-studio", { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "sine.out" }, 3.6);
 
         window.__timelines["main"] = tl;
         tl.seek(0);
+        place();
         paint();
       })();
     </script>

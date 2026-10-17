@@ -1,37 +1,15 @@
 {
   "category": "logo-reveal",
-  "duration_s": 6.4,
+  "duration_s": 5.6,
   "fps": 30,
-  "canvas": {
-    "w": 1920,
-    "h": 1080,
-    "aspect": "16:9"
-  },
-  "style": "Dark, cinematic, brand-led, 3D. The screen starts pure black; a tiny orange ball pops out of nowhere, crouches, jumps towards the camera (grows, stretches with speed, speed echoes), falls and hits a tilted floor (squash, rebound, small hop). Only then a shockwave of large hexagons with acid orange between the cells crosses the floor in perspective and leaves the frame; everything is black and the ball becomes the framing-L logo.",
-  "palette": [
-    "#FF5B14",
-    "#1D1D1D",
-    "#F7F5F2",
-    "#C9CDD2",
-    "#050505"
-  ],
+  "canvas": { "w": 1920, "h": 1080, "aspect": "16:9" },
+  "style": "Dark, cinematic, brand-led. A single orange ball flies at the viewer, hits the glass and releases a shockwave of micro-hexagons with acid orange glowing between the cells; the wave leaves the frame, everything is black, and the ball becomes the framing-L logo.",
+  "palette": ["#FF5B14", "#1D1D1D", "#F7F5F2", "#C9CDD2", "#050505"],
   "font": "Montserrat (local woff2)",
-  "beats": [
-    0.15,
-    0.5,
-    1.2,
-    1.92,
-    3.4,
-    3.8
-  ],
+  "beats": [1.1, 1.3, 3.0, 3.35],
   "export": "mp4",
   "asset_needs": [
-    {
-      "role": "logo",
-      "kind": "svg",
-      "source": "brand manual geometry (viewBox -60 -60 320 320, two L polygons) — inlined",
-      "treatment": "none"
-    }
+    { "role": "logo", "kind": "svg", "source": "brand manual geometry (viewBox -60 -60 320 320, two L polygons) — inlined", "treatment": "none" }
   ],
   "block": null,
   "customize": {},
@@ -40,42 +18,11 @@
     "tagline": "LUCAS DOMINGUEZ / STUDIO",
     "url": null,
     "phases": [
-      {
-        "id": "pop",
-        "start": 0.15,
-        "end": 0.5,
-        "motion": "tiny ball pops out of the black (back.out), crouch anticipation"
-      },
-      {
-        "id": "jump",
-        "start": 0.5,
-        "end": 1.92,
-        "motion": "parabolic throw towards the camera: size = 1/(1-0.55h), stretch with speed, 3 speed echoes, slight arc"
-      },
-      {
-        "id": "impact",
-        "start": 1.92,
-        "end": 2.64,
-        "motion": "squash/rebound, floor flash + shake, small second hop"
-      },
-      {
-        "id": "shockwave",
-        "start": 1.92,
-        "end": 3.8,
-        "motion": "canvas hexagon floor tilted 36°, two rings, orange between cells, back to black"
-      },
-      {
-        "id": "morph",
-        "start": 3.25,
-        "end": 4.5,
-        "motion": "shading fades, ball squares off and turns, L pieces slide in"
-      },
-      {
-        "id": "lockup",
-        "start": 4.15,
-        "end": 6.4,
-        "motion": "LUCAS DOMINGUEZ / STUDIO tracks in, hold"
-      }
+      { "id": "approach", "start": 0.0, "end": 1.1, "motion": "perspective z-approach: size ∝ 1/z, slight drift to centre, growing glow" },
+      { "id": "impact", "start": 1.1, "end": 1.35, "motion": "splat against the glass + warm flash + 2px camera shake" },
+      { "id": "shockwave", "start": 1.1, "end": 3.1, "motion": "canvas micro-hex ring expands past the frame; cells shrink at the front so orange glows between them; two rings; leaves pure black" },
+      { "id": "morph", "start": 2.55, "end": 3.6, "motion": "ball rotates -90→0 and squares off into the badge; L pieces slide in from opposite corners" },
+      { "id": "lockup", "start": 3.35, "end": 5.6, "motion": "LUCAS DOMINGUEZ / STUDIO tracks in, hold" }
     ]
   },
   "notes": "Registry search (hexagon shockwave ripple / honeycomb grid reveal / logo reveal ball impact) returned no items, so the hex shockwave is hand-authored on a seek-safe canvas driven by the paused timeline."
