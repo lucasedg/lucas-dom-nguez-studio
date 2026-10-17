@@ -1,13 +1,13 @@
 {
   "category": "logo-reveal",
-  "duration_s": 5.6,
+  "duration_s": 6.4,
   "fps": 30,
   "canvas": {
     "w": 1920,
     "h": 1080,
     "aspect": "16:9"
   },
-  "style": "Dark, cinematic, brand-led. Top-down camera: an orange ball falls from the centre towards the floor, hits it and releases a shockwave of hexagons (large enough to read as geometry) with acid orange glowing between the cells; the wave leaves the frame, everything is black, and the ball becomes the framing-L logo.",
+  "style": "Dark, cinematic, brand-led, 3D. The screen starts pure black; a tiny orange ball pops out of nowhere, crouches, jumps towards the camera (grows, stretches with speed, speed echoes), falls and hits a tilted floor (squash, rebound, small hop). Only then a shockwave of large hexagons with acid orange between the cells crosses the floor in perspective and leaves the frame; everything is black and the ball becomes the framing-L logo.",
   "palette": [
     "#FF5B14",
     "#1D1D1D",
@@ -17,10 +17,12 @@
   ],
   "font": "Montserrat (local woff2)",
   "beats": [
-    1.1,
-    1.3,
-    3.0,
-    3.35
+    0.15,
+    0.5,
+    1.2,
+    1.92,
+    3.4,
+    3.8
   ],
   "export": "mp4",
   "asset_needs": [
@@ -39,33 +41,39 @@
     "url": null,
     "phases": [
       {
-        "id": "drop",
-        "start": 0.0,
-        "end": 1.1,
-        "motion": "top-down fall: size = 1/(1-0.55h), h = 1-u² (gravity); the floor under it lights up as it nears"
+        "id": "pop",
+        "start": 0.15,
+        "end": 0.5,
+        "motion": "tiny ball pops out of the black (back.out), crouch anticipation"
+      },
+      {
+        "id": "jump",
+        "start": 0.5,
+        "end": 1.92,
+        "motion": "parabolic throw towards the camera: size = 1/(1-0.55h), stretch with speed, 3 speed echoes, slight arc"
       },
       {
         "id": "impact",
-        "start": 1.1,
-        "end": 1.55,
-        "motion": "squash 1.16, small bounce, floor flash + 2px shake"
+        "start": 1.92,
+        "end": 2.64,
+        "motion": "squash/rebound, floor flash + shake, small second hop"
       },
       {
         "id": "shockwave",
-        "start": 1.1,
-        "end": 3.1,
-        "motion": "canvas hexagon floor (R = min(W,H)/38) lit by an expanding ring; orange between cells; two rings; leaves pure black"
+        "start": 1.92,
+        "end": 3.8,
+        "motion": "canvas hexagon floor tilted 36°, two rings, orange between cells, back to black"
       },
       {
         "id": "morph",
-        "start": 2.55,
-        "end": 3.6,
-        "motion": "ball rotates -90→0 and squares off into the badge; L pieces slide in from opposite corners"
+        "start": 3.25,
+        "end": 4.5,
+        "motion": "shading fades, ball squares off and turns, L pieces slide in"
       },
       {
         "id": "lockup",
-        "start": 3.35,
-        "end": 5.6,
+        "start": 4.15,
+        "end": 6.4,
         "motion": "LUCAS DOMINGUEZ / STUDIO tracks in, hold"
       }
     ]

@@ -3542,7 +3542,7 @@ html {
   aspect-ratio: 1;
 }
 .ld-intro-on .hero-mark {
-  --hero-delay: 4.95s;
+  --hero-delay: 5.75s;
 }
 .hero-mark-float {
   position: absolute;
@@ -3769,9 +3769,11 @@ html {
   fill: currentColor;
 }
 
-/* Entrance intro (once per session), seen from above: the ball falls from the centre,
-   hits the floor, a hexagon shockwave leaves the frame, and the ball becomes the logo.
-   Timeline mirrors the HyperFrames composition in videos/ld-intro-motion. */
+/* Entrance intro (once per session): pure black, a tiny ball pops out, jumps towards the
+   camera and hits the floor; a hexagon shockwave crosses the tilted floor, everything goes
+   black again and the ball becomes the logo. Mirrors motion/ld-intro-hyperframes.
+   Ball, echoes, shadow and floor are driven by JS (src/lib/ballmotion.ts, hexwave.ts)
+   from this element's own animation clock; the logo morph below is pure CSS. */
 .ld-intro {
   --ld-mark: clamp(140px, 26vmin, 300px);
   position: fixed;
@@ -3780,7 +3782,9 @@ html {
   overflow: hidden;
   background: #050505;
   clip-path: inset(0 0 0 0);
-  animation: ld-intro-out 0.9s cubic-bezier(0.76, 0, 0.24, 1) 4.6s forwards;
+  animation:
+    ld-intro-out 0.9s cubic-bezier(0.76, 0, 0.24, 1) 5.4s forwards,
+    ld-intro-failsafe 0.01s 10s forwards;
 }
 .ld-intro.is-skipping {
   animation: ld-intro-out 0.55s cubic-bezier(0.76, 0, 0.24, 1) 0s forwards;
@@ -3791,21 +3795,26 @@ html {
 @keyframes ld-intro-out {
   to { clip-path: inset(50% 0 50% 0); visibility: hidden; }
 }
-.ld-intro-wave {
-  position: absolute;
-  inset: 0;
-}
-.ld-intro-wave canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
+@keyframes ld-intro-failsafe {
+  to { visibility: hidden; pointer-events: none; }
 }
 .ld-intro-world {
   position: absolute;
   inset: 0;
-  animation: ld-shake 0.28s 1.1s ease-out both;
+  animation: ld-shake 0.3s 1.92s ease-out both;
+}
+/* The floor is larger than the screen so it still covers it once tilted away from the camera. */
+.ld-intro-floor {
+  position: absolute;
+  left: -25%;
+  top: -28%;
+  width: 150%;
+  height: 166%;
+}
+.ld-intro-floor canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 .ld-intro-core {
   position: absolute;
@@ -3822,39 +3831,45 @@ html {
   width: var(--ld-mark);
   height: var(--ld-mark);
 }
-.ld-intro-approach,
-.ld-intro-body {
+.ld-intro-shadow,
+.ld-intro-ghost,
+.ld-intro-mark {
   position: absolute;
   inset: 0;
-}
-.ld-intro-approach {
   opacity: 0;
-  animation:
-    ld-approach 0.95s 0.15s linear both,
-    ld-fade-in 0.15s 0.15s ease-out forwards;
 }
-.ld-intro-body {
-  animation: ld-splat 1.22s 1.1s both;
+.ld-intro-shadow {
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(0 0 0 / 92%), rgb(0 0 0 / 55%) 55%, rgb(0 0 0 / 0%));
+}
+.ld-intro-ghost {
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, rgb(255 140 80 / 80%), rgb(255 91 20 / 60%) 55%, rgb(255 91 20 / 0%) 72%);
 }
 .ld-intro-ball {
   position: absolute;
   inset: 0;
   border-radius: 50%;
   background: #ff5b14;
-  box-shadow: 0 0 90px rgb(255 91 20 / 55%);
+  box-shadow: 0 0 80px rgb(255 91 20 / 45%);
   transform: rotate(-90deg);
   animation:
-    ld-ball-square 0.6s 2.6s cubic-bezier(0.45, 0, 0.55, 1) both,
-    ld-ball-turn 0.65s 2.6s cubic-bezier(0.215, 0.61, 0.355, 1) both;
+    ld-ball-square 0.6s 3.4s cubic-bezier(0.45, 0, 0.55, 1) both,
+    ld-ball-turn 0.65s 3.4s cubic-bezier(0.215, 0.61, 0.355, 1) both;
 }
+/* Sphere shading: key light top-left, warm core shadow bottom-right, rim and specular dot. */
 .ld-intro-ball-shade {
   position: absolute;
   inset: 0;
-  border-radius: inherit;
-  background: radial-gradient(circle at 34% 28%, rgb(255 220 196 / 95%) 0%, rgb(255 140 80 / 35%) 26%, rgb(0 0 0 / 0%) 52%, rgb(90 20 0 / 50%) 100%);
-  animation: ld-fade-out 0.4s 2.65s ease-in both;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 31% 25%, rgb(255 255 255 / 90%) 0%, rgb(255 255 255 / 0%) 9%),
+    radial-gradient(circle at 36% 30%, rgb(255 196 160 / 85%) 0%, rgb(255 140 80 / 35%) 24%, rgb(255 91 20 / 0%) 46%),
+    radial-gradient(circle at 70% 76%, rgb(120 26 0 / 0%) 30%, rgb(120 26 0 / 55%) 62%, rgb(60 10 0 / 75%) 100%),
+    radial-gradient(circle at 50% 50%, rgb(0 0 0 / 0%) 62%, rgb(255 150 90 / 35%) 70%, rgb(0 0 0 / 0%) 72%);
+  animation: ld-fade-out 0.3s 3.25s ease-in-out both;
 }
-.ld-intro-body svg {
+.ld-intro-mark svg {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -3863,10 +3878,10 @@ html {
   fill: #1d1d1d;
 }
 .ld-intro-l1 {
-  animation: ld-l1 0.7s 3s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: ld-l1 0.7s 3.8s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 .ld-intro-l2 {
-  animation: ld-l2 0.7s 3.06s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: ld-l2 0.7s 3.86s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 .ld-intro-name {
   display: flex;
@@ -3883,14 +3898,14 @@ html {
 }
 .ld-intro-name span {
   letter-spacing: 0.18em;
-  animation: ld-name 0.9s 3.35s cubic-bezier(0.215, 0.61, 0.355, 1) both;
+  animation: ld-name 0.9s 4.15s cubic-bezier(0.215, 0.61, 0.355, 1) both;
 }
 .ld-intro-name small {
   color: #c9cdd2;
   font-size: 0.47em;
   font-weight: 600;
   letter-spacing: 0.5em;
-  animation: ld-fade-in 0.6s 3.6s ease-out both;
+  animation: ld-fade-in 0.6s 4.4s ease-out both;
 }
 .ld-intro-skip {
   position: absolute;
@@ -3910,7 +3925,7 @@ html {
   cursor: pointer;
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
-  animation: ld-fade-in 0.6s 0.6s both;
+  animation: ld-fade-in 0.6s 0.9s both;
 }
 .ld-intro-skip:focus-visible {
   outline: 2px solid #ff5b14;
@@ -3918,37 +3933,11 @@ html {
 }
 @keyframes ld-fade-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes ld-fade-out { to { opacity: 0; } }
-/* Seen from above: the ball falls away from the camera (size = 1 / distance) under gravity. */
-@keyframes ld-approach {
-  0.00% { transform: scale(2.2222); }
-  7.14% { transform: scale(2.2085); }
-  14.29% { transform: scale(2.1681); }
-  21.43% { transform: scale(2.1041); }
-  28.57% { transform: scale(2.0206); }
-  35.71% { transform: scale(1.9225); }
-  42.86% { transform: scale(1.8148); }
-  50.00% { transform: scale(1.7021); }
-  57.14% { transform: scale(1.5883); }
-  64.29% { transform: scale(1.4765); }
-  71.43% { transform: scale(1.3687); }
-  78.57% { transform: scale(1.2666); }
-  85.71% { transform: scale(1.1708); }
-  92.86% { transform: scale(1.0820); }
-  100.00% { transform: scale(1.0000); }
-}
-/* Hits the floor: squash, a small bounce, then it settles to the logo size. */
-@keyframes ld-splat {
-  0% { transform: scale(1); animation-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1); }
-  8.2% { transform: scale(1.16); animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
-  21.3% { transform: scale(0.94); animation-timing-function: cubic-bezier(0.61, 1, 0.88, 1); }
-  36.1% { transform: scale(1.03); animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1); }
-  100% { transform: scale(0.6); }
-}
 @keyframes ld-shake {
   0% { transform: translate(0, 0); }
-  18% { transform: translate(7px, -5px); }
-  40% { transform: translate(-6px, 4px); }
-  65% { transform: translate(3px, -2px); }
+  17% { transform: translate(6px, -6px); }
+  37% { transform: translate(-5px, 5px); }
+  60% { transform: translate(3px, -2px); }
   100% { transform: translate(0, 0); }
 }
 @keyframes ld-ball-square {
@@ -3966,11 +3955,11 @@ html {
 .ld-intro-on .brand-hero-copy > *,
 .ld-intro-on .hero-disciplines {
   animation: ld-rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
-  animation-delay: 4.85s;
+  animation-delay: 5.65s;
 }
-.ld-intro-on .brand-hero-copy > :nth-child(2) { animation-delay: 4.95s; }
-.ld-intro-on .brand-hero-copy > :nth-child(n + 3) { animation-delay: 5.1s; }
-.ld-intro-on .hero-disciplines { animation-delay: 5.3s; }
+.ld-intro-on .brand-hero-copy > :nth-child(2) { animation-delay: 5.75s; }
+.ld-intro-on .brand-hero-copy > :nth-child(n + 3) { animation-delay: 5.9s; }
+.ld-intro-on .hero-disciplines { animation-delay: 6.1s; }
 @keyframes ld-rise {
   from { transform: translateY(28px); opacity: 0; }
   to { transform: none; opacity: 1; }

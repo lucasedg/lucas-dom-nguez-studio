@@ -13,6 +13,8 @@ export type HexWaveOptions = {
   cy?: number;
   /** Hexagon radius in canvas px (defaults to a size that scales with the viewport). */
   cell?: number;
+  /** Floor light driven by the ball (overrides the time-based default). */
+  light?: { amount: number; radius: number };
 };
 
 function hash(i: number, j: number) {
@@ -63,9 +65,13 @@ export function drawHexWave(
   const k = t - impact;
   /* Before the hit: the falling ball lights the floor below it, more and tighter as it nears. */
   const fall = k < 0 ? clamp01((t - (impact - 0.95)) / 0.95) : 1;
-  const floorLight = k < 0 ? fall * fall : Math.max(0, 1 - k / 0.5);
-  const floorRad = Math.min(W, H) * (0.42 - 0.2 * fall);
-  if (k < 0 && fall <= 0) return;
+  const floorLight = opts.light
+    ? opts.light.amount
+    : k < 0
+      ? fall * fall
+      : Math.max(0, 1 - k / 0.5);
+  const floorRad = opts.light ? opts.light.radius : Math.min(W, H) * (0.42 - 0.2 * fall);
+  if (k < 0 && floorLight <= 0) return;
 
   const maxR = Math.hypot(Math.max(cx, W - cx), Math.max(cy, H - cy)) + R * 6;
   const fronts: { F: number; band: number; amp: number }[] = [];
@@ -128,7 +134,7 @@ export function drawHexWave(
   const rows = Math.ceil(H / vh) + 2;
   const cols = Math.ceil(W / hw) + 2;
   const outer = Math.max(
-    fronts.length ? fronts[0].F + R * 3 : 0,
+    fronts[0] ? fronts[0].F + R * 3 : 0,
     floorLight > 0 ? floorRad * 1.6 : 0,
   );
 

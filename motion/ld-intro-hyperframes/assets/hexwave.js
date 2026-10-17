@@ -59,7 +59,12 @@
     var fall = k < 0 ? clamp01((t - (impact - 0.95)) / 0.95) : 1;
     var floorLight = k < 0 ? fall * fall : Math.max(0, 1 - k / 0.5);
     var floorRad = Math.min(W, H) * (0.42 - 0.2 * fall);
-    if (k < 0 && fall <= 0) return;
+    /* The caller may drive the floor light from the ball's real height instead. */
+    if (opts.light) {
+      floorLight = opts.light.amount;
+      floorRad = opts.light.radius;
+    }
+    if (k < 0 && floorLight <= 0) return;
 
     var maxR = Math.hypot(Math.max(cx, W - cx), Math.max(cy, H - cy)) + R * 6;
     /* Two rings: the main shockwave and a softer echo. */
