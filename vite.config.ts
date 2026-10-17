@@ -8,5 +8,19 @@ export default defineConfig({
   resolve: {
     tsconfigPaths: true,
   },
-  plugins: [tanstackStart({ server: { entry: "server" } }), nitro(), viteReact(), tailwindcss()],
+  plugins: [
+    tanstackStart({
+      server: { entry: "server" },
+      /* Static export for Cloudflare Pages: every route is rendered to plain HTML at build time. */
+      prerender: {
+        enabled: true,
+        crawlLinks: true,
+        failOnError: true,
+        filter: ({ path }) => !path.includes("?"),
+      },
+    }),
+    nitro(),
+    viteReact(),
+    tailwindcss(),
+  ],
 });
