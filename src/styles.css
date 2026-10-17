@@ -3769,8 +3769,8 @@ html {
   fill: currentColor;
 }
 
-/* Entrance intro (once per session): the ball flies at the viewer, hits the glass,
-   a micro-hexagon shockwave leaves the frame, and the ball becomes the logo.
+/* Entrance intro (once per session), seen from above: the ball falls from the centre,
+   hits the floor, a hexagon shockwave leaves the frame, and the ball becomes the logo.
    Timeline mirrors the HyperFrames composition in videos/ld-intro-motion. */
 .ld-intro {
   --ld-mark: clamp(140px, 26vmin, 300px);
@@ -3831,7 +3831,7 @@ html {
   opacity: 0;
   animation:
     ld-approach 0.95s 0.15s linear both,
-    ld-fade-in 0.25s 0.15s ease-out forwards;
+    ld-fade-in 0.15s 0.15s ease-out forwards;
 }
 .ld-intro-body {
   animation: ld-splat 1.22s 1.1s both;
@@ -3918,31 +3918,30 @@ html {
 }
 @keyframes ld-fade-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes ld-fade-out { to { opacity: 0; } }
-/* On-screen size is proportional to 1/z while the ball travels towards the glass. */
+/* Seen from above: the ball falls away from the camera (size = 1 / distance) under gravity. */
 @keyframes ld-approach {
-  0.00% { transform: translate(-14.110vmin, -9.350vmin) scale(0.0556); }
-  7.14% { transform: translate(-14.038vmin, -9.302vmin) scale(0.0558); }
-  14.29% { transform: translate(-13.822vmin, -9.159vmin) scale(0.0566); }
-  21.43% { transform: translate(-13.462vmin, -8.921vmin) scale(0.0581); }
-  28.57% { transform: translate(-12.958vmin, -8.587vmin) scale(0.0602); }
-  35.71% { transform: translate(-12.310vmin, -8.157vmin) scale(0.0632); }
-  42.86% { transform: translate(-11.518vmin, -7.633vmin) scale(0.0672); }
-  50.00% { transform: translate(-10.582vmin, -7.013vmin) scale(0.0727); }
-  57.14% { transform: translate(-9.503vmin, -6.297vmin) scale(0.0803); }
-  64.29% { transform: translate(-8.279vmin, -5.486vmin) scale(0.0911); }
-  71.43% { transform: translate(-6.911vmin, -4.580vmin) scale(0.1072); }
-  78.57% { transform: translate(-5.399vmin, -3.578vmin) scale(0.1332); }
-  85.71% { transform: translate(-3.743vmin, -2.481vmin) scale(0.1815); }
-  92.86% { transform: translate(-1.944vmin, -1.288vmin) scale(0.2992); }
-  100.00% { transform: translate(-0.000vmin, -0.000vmin) scale(1.0000); }
+  0.00% { transform: scale(2.2222); }
+  7.14% { transform: scale(2.2085); }
+  14.29% { transform: scale(2.1681); }
+  21.43% { transform: scale(2.1041); }
+  28.57% { transform: scale(2.0206); }
+  35.71% { transform: scale(1.9225); }
+  42.86% { transform: scale(1.8148); }
+  50.00% { transform: scale(1.7021); }
+  57.14% { transform: scale(1.5883); }
+  64.29% { transform: scale(1.4765); }
+  71.43% { transform: scale(1.3687); }
+  78.57% { transform: scale(1.2666); }
+  85.71% { transform: scale(1.1708); }
+  92.86% { transform: scale(1.0820); }
+  100.00% { transform: scale(1.0000); }
 }
+/* Hits the floor: squash, a small bounce, then it settles to the logo size. */
 @keyframes ld-splat {
   0% { transform: scale(1); animation-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1); }
-  10% { transform: scale(1.34); animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1); }
-  30% { transform: scale(0.5); animation-timing-function: ease-in-out; }
-  46% { transform: scale(0.66); animation-timing-function: ease-in-out; }
-  62% { transform: scale(0.575); animation-timing-function: ease-in-out; }
-  78% { transform: scale(0.612); animation-timing-function: ease-in-out; }
+  8.2% { transform: scale(1.16); animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
+  21.3% { transform: scale(0.94); animation-timing-function: cubic-bezier(0.61, 1, 0.88, 1); }
+  36.1% { transform: scale(1.03); animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1); }
   100% { transform: scale(0.6); }
 }
 @keyframes ld-shake {

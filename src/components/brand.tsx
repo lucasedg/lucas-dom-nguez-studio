@@ -104,7 +104,7 @@ function startHexWave(intro: HTMLElement, box: HTMLElement, slot: HTMLElement) {
       x: (m.left + m.width / 2 - rect.left) * dpr,
       y: (m.top + m.height / 2 - rect.top) * dpr,
     };
-    cell = Math.max(4 * dpr, Math.min(W, H) / 120);
+    cell = Math.max(12 * dpr, Math.min(W, H) / 38);
   };
   box.appendChild(canvas);
   resize();
@@ -130,8 +130,8 @@ function startHexWave(intro: HTMLElement, box: HTMLElement, slot: HTMLElement) {
 }
 
 /*
- * Entrance: the orange ball flies at the viewer, hits the glass and releases a
- * shockwave of micro-hexagons; when the wave has left the screen, everything is
+ * Entrance (seen from above): the orange ball falls from the centre, hits the floor
+ * and releases a shockwave of hexagons; when the wave has left the screen, everything is
  * black and the ball becomes the logo. Built and proofed in HyperFrames first.
  */
 export function BrandIntro() {
