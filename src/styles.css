@@ -1,8 +1,5 @@
-@import "@fontsource/cormorant-garamond/latin-400.css";
-@import "@fontsource/cormorant-garamond/latin-400-italic.css";
-@import "@fontsource/manrope/latin-400.css";
-@import "@fontsource/manrope/latin-500.css";
-@import "@fontsource/manrope/latin-600.css";
+@import "@fontsource/bebas-neue/latin-400.css";
+@import "@fontsource-variable/montserrat/wght.css";
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
@@ -10,8 +7,8 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-sans: "Manrope", sans-serif;
-  --font-serif: "Cormorant Garamond", serif;
+  --font-sans: "Montserrat Variable", "Montserrat", system-ui, sans-serif;
+  --font-serif: "Bebas Neue", Impact, sans-serif;
   --color-studio-black: var(--studio-black);
   --color-studio-ink: var(--studio-ink);
   --color-studio-deep: var(--studio-deep);
@@ -46,15 +43,18 @@
 
 :root {
   --radius: 0.125rem;
-  --studio-petrol: #0B1F20;
-  --studio-ink: #071416;
-  --studio-warm-ivory: #F1EDE4;
-  --studio-off-white: #F8F5EF;
-  --studio-copper: #B87555;
-  --studio-blue: #6676FF;
-  --studio-copper-text: #8B4D33;
-  --studio-muted-light: #C5CEC9;
-  --studio-muted-dark: #52615F;
+  /* Rebranding 2026: carbón, blanco roto y naranja ácido como acento. */
+  --studio-petrol: #1D1D1D;
+  --studio-ink: #161616;
+  --studio-warm-ivory: #F7F5F2;
+  --studio-off-white: #FBFAF8;
+  --studio-copper: #FF5B14;
+  --studio-blue: #FF5B14;
+  --studio-copper-text: #C2410C;
+  --studio-muted-light: #C9CBCE;
+  --studio-muted-dark: #62676E;
+  --studio-brand-petrol: #132433;
+  --studio-steel: #8C9198;
   --project-viora-surface: #050b1b;
   /* Compatibility aliases keep existing components and Tailwind classes intact. */
   --studio-black: var(--studio-petrol);
@@ -3392,3 +3392,628 @@ html {
   .graphite-logo-scene { height: 34svh; min-height: 210px; margin-bottom: 12px; }
 }
 .graphite-hero .brand-headline em { color: #D59B7D; }
+
+/* ==========================================================================
+   Rebranding 2026 · Lucas Dominguez Studio
+   Same layout, copy and motion; new identity: carbón, blanco roto, naranja
+   ácido (acento), Bebas Neue para titulares y Montserrat para el resto.
+   ========================================================================== */
+
+/* Typography: Bebas is condensed and uppercase, so it needs air, not negative tracking. */
+.brand-headline,
+.section-title,
+.about-title,
+.cta-title,
+.service-name,
+.motion-showcase h2,
+.service-guide-card h3,
+.service-guide-help h3 {
+  letter-spacing: 0.01em;
+  line-height: 0.92;
+  text-transform: uppercase;
+}
+:is(h1, h2, h3, .brand-headline, .section-title, .about-title, .cta-title) em {
+  font-style: normal;
+  color: var(--studio-copper);
+}
+.services-section .section-title em,
+#estudio .about-title em,
+.work-section .section-title em {
+  color: var(--studio-copper-text);
+}
+.sculptural-hero .brand-headline,
+.graphite-hero .brand-headline {
+  font-size: clamp(3.4rem, 6.4vw, 7.2rem);
+}
+.about-copy .about-intro {
+  font-family: var(--font-sans);
+  font-size: clamp(1.15rem, 1.6vw, 1.45rem);
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+}
+.service-row .service-name + * {
+  font-family: var(--font-sans);
+}
+.hero-kicker {
+  color: var(--studio-copper);
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+.graphite-hero .brand-headline em,
+.sculptural-hero .brand-headline em {
+  color: var(--studio-copper);
+}
+.contact-lead {
+  font-weight: 500;
+  color: var(--studio-ivory);
+}
+
+/* Accent: the orange is for actions and details, never for long text. */
+.glass-button-primary {
+  color: #1d1d1d;
+  background: var(--studio-copper);
+  border-color: var(--studio-copper);
+  font-weight: 700;
+}
+.glass-button-primary:hover {
+  background: #ff7a3d;
+  border-color: #ff7a3d;
+}
+::selection {
+  background: var(--studio-copper);
+  color: #1d1d1d;
+}
+
+/* Logo lockup: symbol + LUCAS DOMINGUEZ / STUDIO, built as live text. */
+.brand-symbol {
+  display: block;
+  overflow: visible;
+}
+.brand-symbol-badge {
+  fill: var(--studio-copper);
+}
+.brand-symbol-l1,
+.brand-symbol-l2 {
+  fill: #1d1d1d;
+}
+.brand-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  color: var(--studio-ivory);
+}
+.brand-logo-symbol {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+}
+.brand-logo-words {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+  text-transform: uppercase;
+}
+.brand-logo-name {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+}
+.brand-logo-studio {
+  margin-top: 5px;
+  font-size: 7.5px;
+  font-weight: 600;
+  letter-spacing: 0.42em;
+  color: var(--studio-steel);
+}
+.brand-logo-footer .brand-logo-symbol {
+  width: 52px;
+  height: 52px;
+}
+.brand-logo-footer .brand-logo-name {
+  font-size: clamp(16px, 2vw, 22px);
+}
+.brand-logo-footer .brand-logo-studio {
+  font-size: 10px;
+  margin-top: 7px;
+}
+
+/* Hero surface: carbón with a warm orange light where the symbol sits. */
+.hero-scroll-scene .hero-stage.graphite-hero {
+  background:
+    radial-gradient(ellipse 42% 55% at 74% 46%, rgb(255 91 20 / 17%), transparent 70%),
+    radial-gradient(ellipse at 15% 0%, rgb(255 255 255 / 5%), transparent 50%),
+    #1d1d1d;
+}
+@media (max-width: 767px) {
+  .hero-scroll-scene .hero-stage.graphite-hero {
+    background:
+      radial-gradient(ellipse 70% 32% at 50% 28%, rgb(255 91 20 / 20%), transparent 75%),
+      #1d1d1d;
+  }
+}
+
+/* Hero symbol: assembles itself, then keeps "framing" on a slow loop. */
+.hero-mark {
+  --hero-delay: 0.2s;
+  position: relative;
+  width: min(30vw, 56svh, 480px);
+  aspect-ratio: 1;
+}
+.ld-intro-on .hero-mark {
+  --hero-delay: 4.45s;
+}
+.hero-mark-float {
+  position: absolute;
+  inset: 0;
+  animation: hero-mark-float 9s ease-in-out infinite;
+}
+.hero-mark-symbol {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 40px 60px rgb(0 0 0 / 45%)) drop-shadow(0 0 80px rgb(255 91 20 / 22%));
+}
+.hero-mark-symbol .brand-symbol-badge {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: hero-badge-in 1s var(--hero-delay) cubic-bezier(0.34, 1.4, 0.64, 1) both;
+}
+.hero-mark-symbol .brand-symbol-l1 {
+  animation:
+    hero-l1-in 0.9s calc(var(--hero-delay) + 0.35s) cubic-bezier(0.16, 1, 0.3, 1) both,
+    hero-l1-frame 7s calc(var(--hero-delay) + 2.5s) cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+.hero-mark-symbol .brand-symbol-l2 {
+  animation:
+    hero-l2-in 0.9s calc(var(--hero-delay) + 0.35s) cubic-bezier(0.16, 1, 0.3, 1) both,
+    hero-l2-frame 7s calc(var(--hero-delay) + 2.5s) cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+.hero-mark-crop {
+  position: absolute;
+  width: 16%;
+  height: 16%;
+  border: 0 solid var(--studio-copper);
+}
+.hero-mark-crop-a {
+  top: -9%;
+  left: -9%;
+  border-top-width: 3px;
+  border-left-width: 3px;
+}
+.hero-mark-crop-b {
+  right: -9%;
+  bottom: -9%;
+  border-right-width: 3px;
+  border-bottom-width: 3px;
+}
+.hero-mark-crop-a { --crop-x: -10px; --crop-y: -10px; }
+.hero-mark-crop-b { --crop-x: 10px; --crop-y: 10px; }
+.hero-mark-crop {
+  animation:
+    hero-crop-in 0.8s calc(var(--hero-delay) + 0.9s) cubic-bezier(0.16, 1, 0.3, 1) both,
+    hero-crop-frame 7s calc(var(--hero-delay) + 2.5s) cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+.hero-mark-tag {
+  position: absolute;
+  z-index: 2;
+  padding: 0.55rem 0.85rem;
+  font-size: clamp(9px, 0.75vw, 11px);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  box-shadow: 0 10px 24px rgb(0 0 0 / 35%);
+}
+.hero-mark-tag-a {
+  left: -14%;
+  bottom: 9%;
+  color: #1d1d1d;
+  background: var(--studio-ivory);
+  --tag-r: -5deg;
+  animation: hero-tag-in 0.7s calc(var(--hero-delay) + 1.2s) cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.hero-mark-tag-b {
+  top: 8%;
+  right: -10%;
+  color: var(--studio-copper);
+  background: #1d1d1d;
+  border: 1px solid var(--studio-copper);
+  --tag-r: 6deg;
+  animation: hero-tag-in 0.7s calc(var(--hero-delay) + 1.4s) cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes hero-mark-float {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50% { transform: translate3d(0, -12px, 0) rotate(-1.2deg); }
+}
+@keyframes hero-badge-in {
+  from { transform: scale(0.55) rotate(-12deg); opacity: 0; }
+}
+@keyframes hero-l1-in {
+  from { transform: translate(-90px, 90px); opacity: 0; }
+}
+@keyframes hero-l2-in {
+  from { transform: translate(90px, -90px); opacity: 0; }
+}
+@keyframes hero-l1-frame {
+  0%, 62%, 100% { transform: none; }
+  74% { transform: translate(-16px, 16px); }
+  86% { transform: translate(3px, -3px); }
+}
+@keyframes hero-l2-frame {
+  0%, 62%, 100% { transform: none; }
+  74% { transform: translate(16px, -16px); }
+  86% { transform: translate(-3px, 3px); }
+}
+@keyframes hero-crop-in {
+  from { opacity: 0; transform: translate(calc(var(--crop-x) * -3), calc(var(--crop-y) * -3)); }
+}
+@keyframes hero-crop-frame {
+  0%, 62%, 100% { transform: none; }
+  74% { transform: translate(var(--crop-x), var(--crop-y)); }
+}
+@keyframes hero-tag-in {
+  from { opacity: 0; transform: translateY(14px) rotate(0deg) scale(0.8); }
+  to { opacity: 1; transform: rotate(var(--tag-r)); }
+}
+@media (max-width: 1100px) {
+  .graphite-logo-scene {
+    height: auto;
+    padding-block: 9% 7%;
+  }
+  .hero-mark {
+    width: min(56vw, 36svh, 380px);
+    margin-inline: auto;
+  }
+}
+@media (max-width: 767px) {
+  .graphite-logo-scene {
+    height: auto;
+    margin-bottom: 28px;
+  }
+  .hero-mark {
+    width: min(58vw, 34svh, 300px);
+  }
+  .hero-mark-tag-a { left: -12%; }
+  .hero-mark-tag-b { right: -8%; }
+}
+
+/* Motion section: brand petrol, with the full logo animating on a loop. */
+.motion-showcase {
+  background: linear-gradient(160deg, var(--studio-brand-petrol), #0d1a25);
+}
+.motion-showcase-art {
+  width: min(100%, 440px);
+}
+.logo-motion-card {
+  position: relative;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 8%;
+  aspect-ratio: 1;
+  background: var(--studio-copper);
+  color: #1d1d1d;
+  box-shadow: 0 40px 80px rgb(0 0 0 / 35%);
+  animation: logo-card-breathe 8s ease-in-out infinite;
+}
+.logo-motion-symbol {
+  width: 38%;
+}
+.logo-motion-symbol .brand-symbol-l1 {
+  animation: logo-l1 8s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+.logo-motion-symbol .brand-symbol-l2 {
+  animation: logo-l2 8s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+.logo-motion-words {
+  display: grid;
+  justify-items: center;
+  font-weight: 800;
+  font-size: clamp(16px, 2.2vw, 26px);
+  letter-spacing: 0.12em;
+  line-height: 1.05;
+  text-transform: uppercase;
+}
+.logo-motion-words small {
+  margin-top: 0.6em;
+  font-size: 0.42em;
+  font-weight: 700;
+  letter-spacing: 0.5em;
+  animation: logo-studio 8s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+@keyframes logo-card-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(0.985); }
+}
+@keyframes logo-l1 {
+  0%, 18%, 100% { transform: none; }
+  30%, 52% { transform: translate(-34px, 34px); }
+  64% { transform: translate(4px, -4px); }
+  72% { transform: none; }
+}
+@keyframes logo-l2 {
+  0%, 18%, 100% { transform: none; }
+  30%, 52% { transform: translate(34px, -34px); }
+  64% { transform: translate(-4px, 4px); }
+  72% { transform: none; }
+}
+@keyframes logo-studio {
+  0%, 20% { letter-spacing: 0.5em; opacity: 1; }
+  32%, 54% { letter-spacing: 0.9em; opacity: 0.55; }
+  70%, 100% { letter-spacing: 0.5em; opacity: 1; }
+}
+[data-motion] .logo-motion-card,
+[data-motion] .logo-motion-card *,
+.hero-mark[data-motion] * {
+  animation-play-state: paused;
+}
+[data-motion-visible="true"] .logo-motion-card,
+[data-motion-visible="true"] .logo-motion-card *,
+.hero-mark[data-motion-visible="true"] * {
+  animation-play-state: running;
+}
+[data-graphics-paused="true"] .logo-motion-card,
+[data-graphics-paused="true"] .logo-motion-card *,
+[data-graphics-paused="true"] .hero-mark-float,
+[data-graphics-paused="true"] .hero-mark .brand-symbol-l1,
+[data-graphics-paused="true"] .hero-mark .brand-symbol-l2,
+[data-graphics-paused="true"] .hero-mark-crop {
+  animation-play-state: paused;
+}
+
+/* Decorative framing marks replace the old sparkle, with the same slow rotation. */
+.motion-star polygon {
+  fill: currentColor;
+}
+
+/* Entrance intro (once per session): ball, pleated wave, logo, then the screen opens. */
+.ld-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  overflow: hidden;
+  background: #050505;
+  clip-path: inset(0 0 0 0);
+  animation: ld-intro-out 1s cubic-bezier(0.76, 0, 0.24, 1) 4.25s forwards;
+}
+.ld-intro.is-skipping {
+  animation: ld-intro-out 0.55s cubic-bezier(0.76, 0, 0.24, 1) 0s forwards;
+}
+.ld-intro-off .ld-intro {
+  display: none;
+}
+@keyframes ld-intro-out {
+  to { clip-path: inset(50% 0 50% 0); visibility: hidden; }
+}
+.ld-intro-wave {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 40% at 50% 85%, rgb(255 91 20 / 35%), transparent 70%);
+  animation: ld-fade 1s 1s both;
+}
+.ld-intro-wave.has-gl {
+  background: none;
+  animation: none;
+}
+.ld-intro-wave canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.ld-intro::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 30% 12% at 50% 54%, rgb(5 5 5 / 80%) 0%, rgb(5 5 5 / 50%) 50%, rgb(5 5 5 / 0%) 100%);
+  animation: ld-fade 0.8s 2.6s both;
+}
+.ld-intro-core {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 26px;
+  padding-bottom: 12vh;
+}
+.ld-intro-mark {
+  position: relative;
+  width: clamp(96px, 13vw, 160px);
+  aspect-ratio: 1;
+}
+.ld-intro-mark svg {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  fill: #1d1d1d;
+}
+.ld-intro-splash {
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  z-index: 1;
+  width: 90%;
+  aspect-ratio: 4 / 1;
+  border: 2px solid rgb(255 190 150 / 80%);
+  border-radius: 50%;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.1);
+  animation: ld-splash 0.9s 0.96s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.ld-intro-splash-2 {
+  border-width: 1px;
+  animation-delay: 1.51s;
+}
+.ld-intro-ball-y {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  animation: ld-ball-y 2.2s 0.3s both;
+}
+.ld-intro-ball {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: #ff5b14;
+  box-shadow: 0 0 60px rgb(255 91 20 / 55%);
+  transform: scale(0.34);
+  transform-origin: 50% 100%;
+  animation:
+    ld-ball-squash 2.2s 0.3s both,
+    ld-ball-morph 0.7s 2.5s cubic-bezier(0.34, 1.45, 0.64, 1) forwards;
+}
+.ld-intro-ball::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at 34% 28%, rgb(255 214 190 / 95%) 0%, rgb(255 140 80 / 35%) 28%, rgb(0 0 0 / 0%) 52%, rgb(90 20 0 / 45%) 100%);
+  animation: ld-fade-out 0.4s 2.55s both;
+}
+.ld-intro-shadow {
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  width: 40%;
+  height: 12px;
+  margin-left: -20%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(0 0 0 / 75%), rgb(0 0 0 / 0%));
+  animation:
+    ld-shadow-y 2.2s 0.3s both,
+    ld-fade-out 0.3s 2.5s forwards;
+}
+.ld-intro-l1 {
+  animation: ld-l1 0.8s 2.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.ld-intro-l2 {
+  animation: ld-l2 0.8s 2.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.ld-intro-name {
+  color: #f7f5f2;
+  font-size: clamp(14px, 1.6vw, 20px);
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  line-height: 1.2;
+  text-align: center;
+  text-transform: uppercase;
+  text-shadow: 0 2px 18px rgb(0 0 0 / 90%), 0 0 4px rgb(0 0 0 / 70%);
+  animation: ld-name 1s 3.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.ld-intro-name small {
+  display: block;
+  margin-top: 6px;
+  color: #c9cdd2;
+  font-size: 0.5em;
+  letter-spacing: 0.5em;
+}
+.ld-intro-skip {
+  position: absolute;
+  z-index: 3;
+  right: max(20px, env(safe-area-inset-right, 0px));
+  bottom: max(20px, calc(env(safe-area-inset-bottom, 0px) + 16px));
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid rgb(255 255 255 / 25%);
+  border-radius: 999px;
+  background: rgb(10 10 10 / 40%);
+  color: #f7f5f2;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  animation: ld-fade 0.6s 0.6s both;
+}
+.ld-intro-skip:focus-visible {
+  outline: 2px solid #ff5b14;
+  outline-offset: 3px;
+}
+@keyframes ld-fade { from { opacity: 0; } }
+@keyframes ld-fade-out { to { opacity: 0; } }
+@keyframes ld-splash {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.1); }
+  15% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(3); }
+}
+@keyframes ld-ball-y {
+  0% { transform: translateY(-75vh); animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45); }
+  30% { transform: translateY(0); animation-timing-function: cubic-bezier(0, 0.55, 0.45, 1); }
+  42% { transform: translateY(-20vh); animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45); }
+  55% { transform: translateY(0); animation-timing-function: cubic-bezier(0, 0.55, 0.45, 1); }
+  65% { transform: translateY(-8vh); animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45); }
+  75% { transform: translateY(0); animation-timing-function: cubic-bezier(0, 0.55, 0.45, 1); }
+  81.5% { transform: translateY(-2.5vh); animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45); }
+  88%, 100% { transform: translateY(0); }
+}
+@keyframes ld-ball-squash {
+  0%, 27% { transform: scale(0.3, 0.42); }
+  30% { transform: scale(0.5, 0.2); }
+  34% { transform: scale(0.3, 0.4); }
+  38%, 53% { transform: scale(0.34); }
+  55% { transform: scale(0.44, 0.25); }
+  59%, 73% { transform: scale(0.34); }
+  75% { transform: scale(0.4, 0.29); }
+  78%, 86% { transform: scale(0.34); }
+  88% { transform: scale(0.37, 0.31); }
+  91%, 100% { transform: scale(0.34); }
+}
+@keyframes ld-ball-morph {
+  from { transform: scale(0.34) rotate(-90deg); border-radius: 50%; box-shadow: 0 0 60px rgb(255 91 20 / 55%); }
+  55% { border-radius: 8%; }
+  to { transform: scale(1) rotate(0); border-radius: 0; box-shadow: 0 0 0 rgb(255 91 20 / 0%); }
+}
+@keyframes ld-shadow-y {
+  0%, 29% { opacity: 0; transform: scale(1); }
+  30% { opacity: 1; transform: scale(1.2); }
+  42% { opacity: 0.45; transform: scale(0.6); }
+  55% { opacity: 1; transform: scale(1.1); }
+  65% { opacity: 0.6; transform: scale(0.8); }
+  75% { opacity: 1; transform: scale(1.05); }
+  81.5% { opacity: 0.85; transform: scale(0.9); }
+  88%, 100% { opacity: 1; transform: scale(1); }
+}
+@keyframes ld-l1 { from { transform: translate(-120px, 120px); opacity: 0; } }
+@keyframes ld-l2 { from { transform: translate(120px, -120px); opacity: 0; } }
+@keyframes ld-name { from { opacity: 0; letter-spacing: 0.6em; } }
+
+/* Hero copy waits for the intro to open before it rises into place. */
+.ld-intro-on .brand-hero-copy > *,
+.ld-intro-on .hero-disciplines {
+  animation: ld-rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 4.35s;
+}
+.ld-intro-on .brand-hero-copy > :nth-child(2) { animation-delay: 4.45s; }
+.ld-intro-on .brand-hero-copy > :nth-child(n + 3) { animation-delay: 4.6s; }
+.ld-intro-on .hero-disciplines { animation-delay: 4.8s; }
+@keyframes ld-rise {
+  from { transform: translateY(28px); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ld-intro { display: none; }
+  .hero-mark-float,
+  .hero-mark-symbol *,
+  .hero-mark-crop,
+  .hero-mark-tag,
+  .logo-motion-card,
+  .logo-motion-card *,
+  .ld-intro-on .brand-hero-copy > *,
+  .ld-intro-on .hero-disciplines {
+    animation: none !important;
+  }
+}

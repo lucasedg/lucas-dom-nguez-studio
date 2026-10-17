@@ -12,8 +12,8 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { BrandIntro, BrandLogo, HeroBrandMark, LogoMotion } from "@/components/brand";
 
-import studioLogo from "@/assets/ld-transparent.webp";
 import lucasPortrait from "@/assets/lucas-sobre-mi.webp";
 import almaRosaImage from "@/assets/alma-rosa/web.jpg";
 import almaRosaIdentity from "@/assets/alma-rosa/identidad.jpg";
@@ -611,11 +611,10 @@ function Header() {
         <a
           href="#inicio"
           data-cursor="HOME"
-          className="min-w-0 text-[11px] font-semibold uppercase leading-tight tracking-[0.16em] sm:text-xs"
+          className="min-w-0"
+          aria-label="Lucas Domínguez Studio, inicio"
         >
-          Lucas Domínguez
-          <br />
-          Studio
+          <BrandLogo />
         </a>
         <nav className="hidden items-center gap-8 lg:flex" aria-label="Navegación principal">
           {links.map(([label, href]) => (
@@ -669,14 +668,7 @@ function Hero() {
     <section id="inicio" className="hero-scroll-scene">
       <div className="hero-stage hero brand-hero cinema-surface sculptural-hero graphite-hero">
         <div className="graphite-logo-scene">
-          <img
-            className="graphite-logo"
-            src={studioLogo}
-            width={1106}
-            height={1422}
-            alt="LD, monograma de Lucas Domínguez Studio en metal con relieve"
-            fetchPriority="high"
-          />
+          <HeroBrandMark />
         </div>
         <Header />
         <div className="brand-hero-grid">
@@ -1212,7 +1204,7 @@ function ProjectQualifier() {
             <br />
             <em>con una idea.</em>
           </h2>
-          <p className="mt-10 max-w-md font-serif text-2xl leading-tight sm:text-3xl">
+          <p className="contact-lead mt-10 max-w-md text-xl leading-snug sm:text-2xl">
             Cuéntame qué quieres transformar. Me encantará conocer tu proyecto.
           </p>
         </Reveal>
@@ -1342,7 +1334,7 @@ function Footer() {
     <footer className="bg-studio-black px-5 py-10 text-studio-ivory sm:px-8 lg:px-12">
       <div className="mx-auto grid max-w-[1500px] gap-10 border-t border-studio-ivory/20 pt-8 md:grid-cols-[1fr_auto] md:items-end">
         <div>
-          <p className="font-serif text-2xl uppercase">Lucas Domínguez Studio</p>
+          <BrandLogo className="brand-logo-footer" />
           <p className="mt-2 text-[10px] uppercase tracking-[0.16em] text-studio-ivory/50">
             Málaga, España
           </p>
@@ -1410,16 +1402,9 @@ function MotionGraphic({ variant = "orbit" }: { variant?: "orbit" | "tiles" | "s
           ))}
         </g>
       ) : (
-        <g className="motion-star">
-          {Array.from({ length: 12 }, (_, ray) => (
-            <path
-              key={ray}
-              d="M100 22 L107 77 L100 92 L93 77 Z"
-              fill="currentColor"
-              stroke="none"
-              transform={`rotate(${ray * 30} 100 100)`}
-            />
-          ))}
+        <g className="motion-star" fill="currentColor" stroke="none">
+          <polygon points="20,62 52,62 52,148 138,148 138,180 20,180" />
+          <polygon points="62,20 180,20 180,138 148,138 148,52 62,52" />
         </g>
       )}
     </svg>
@@ -1437,8 +1422,8 @@ function MotionShowcase() {
         </h2>
         <p>Motion graphics para dar vida a tu marca.</p>
       </div>
-      <div className="motion-showcase-art">
-        <MotionGraphic />
+      <div className="motion-showcase-art" data-motion>
+        <LogoMotion />
       </div>
     </section>
   );
@@ -1479,6 +1464,7 @@ function GraphicMotionControl() {
 function StudioPage() {
   return (
     <main className="studio-page" tabIndex={-1}>
+      <BrandIntro />
       <CinematicCursor />
       <Hero />
       <Work />
