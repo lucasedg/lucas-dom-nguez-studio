@@ -215,8 +215,8 @@
       (function () {
         var W = 1080;
         var H = 1920;
-        var BALL = 30;
-        var MARGIN = 52;
+        var BALL = 26;
+        var MARGIN = 30;
 
         /* Band copy: what the studio does, repeated so the loop is seamless. */
         var items = ["Branding", "Identidad visual", "Diseño web", "Motion graphics", "Contenido para redes", "Packaging"];
@@ -262,7 +262,7 @@
           var u = Math.min(1, Math.max(0, (v - a) / (b - a)));
           return u * u * (3 - 2 * u);
         }
-        var proc = { top: 0, dotX: 0, last: 0 };
+        var proc = { top: 0, dotX: 0, last: 0, start: 0 };
         function measure() {
           var el = document.getElementById("process");
           var dots = el.querySelectorAll(".dot");
@@ -272,13 +272,15 @@
           proc.top = d0.top - page.top + d0.height / 2;
           proc.dotX = d0.left - page.left + d0.width / 2;
           proc.last = dl.top - page.top + dl.height / 2;
+          proc.start = el.getBoundingClientRect().top - page.top;
         }
         function routeX(py) {
           var left = MARGIN;
           var right = W - MARGIN;
-          var x = left + (right - left) * sm(560, 980, py); // first crossing
-          x += (proc.dotX - right) * sm(proc.top - 420, proc.top, py); // into the timeline
-          x += (right - proc.dotX) * sm(proc.last + 120, proc.last + 620, py); // last crossing
+          var x = left + (right - left) * sm(420, 1250, py); // first crossing, long diagonal
+          x += (left - right) * sm(proc.start - 420, proc.start + 40, py); // cross before the section
+          x += (proc.dotX - left) * sm(proc.top - 160, proc.top, py); // step onto the timeline
+          x += (right - proc.dotX) * sm(proc.last + 60, proc.last + 760, py); // last crossing
           return x;
         }
         var logo = { x: 98, y: 108 };
@@ -323,23 +325,6 @@
             ctx.moveTo(a.x, a.py - sc);
             ctx.lineTo(c.x, c.py - sc);
             ctx.stroke();
-          }
-          /* Paint drops flicked off the tail when it moves fast; they sag and fade. */
-          var first = Math.max(0, Math.floor((t - LIFE) / STEP));
-          for (var k2 = first; k2 * STEP <= t; k2++) {
-            var te = k2 * STEP;
-            var p0 = ballAt(te);
-            var p1 = ballAt(te + STEP);
-            var speed = Math.hypot(p1.x - p0.x, p1.py - p0.py);
-            if (speed < 18 || p0.sc < 60 || hash(k2) > 0.55) continue;
-            var age = (t - te) / LIFE;
-            var n = hash(k2 + 77);
-            var size = p0.r * (0.18 + 0.3 * n);
-            ctx.globalAlpha = Math.max(0, 1 - age);
-            ctx.fillStyle = "#ff5b14";
-            ctx.beginPath();
-            ctx.arc(p0.x + (n - 0.5) * p0.r * 2.2, p0.py - sc + age * age * 60, size * (1 - age * 0.5), 0, Math.PI * 2);
-            ctx.fill();
           }
           ctx.globalAlpha = 1;
           /* The ball. */
