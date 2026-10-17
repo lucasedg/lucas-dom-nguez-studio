@@ -308,7 +308,7 @@
           var sc = scrollAt(t);
           document.getElementById("page").style.transform = "translateY(" + -sc + "px)";
           track.style.transform = "translateX(" + -((t * 160) % segment) + "px)";
-          document.getElementById("logo-mark").style.opacity = String(1 - Math.min(1, sc / 120));
+          document.getElementById("logo-mark").style.opacity = "0";
 
           ctx.clearRect(0, 0, W, H);
           /* Stretched tail: the ball's recent path, tapering to a point. */
@@ -341,8 +341,10 @@
           ctx.shadowBlur = 30;
           ctx.fillStyle = "#ff5b14";
           ctx.beginPath();
-          if (sc < 1) ctx.rect(-38, -38, 76, 76);
-          else ctx.arc(0, 0, b.r, 0, Math.PI * 2);
+          /* Logo → ball: the square badge rounds its corners into the ball. */
+          var g = Math.min(1, sc / 220);
+          var size = 76 + (b.r * 2 - 76) * g;
+          ctx.roundRect(-size / 2, -size / 2, size, size, (size / 2) * g);
           ctx.fill();
           ctx.restore();
           if (sc >= 1) {

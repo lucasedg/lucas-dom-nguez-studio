@@ -133,11 +133,12 @@ export function ScrollDrop() {
       y += (target - y) * 0.45;
       tailY += (y - tailY) * 0.14;
 
-      const grow = Math.min(1, m * 5);
-      if (symbol) symbol.style.opacity = String(1 - grow);
-      canvas.style.opacity = "1";
+      const grow = Math.min(1, sy / 140); // logo → ball morph progress
+      // The canvas takes over from the real logo the moment the page moves.
+      if (symbol) symbol.style.opacity = sy > 0 ? "0" : "";
+      canvas.style.opacity = sy > 0 ? "1" : "0";
 
-      const r = (origin.size / 2) * (1 - grow) + BALL * grow;
+      const r = BALL;
       const xAt = (py: number) => origin.x + (routeX(route, W, py) - origin.x) * ease;
       const hx = xAt(y);
       const hy = y - sy;
@@ -163,26 +164,41 @@ export function ScrollDrop() {
         }
       }
 
-      // Ball, a touch stretched along the motion when fast.
+      // Ball. Near the top it is still the logo badge: a square that rounds into the ball.
       const dir = span >= 0 ? 1 : -1;
-      const angle = Math.atan2(dir * 4, xAt(y + dir * 4) - hx);
-      const stretch = 1 + Math.min(0.3, Math.abs(span) / 300);
+      const angle = grow < 1 ? 0 : Math.atan2(dir * 4, xAt(y + dir * 4) - hx);
+      const stretch = 1 + Math.min(0.3, Math.abs(span) / 300) * grow;
+      const size = origin.size + (BALL * 2 - origin.size) * grow;
       ctx.save();
       ctx.translate(hx, hy);
       ctx.rotate(angle);
       ctx.scale(stretch, 1 / Math.sqrt(stretch));
-      ctx.shadowColor = "rgba(255, 91, 20, 0.45)";
+      ctx.shadowColor = `rgba(255, 91, 20, ${0.45 * grow})`;
       ctx.shadowBlur = 12;
       ctx.fillStyle = "#ff5b14";
       ctx.beginPath();
-      ctx.arc(0, 0, r, 0, Math.PI * 2);
+      ctx.roundRect(-size / 2, -size / 2, size, size, (size / 2) * grow);
       ctx.fill();
       ctx.restore();
+      // The two L pieces of the badge fade out as it turns into the ball.
+      if (grow < 1) {
+        const u = size / 320; // badge viewBox is 320 units wide (-60…260)
+        ctx.save();
+        ctx.translate(hx - size / 2 + 60 * u, hy - size / 2 + 60 * u);
+        ctx.scale(u, u);
+        ctx.globalAlpha = 1 - Math.min(1, grow * 1.6);
+        ctx.fillStyle = "#1d1d1d";
+        ctx.fill(new Path2D("M0 56H40V160H144V200H0Z"));
+        ctx.fill(new Path2D("M56 0H200V144H160V40H56Z"));
+        ctx.restore();
+      }
       ctx.shadowBlur = 0;
+      ctx.globalAlpha = grow;
       ctx.fillStyle = "rgba(255, 226, 205, 0.55)";
       ctx.beginPath();
-      ctx.arc(hx - r * 0.32, hy - r * 0.34, r * 0.3, 0, Math.PI * 2);
+      ctx.arc(hx - size * 0.16, hy - size * 0.17, size * 0.15, 0, Math.PI * 2);
       ctx.fill();
+      ctx.globalAlpha = 1;
 
       if (Math.abs(target - y) > 0.3 || Math.abs(span) > 1 || m < 1) {
         raf = requestAnimationFrame(frame);
