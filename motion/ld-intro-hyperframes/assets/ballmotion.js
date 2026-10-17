@@ -16,7 +16,8 @@
     shrinkA: 2.65,
     shrinkB: 3.35, // settles to logo size
   };
-  var K = 0.55; // perspective: size = 1 / (1 - K * height)
+  var K = 0.3; // perspective: size = 1 / (1 - K * height)
+  var DIST = 0.6; // camera distance: the whole scene reads smaller, as seen from further away
 
   function clamp01(x) {
     return x < 0 ? 0 : x > 1 ? 1 : x;
@@ -65,8 +66,8 @@
     var spawn = Math.max(0.02, 0.22 * pop + 0.78 * grow);
 
     var proj = 1 / (1 - K * f.h);
-    var s = spawn * proj;
-    var x = -Math.sin(Math.PI * f.air) * width * 0.022;
+    var s = spawn * proj * DIST;
+    var x = -Math.sin(Math.PI * f.air) * width * 0.014;
     var y = -f.h * rise;
 
     /* Stretch along the travel axis with speed; round at the apex. */
@@ -96,22 +97,22 @@
     }
 
     /* Settle to the logo size. */
-    s *= 1 - 0.4 * inOut(smooth(T.shrinkA, T.shrinkB, t) === 0 ? 0 : clamp01((t - T.shrinkA) / (T.shrinkB - T.shrinkA)));
+    /* Already at logo size from the landing on (the camera is far enough). */
 
     /* Floor shadow (only readable on the lit floor) and the ball's light on the floor. */
     var ground = 1 - smooth(T.impact + 0.25, T.impact + 0.75, t);
     var shadowBase = {
-      scale: 0.9 + 1.1 * f.h,
-      dx: 18 + 70 * f.h,
-      dy: 10 + 40 * f.h,
-      blur: 6 + 34 * f.h,
+      scale: DIST * (0.9 + 1.1 * f.h),
+      dx: DIST * (18 + 70 * f.h),
+      dy: DIST * (10 + 40 * f.h),
+      blur: 4 + 20 * f.h,
       o: t < T.impact ? 0 : o * ground * 0.8,
     };
     var shadow = shadowBase;
     var light = {
       /* Pure black until the hit: the floor (and its hexagons) only appears with the impact. */
       amount: t < T.impact ? 0 : ground,
-      radiusK: 1.4 + 1.6 * f.h, // in units of the ball's floor diameter
+      radiusK: DIST * (1.4 + 1.6 * f.h), // in units of the ball's floor diameter
     };
 
     return { x: x, y: y, s: s, sx: sx, sy: sy, o: o, h: f.h, speed: f.v, shadow: shadow, light: light };

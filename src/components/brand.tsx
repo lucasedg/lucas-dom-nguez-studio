@@ -126,7 +126,7 @@ function startIntroMotion({ intro, floor, slot, mark, shadow, ghosts }: IntroPar
     W = canvas.width = Math.max(1, Math.round(fw * dpr));
     H = canvas.height = Math.max(1, Math.round(fh * dpr));
     markSize = slot.offsetWidth;
-    rise = vh * 0.213;
+    rise = vh * 0.13;
     /* Pivot the tilted floor around the contact point (the slot centre, untransformed). */
     const m = slot.getBoundingClientRect();
     floor.style.transform = "none";
@@ -136,7 +136,7 @@ function startIntroMotion({ intro, floor, slot, mark, shadow, ghosts }: IntroPar
     floor.style.transformOrigin = `${ox}px ${oy}px`;
     floor.style.transform = `perspective(${Math.round(vh * 1.6)}px) rotateX(${FLOOR_TILT}deg)`;
     origin = { x: ox * dpr, y: oy * dpr };
-    cell = Math.max(12, Math.min(vw, vh) / 36) * dpr;
+    cell = Math.max(8, Math.min(vw, vh) / 56) * dpr;
   };
   floor.appendChild(canvas);
   resize();
@@ -163,7 +163,7 @@ function startIntroMotion({ intro, floor, slot, mark, shadow, ghosts }: IntroPar
     const sh = b.shadow;
     shadow.style.opacity = sh.o.toFixed(3);
     shadow.style.filter = `blur(${sh.blur.toFixed(1)}px)`;
-    shadow.style.transform = `translate(${sh.dx.toFixed(1)}px,${(sh.dy + markSize * 0.25).toFixed(
+    shadow.style.transform = `translate(${sh.dx.toFixed(1)}px,${(sh.dy + markSize * 0.15).toFixed(
       1,
     )}px) scale(${(sh.scale * b.sx).toFixed(3)},${(sh.scale * 0.42).toFixed(3)})`;
 

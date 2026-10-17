@@ -14,7 +14,8 @@ export const BALL_TIMES = {
   shrinkB: 3.35, // settles to logo size
 };
 const T = BALL_TIMES;
-const K = 0.55; // perspective: size = 1 / (1 - K * height)
+const K = 0.3; // perspective: size = 1 / (1 - K * height)
+const DIST = 0.6; // camera distance: the whole scene reads smaller, as seen from further away
 
 export type BallState = {
   x: number;
@@ -39,9 +40,6 @@ function backOut(u: number) {
   const c1 = 1.9;
   const c3 = c1 + 1;
   return 1 + c3 * Math.pow(u - 1, 3) + c1 * Math.pow(u - 1, 2);
-}
-function inOut(u: number) {
-  return u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2;
 }
 
 /* Height above the floor (0..1), normalised speed (0..1) and progress through the throw. */
@@ -70,8 +68,8 @@ export function ballAt(t: number, rise: number, width: number): BallState {
   const grow = t < T.launch ? 0 : smooth(T.launch, T.apex - 0.15, t);
   const spawn = Math.max(0.02, 0.22 * pop + 0.78 * grow);
 
-  let s = spawn / (1 - K * f.h);
-  const x = -Math.sin(Math.PI * f.air) * width * 0.022;
+  const s = (spawn / (1 - K * f.h)) * DIST;
+  const x = -Math.sin(Math.PI * f.air) * width * 0.014;
   const y = -f.h * rise;
 
   /* Stretch along the travel axis with speed; round at the apex. */
@@ -99,8 +97,7 @@ export function ballAt(t: number, rise: number, width: number): BallState {
     sy = 1 - 0.09 * q;
   }
 
-  /* Settle to the logo size. */
-  s *= 1 - 0.4 * inOut(clamp01((t - T.shrinkA) / (T.shrinkB - T.shrinkA)));
+  /* Already at logo size from the landing on (the camera is far enough). */
 
   /* Pure black until the hit: floor light and shadow only exist once it lands. */
   const ground = 1 - smooth(T.impact + 0.25, T.impact + 0.75, t);
@@ -113,12 +110,12 @@ export function ballAt(t: number, rise: number, width: number): BallState {
     o,
     speed: f.v,
     shadow: {
-      scale: 0.9 + 1.1 * f.h,
-      dx: 18 + 70 * f.h,
-      dy: 10 + 40 * f.h,
-      blur: 6 + 34 * f.h,
+      scale: DIST * (0.9 + 1.1 * f.h),
+      dx: DIST * (18 + 70 * f.h),
+      dy: DIST * (10 + 40 * f.h),
+      blur: 4 + 20 * f.h,
       o: t < T.impact ? 0 : o * ground * 0.8,
     },
-    light: { amount: t < T.impact ? 0 : ground, radiusK: 1.4 + 1.6 * f.h },
+    light: { amount: t < T.impact ? 0 : ground, radiusK: DIST * (1.4 + 1.6 * f.h) },
   };
 }

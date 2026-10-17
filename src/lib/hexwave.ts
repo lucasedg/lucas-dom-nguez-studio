@@ -133,10 +133,7 @@ export function drawHexWave(
   const vh = 1.5 * R;
   const rows = Math.ceil(H / vh) + 2;
   const cols = Math.ceil(W / hw) + 2;
-  const outer = Math.max(
-    fronts[0] ? fronts[0].F + R * 3 : 0,
-    floorLight > 0 ? floorRad * 1.6 : 0,
-  );
+  const outer = Math.max(fronts[0] ? fronts[0].F + R * 3 : 0, floorLight > 0 ? floorRad * 1.6 : 0);
 
   for (let j = -1; j < rows; j++) {
     const y0 = j * vh;
