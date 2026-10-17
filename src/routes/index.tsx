@@ -1,7 +1,14 @@
 import { Content as DialogContent } from "@radix-ui/react-dialog";
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowUpRight, Menu, MoveRight, X } from "lucide-react";
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from "react";
 
 import {
   Dialog,
@@ -13,6 +20,8 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { BrandIntro, BrandLogo, HeroBrandMark, LogoMotion } from "@/components/brand";
+import { ScrollDrop } from "@/components/scroll-drop";
+import { SmoothDetails } from "@/components/smooth-details";
 
 import lucasPortrait from "@/assets/lucas-sobre-mi.webp";
 import almaRosaImage from "@/assets/alma-rosa/web.jpg";
@@ -641,24 +650,25 @@ function Header() {
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
-      {open && (
-        <nav
-          id="mobile-navigation"
-          className="mobile-menu absolute inset-x-0 top-full border-t border-studio-ivory/15 bg-studio-black px-5 pb-8 pt-4 lg:hidden"
-          aria-label="Navegación móvil"
-        >
-          {links.map(([label, href]) => (
-            <a
-              key={href}
-              href={href}
-              onClick={() => setOpen(false)}
-              className="flex min-h-16 items-center justify-between border-b border-studio-ivory/15 py-4 font-serif text-3xl"
-            >
-              {label}
-            </a>
-          ))}
-        </nav>
-      )}
+      <nav
+        id="mobile-navigation"
+        className="mobile-menu absolute inset-x-0 top-full border-t border-studio-ivory/15 bg-studio-black px-5 pb-8 pt-4 lg:hidden"
+        aria-label="Navegación móvil"
+        data-open={open}
+        inert={!open}
+      >
+        {links.map(([label, href], index) => (
+          <a
+            key={href}
+            href={href}
+            onClick={() => setOpen(false)}
+            style={{ "--i": index } as CSSProperties}
+            className="flex min-h-16 items-center justify-between border-b border-studio-ivory/15 py-4 font-serif text-3xl"
+          >
+            {label}
+          </a>
+        ))}
+      </nav>
     </header>
   );
 }
@@ -855,14 +865,16 @@ function Services() {
                     <li key={feature}>{feature}</li>
                   ))}
                 </ul>
-                <details className="plan-mobile-details mobile-content-only">
-                  <summary>Qué incluye</summary>
+                <SmoothDetails
+                  className="plan-mobile-details mobile-content-only"
+                  summary="Qué incluye"
+                >
                   <ul>
                     {plan.features.map((feature) => (
                       <li key={feature}>{feature}</li>
                     ))}
                   </ul>
-                </details>
+                </SmoothDetails>
                 <a
                   className="creative-plan-cta"
                   href={`/?plan=${encodeURIComponent(plan.name)}#contacto`}
@@ -872,14 +884,16 @@ function Services() {
               </article>
             ))}
           </div>
-          <details className="creative-plans-details">
-            <summary>¿Qué cuenta como una unidad de diseño?</summary>
+          <SmoothDetails
+            className="creative-plans-details"
+            summary="¿Qué cuenta como una unidad de diseño?"
+          >
             <ul>
               {designUnitExamples.map((example) => (
                 <li key={example}>{example}</li>
               ))}
             </ul>
-          </details>
+          </SmoothDetails>
           <p className="creative-plans-notes">
             Planes mes a mes · Precios sin IVA · Alta inicial: 290 € cuando sea necesaria; no se
             aplica si ya hemos creado tu identidad. Las piezas se acuerdan al comenzar cada mes.
@@ -1205,124 +1219,135 @@ function ProjectQualifier() {
             <em>con una idea.</em>
           </h2>
           <p className="contact-lead mt-10 max-w-md text-xl leading-snug sm:text-2xl">
-            Cuéntame qué quieres transformar. Me encantará conocer tu proyecto.
+            Elige cómo prefieres escribirme.
           </p>
         </Reveal>
         <Reveal delay={100}>
-          <div className="contact-channels">
-            <a
-              className="contact-whatsapp"
-              href={`https://wa.me/34622688942?text=${encodeURIComponent(details || "Hola Lucas, me gustaría hablar de un proyecto.")}`}
-              target="_blank"
-              rel="noopener noreferrer"
+          <div className="contact-steps">
+            <div className="contact-card contact-card-quick">
+              <p className="contact-step">
+                <span>1</span> Lo más rápido
+              </p>
+              <div className="contact-channels">
+                <a
+                  className="contact-whatsapp"
+                  href={`https://wa.me/34622688942?text=${encodeURIComponent(details || "Hola Lucas, me gustaría hablar de un proyecto.")}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span>
+                    <strong>WhatsApp</strong>
+                    <small>Abre un chat conmigo</small>
+                  </span>
+                  <ArrowUpRight aria-hidden="true" />
+                </a>
+                <a
+                  className="contact-instagram"
+                  href="https://www.instagram.com/lucasdominguez.studio/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span>
+                    <strong>Instagram</strong>
+                    <small>@lucasdominguez.studio</small>
+                  </span>
+                  <ArrowUpRight aria-hidden="true" />
+                </a>
+              </div>
+            </div>
+
+            <form
+              className="qualifier-form contact-card"
+              action="https://formsubmit.co/lucase.dominguezguridi@gmail.com"
+              method="POST"
             >
-              Escribir por WhatsApp <ArrowUpRight aria-hidden="true" />
-            </a>
-            <a
-              href="https://www.instagram.com/lucasdominguez.studio/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Instagram · @lucasdominguez.studio <ArrowUpRight aria-hidden="true" />
-            </a>
-          </div>
-          <form
-            className="qualifier-form"
-            action="https://formsubmit.co/lucase.dominguezguridi@gmail.com"
-            method="POST"
-          >
-            <input type="hidden" name="_subject" value="Nuevo proyecto · Lucas Domínguez Studio" />
-            <input type="hidden" name="Objetivo" value={goal} />
-            <label className="qualifier-field">
-              <span>Tu nombre</span>
+              <p className="contact-step">
+                <span>2</span> O déjame un mensaje
+              </p>
               <input
-                name="name"
-                autoComplete="name"
-                required
-                maxLength={120}
-                placeholder="¿Cómo te llamas?"
+                type="hidden"
+                name="_subject"
+                value="Nuevo proyecto · Lucas Domínguez Studio"
               />
-            </label>
-            <label className="qualifier-field">
-              <span>Tu correo</span>
-              <input
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                maxLength={254}
-                placeholder="Para poder responderte"
-              />
-            </label>
-            <label className="qualifier-field">
-              <span>Cuéntame brevemente qué tienes en mente.</span>
-              <textarea
-                name="message"
-                required
-                maxLength={5000}
-                value={brief}
-                onChange={(event) => setBrief(event.target.value)}
-                placeholder="El punto de partida, el momento en el que está tu marca o lo que te gustaría cambiar."
-                rows={4}
-              />
-            </label>
-            <details className="contact-optional">
-              <summary>Añadir detalles del negocio (opcional)</summary>
-              <fieldset>
-                <legend>¿Qué quieres conseguir?</legend>
-                <div className="qualifier-options">
-                  {goals.map((option) => (
-                    <button
-                      key={option}
-                      type="button"
-                      onClick={() => setGoal(option)}
-                      className={goal === option ? "is-selected" : ""}
-                      aria-pressed={goal === option}
-                    >
-                      {option}
-                    </button>
-                  ))}
-                </div>
-              </fieldset>
+              <input type="hidden" name="Objetivo" value={goal} />
               <label className="qualifier-field">
-                <span>¿Qué tipo de negocio tienes?</span>
+                <span>Nombre</span>
                 <input
-                  name="Negocio"
-                  maxLength={200}
-                  value={business}
-                  onChange={(event) => setBusiness(event.target.value)}
-                  placeholder="Por ejemplo: hotel, marca de moda, startup…"
+                  name="name"
+                  autoComplete="name"
+                  required
+                  maxLength={120}
+                  placeholder="Tu nombre"
                 />
               </label>
-            </details>
-            <label className="flex items-start gap-3 text-xs leading-relaxed">
-              <input
-                type="checkbox"
-                name="Privacidad"
-                value="Aceptada"
-                required
-                className="mt-0.5 h-4 w-4 shrink-0 accent-current"
-              />
-              <span>
-                He leído la{" "}
-                <a className="underline underline-offset-4" href="/privacidad" target="_blank">
-                  política de privacidad
-                </a>{" "}
-                y acepto que uses mis datos para responder a mi mensaje.
-              </span>
-            </label>
-            <button type="submit" className="qualifier-submit">
-              Enviar mensaje <ArrowUpRight className="h-5 w-5" aria-hidden="true" />
-            </button>
-            <p className="text-xs leading-relaxed">
-              El mensaje se envía a mi correo mediante FormSubmit. También puedes escribirme
-              directamente a{" "}
-              <a className="underline underline-offset-4 break-all" href={mailHref}>
-                lucase.dominguezguridi@gmail.com
-              </a>
-              .
-            </p>
-          </form>
+              <label className="qualifier-field">
+                <span>Correo</span>
+                <input
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  maxLength={254}
+                  placeholder="tu@correo.com"
+                />
+              </label>
+              <label className="qualifier-field">
+                <span>Tu idea</span>
+                <textarea
+                  name="message"
+                  required
+                  maxLength={5000}
+                  value={brief}
+                  onChange={(event) => setBrief(event.target.value)}
+                  placeholder="Qué necesitas para tu marca"
+                  rows={4}
+                />
+              </label>
+              <SmoothDetails className="contact-optional" summary="Añadir más detalles (opcional)">
+                <fieldset>
+                  <legend>¿Qué quieres conseguir?</legend>
+                  <div className="qualifier-options">
+                    {goals.map((option) => (
+                      <button
+                        key={option}
+                        type="button"
+                        onClick={() => setGoal(option)}
+                        className={goal === option ? "is-selected" : ""}
+                        aria-pressed={goal === option}
+                      >
+                        {option}
+                      </button>
+                    ))}
+                  </div>
+                </fieldset>
+                <label className="qualifier-field">
+                  <span>Tipo de negocio</span>
+                  <input
+                    name="Negocio"
+                    maxLength={200}
+                    value={business}
+                    onChange={(event) => setBusiness(event.target.value)}
+                    placeholder="Hotel, moda, startup…"
+                  />
+                </label>
+              </SmoothDetails>
+              <label className="contact-consent">
+                <input type="checkbox" name="Privacidad" value="Aceptada" required />
+                <span>
+                  Acepto la{" "}
+                  <a href="/privacidad" target="_blank">
+                    política de privacidad
+                  </a>
+                </span>
+              </label>
+              <button type="submit" className="qualifier-submit">
+                Enviar mensaje <ArrowUpRight className="h-5 w-5" aria-hidden="true" />
+              </button>
+              <p className="contact-mail">
+                ¿Prefieres el correo? <a href={mailHref}>lucase.dominguezguridi@gmail.com</a>
+              </p>
+            </form>
+          </div>
         </Reveal>
       </div>
     </section>
@@ -1466,6 +1491,7 @@ function StudioPage() {
     <main className="studio-page" tabIndex={-1}>
       <BrandIntro />
       <CinematicCursor />
+      <ScrollDrop />
       <Hero />
       <Work />
       <MotionShowcase />

@@ -3990,3 +3990,270 @@ html {
     animation: none !important;
   }
 }
+
+/* ==========================================================================
+   Mobile fluid motion · menú, proyectos, desplegables, tarjetas, contacto y gota
+   ========================================================================== */
+
+/* Menú móvil: se abre como una burbuja de cristal líquido desde el botón. */
+.mobile-menu {
+  transform-origin: calc(100% - 2.75rem) -1rem;
+  transition:
+    transform 620ms cubic-bezier(0.32, 1.28, 0.42, 1),
+    opacity 320ms ease,
+    border-radius 620ms cubic-bezier(0.32, 1.28, 0.42, 1),
+    visibility 0s linear 0s;
+}
+.mobile-menu[data-open="false"] {
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.18, 0.08) translateY(-12px);
+  border-radius: 999px;
+  transition:
+    transform 380ms cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 260ms ease 80ms,
+    border-radius 380ms ease,
+    visibility 0s linear 400ms;
+}
+.mobile-menu a {
+  transition:
+    opacity 420ms ease calc(140ms + var(--i, 0) * 55ms),
+    transform 560ms cubic-bezier(0.22, 1.2, 0.36, 1) calc(140ms + var(--i, 0) * 55ms);
+}
+.mobile-menu[data-open="false"] a {
+  opacity: 0;
+  transform: translateY(-14px);
+  transition-delay: 0ms;
+}
+
+/* Proyecto en el móvil: se expande desde la tarjeta como una hoja de cristal. */
+@media (max-width: 767px), (pointer: coarse) {
+  .project-glass-overlay {
+    background: rgb(10 10 10 / 55%);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+  .project-glass-overlay[data-state="open"] { animation: overlay-in 420ms ease both !important; }
+  .project-glass-overlay[data-state="closed"] { animation: overlay-out 300ms ease both !important; }
+  .project-app[data-state="open"] {
+    animation: project-launch 640ms cubic-bezier(0.32, 0.72, 0, 1) both;
+  }
+  .project-app[data-state="closed"] {
+    animation: project-return 360ms cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+  .project-app[data-state="open"] .project-app-story {
+    animation: story-rise 700ms cubic-bezier(0.22, 1, 0.36, 1) 220ms both;
+  }
+}
+@keyframes overlay-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes overlay-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes story-rise {
+  from { opacity: 0; transform: translateY(28px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Desplegables suaves (Qué incluye, unidad de diseño, detalles del contacto). */
+.smooth-details { overflow: hidden; }
+.smooth-details > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  list-style: none;
+  cursor: pointer;
+}
+.smooth-details > summary::-webkit-details-marker { display: none; }
+.smooth-details > summary::after {
+  content: "";
+  width: 0.6rem;
+  height: 0.6rem;
+  flex-shrink: 0;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(-25%) rotate(45deg);
+  transition: transform 500ms cubic-bezier(0.22, 1.2, 0.36, 1);
+}
+.smooth-details[data-state="open"] > summary::after,
+.smooth-details[open]:not([data-state]) > summary::after {
+  transform: translateY(15%) rotate(-135deg);
+}
+.smooth-details[data-state="open"] .smooth-details-body {
+  animation: details-in 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.smooth-details[data-state="closed"] .smooth-details-body {
+  animation: details-out 300ms ease both;
+}
+@keyframes details-in {
+  from { opacity: 0; transform: translateY(-10px); filter: blur(4px); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+@keyframes details-out {
+  from { opacity: 1; }
+  to { opacity: 0; transform: translateY(-6px); }
+}
+
+/* Tarjetas de planes: elevadas, como flotando sobre el papel. */
+.creative-plan {
+  border-radius: 20px;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 10%),
+    0 2px 4px rgb(0 0 0 / 8%),
+    0 14px 28px rgb(0 0 0 / 16%),
+    0 38px 70px -18px rgb(0 0 0 / 34%);
+  transition:
+    transform 500ms cubic-bezier(0.22, 1.2, 0.36, 1),
+    box-shadow 500ms ease;
+}
+.creative-plan-featured {
+  box-shadow:
+    0 2px 4px rgb(0 0 0 / 8%),
+    0 18px 34px rgb(0 0 0 / 18%),
+    0 44px 80px -16px rgb(255 91 20 / 30%);
+}
+.creative-plan-cta { border-radius: 12px; }
+@media (hover: hover) {
+  .creative-plan:hover { transform: translateY(-6px); }
+}
+.creative-plan:active { transform: translateY(-2px) scale(0.995); }
+
+/* Contacto: dos pasos claros, tarjetas con relieve y campos que se ven. */
+.contact-steps { display: grid; gap: 1.25rem; }
+.contact-card {
+  border: 1px solid rgb(255 255 255 / 12%);
+  border-radius: 22px;
+  padding: clamp(1.25rem, 4vw, 2rem);
+  background: linear-gradient(160deg, rgb(255 255 255 / 7%), rgb(255 255 255 / 2%));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 12%),
+    0 18px 40px rgb(0 0 0 / 28%);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+.contact-step {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.1rem;
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--studio-ivory);
+}
+.contact-step span {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: var(--studio-copper);
+  color: #1d1d1d;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+.contact-card .contact-channels { margin: 0; gap: 0.75rem; }
+.contact-card .contact-channels a {
+  min-height: 4.25rem;
+  padding: 0.9rem 1.1rem;
+  border-radius: 16px;
+  border: 1px solid rgb(255 255 255 / 16%);
+  background: rgb(255 255 255 / 6%);
+  color: var(--studio-ivory);
+  transition: transform 300ms ease, background-color 300ms ease;
+}
+.contact-card .contact-channels a > span { display: grid; gap: 0.2rem; text-align: left; }
+.contact-card .contact-channels strong { font-size: 1rem; font-weight: 700; }
+.contact-card .contact-channels small { font-size: 0.78rem; opacity: 0.72; }
+.contact-card .contact-channels .contact-whatsapp {
+  background: var(--studio-copper);
+  border-color: var(--studio-copper);
+  color: #1d1d1d;
+  box-shadow: 0 10px 24px rgb(255 91 20 / 28%);
+}
+.contact-card .contact-channels .contact-whatsapp small { opacity: 0.8; }
+.contact-card .contact-channels a:active { transform: scale(0.98); }
+.contact-card.qualifier-form { gap: 1.1rem; }
+.contact-card .qualifier-field > span {
+  margin-bottom: 0.45rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--studio-ivory);
+}
+.contact-card .qualifier-field input,
+.contact-card .qualifier-field textarea {
+  padding: 0.85rem 1rem;
+  border: 1px solid rgb(255 255 255 / 18%);
+  border-radius: 12px;
+  background: rgb(0 0 0 / 28%);
+  color: var(--studio-ivory);
+  transition: border-color 250ms ease, box-shadow 250ms ease, background-color 250ms ease;
+}
+.contact-card .qualifier-field input:focus,
+.contact-card .qualifier-field textarea:focus {
+  outline: none;
+  border-color: var(--studio-copper);
+  background: rgb(0 0 0 / 40%);
+  box-shadow: 0 0 0 3px rgb(255 91 20 / 22%);
+}
+.contact-card .qualifier-field input::placeholder,
+.contact-card .qualifier-field textarea::placeholder { color: rgb(247 245 242 / 42%); }
+.contact-card .contact-optional { margin: 0; }
+.contact-card .contact-optional summary {
+  padding-block: 0.6rem;
+  border-bottom: 0;
+  color: rgb(247 245 242 / 80%);
+  font-size: 0.85rem;
+}
+.contact-card .contact-optional .smooth-details-body { display: grid; gap: 1.1rem; padding-top: 0.75rem; }
+.contact-card .qualifier-options button { border-radius: 999px; padding-inline: 0.95rem; }
+.contact-consent {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-size: 0.82rem;
+  color: rgb(247 245 242 / 80%);
+}
+.contact-consent input { width: 1.15rem; height: 1.15rem; accent-color: var(--studio-copper); }
+.contact-consent a { text-decoration: underline; text-underline-offset: 3px; }
+.contact-card .qualifier-submit {
+  justify-content: center;
+  min-height: 3.5rem;
+  border-radius: 14px;
+  background: var(--studio-ivory);
+  color: #1d1d1d;
+  font-size: 0.8rem;
+}
+.contact-mail { font-size: 0.78rem; color: rgb(247 245 242 / 60%); text-align: center; }
+.contact-mail a { color: var(--studio-ivory); text-decoration: underline; text-underline-offset: 3px; word-break: break-all; }
+
+/* Gota de scroll (solo móvil): la bola naranja del logo acompaña la página. */
+.scroll-drop {
+  position: fixed;
+  inset: 0;
+  z-index: 45;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 250ms ease;
+}
+.scroll-drop-body {
+  fill: var(--studio-copper);
+  filter: drop-shadow(0 6px 10px rgb(255 91 20 / 35%));
+}
+.scroll-drop-shine { fill: rgb(255 226 205 / 70%); }
+@media (min-width: 768px), (prefers-reduced-motion: reduce) {
+  .scroll-drop { display: none; }
+}
+.ld-intro-on .scroll-drop { transition-delay: 0s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-menu,
+  .mobile-menu a,
+  .creative-plan { transition: none; }
+  .smooth-details-body { animation: none !important; }
+}
