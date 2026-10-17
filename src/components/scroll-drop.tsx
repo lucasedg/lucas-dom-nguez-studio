@@ -1,15 +1,13 @@
 import { useEffect, useRef } from "react";
 
 /*
- * Mobile scroll companion. The header symbol melts into the orange ball from the intro,
- * which then travels a winding route through the page: down one margin, across under a
- * section, down the other margin… It leaves a long tapering trail that grows with scroll
- * speed, like a drop being pulled. Drawn in one canvas, only while something moves.
+ * Mobile scroll companion (designed in HyperFrames: motion/ld-scroll-hyperframes).
+ * The header symbol melts into the orange ball from the intro. It crosses the screen once
+ * under the hero, runs down the right margin to the process timeline, steps through its
+ * items, and makes one last crossing to the end. Behind it, a stretched paint tail that
+ * flicks off drops when you scroll fast; at rest only the ball remains.
  */
 const MOBILE = "(max-width: 767px)";
-// Elements the route crosses under, alternating sides (top to bottom of the page).
-// Only a few stretches zigzag (projects and process); elsewhere it runs down one margin.
-const CROSSINGS = ["#proyectos .project-card-caption", ".process-step"].join(",");
 const BALL = 14;
 const DROP_LIFE = 900; // ms a paint drop takes to fade away
 const MARGIN = 24;
@@ -18,30 +16,38 @@ type Route = { x: Float32Array; y: Float32Array; s: Float32Array; n: number; doc
 
 function buildRoute(W: number, start: { x: number; y: number }): Route {
   const sy = window.scrollY;
-  const bottoms: number[] = [];
-  document.querySelectorAll<HTMLElement>(CROSSINGS).forEach((el) => {
-    const r = el.getBoundingClientRect();
-    if (r.height > 0 && r.width > 0) bottoms.push(r.bottom + sy + 18);
-  });
-  bottoms.sort((a, b) => a - b);
-  const rows: number[] = [];
-  for (const b of bottoms) if (b - (rows.at(-1) ?? start.y) > 150) rows.push(b);
-  // Even number of crossings so the route always ends back on the right margin.
-  if (rows.length % 2) rows.pop();
-
-  // Control points: logo → down the left → across → down the right → across …
   const left = MARGIN;
   const right = W - MARGIN;
-  const pts: [number, number][] = [[start.x, start.y]];
-  let side = right;
-  pts.push([right, start.y + 160]);
-  for (const y of rows) {
-    const next = side === left ? right : left;
-    pts.push([side, y - 60], [(side + next) / 2, y], [next, y + 60]);
-    side = next;
-  }
   const docH = document.documentElement.scrollHeight;
-  pts.push([side, docH]);
+  const bottomOf = (sel: string) => {
+    const el = document.querySelector<HTMLElement>(sel);
+    return el ? el.getBoundingClientRect().bottom + sy : start.y + 500;
+  };
+  // Dots of the "De la intención a la presencia" timeline.
+  const dots: [number, number][] = [];
+  document.querySelectorAll<HTMLElement>(".process-step > span:first-child").forEach((el) => {
+    const r = el.getBoundingClientRect();
+    if (r.width) dots.push([r.left + r.width / 2, r.top + sy + r.height / 2]);
+  });
+
+  // 1 · down from the logo, one crossing under the hero symbol.
+  const cross1 = bottomOf(".hero-mark") + 30;
+  const pts: [number, number][] = [
+    [start.x, start.y],
+    [left, start.y + 120],
+    [left, cross1 - 80],
+    [W / 2, cross1],
+    [right, cross1 + 80],
+  ];
+  if (dots.length) {
+    // 2 · the right margin all the way to the process, then step by step on its line.
+    const first = dots[0]!;
+    const last = dots.at(-1)!;
+    pts.push([right, first[1] - 260], [first[0], first[1] - 40], ...dots);
+    // 3 · one last crossing, then down to the end.
+    pts.push([first[0], last[1] + 140], [W / 2, last[1] + 300], [right, last[1] + 460]);
+  }
+  pts.push([right, docH]);
 
   // Catmull-Rom → dense polyline with cumulative length.
   const xs: number[] = [];
@@ -59,7 +65,7 @@ function buildRoute(W: number, start: { x: number; y: number }): Route {
       const f = (a: number, b: number, c: number, d: number) =>
         0.5 *
         (2 * b + (-a + c) * t + (2 * a - 5 * b + 4 * c - d) * t2 + (-a + 3 * b - 3 * c + d) * t3);
-      xs.push(Math.min(W - MARGIN, Math.max(MARGIN, f(p0[0], p1[0], p2[0], p3[0]))));
+      xs.push(Math.min(W - MARGIN, Math.max(16, f(p0[0], p1[0], p2[0], p3[0]))));
       ys.push(f(p0[1], p1[1], p2[1], p3[1]));
     }
   }
@@ -178,29 +184,52 @@ export function ScrollDrop() {
       const [hx, hy] = at(route, pos);
       const headY = hy - sy;
 
-      // Paint drops: shed behind the ball while it moves, each fading and shrinking.
+      // Stretched tail along the route, tapering to a point: longer the faster it goes.
+      const trail = Math.min(420, speed * 9);
+      const dir = vel >= 0 ? -1 : 1; // behind the motion
+      const seg = 22;
+      ctx.lineCap = "round";
+      for (let i = seg; i > 0; i--) {
+        const a = at(route, pos + (dir * (trail * i)) / seg);
+        const b = at(route, pos + (dir * (trail * (i - 1))) / seg);
+        const k = 1 - i / seg;
+        ctx.strokeStyle = `rgba(255, 91, 20, ${(0.15 + 0.85 * k) * grow})`;
+        ctx.lineWidth = Math.max(0.8, r * 2 * k * k);
+        ctx.beginPath();
+        ctx.moveTo(a[0], a[1] - sy);
+        ctx.lineTo(b[0], b[1] - sy);
+        ctx.stroke();
+      }
+
+      // Paint drops flicked off the tail when it moves fast: they sag a little and fade.
       const now = performance.now();
       travelled += speed;
-      if (grow > 0.5 && speed > 0.6 && travelled > 14) {
+      if (grow > 0.5 && speed > 3 && travelled > 26) {
         travelled = 0;
         seed = (seed * 16807) % 2147483647;
         const n = seed / 2147483647;
-        const back = at(route, pos - Math.sign(vel) * (r + 4));
+        const back = at(route, pos + dir * trail * (0.25 + 0.6 * n));
         drops.push({
-          x: back[0] + (n - 0.5) * r * 1.4,
-          y: back[1] + (n - 0.5) * r * 0.6,
-          r: r * (0.28 + 0.42 * n) * Math.min(1, 0.45 + speed / 22),
+          x: back[0] + (n - 0.5) * r * 2.2,
+          y: back[1],
+          r: r * (0.16 + 0.3 * n),
           born: now,
         });
-        if (drops.length > 90) drops.shift();
+        if (drops.length > 60) drops.shift();
       }
       drops = drops.filter((d) => now - d.born < DROP_LIFE);
       for (const d of drops) {
         const age = (now - d.born) / DROP_LIFE;
-        ctx.globalAlpha = (1 - age) * 0.9;
+        ctx.globalAlpha = 1 - age;
         ctx.fillStyle = "#ff5b14";
         ctx.beginPath();
-        ctx.arc(d.x, d.y - sy, Math.max(0.5, d.r * (1 - age * 0.55)), 0, Math.PI * 2);
+        ctx.arc(
+          d.x,
+          d.y - sy + age * age * 26,
+          Math.max(0.5, d.r * (1 - age * 0.5)),
+          0,
+          Math.PI * 2,
+        );
         ctx.fill();
       }
       ctx.globalAlpha = 1;

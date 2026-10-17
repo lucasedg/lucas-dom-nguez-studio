@@ -148,6 +148,15 @@
         background: #262626;
         box-shadow: 0 30px 60px rgb(0 0 0 / 45%);
       }
+      .dark { padding-bottom: 160px; }
+      .process { background: #161616; padding: 120px 60px 200px; }
+      .process h2, .contact h2 { font: 400 130px/1 "Bebas Neue"; }
+      .process h2 em, .contact h2 em { font-style: normal; color: #ff5b14; }
+      .process ol { position: relative; list-style: none; margin-top: 90px; padding-left: 90px; }
+      .process ol::before { content: ""; position: absolute; left: 21px; top: 0; bottom: 0; width: 3px; background: rgb(255 255 255 / 20%); }
+      .process li { position: relative; height: 300px; font: 400 70px/1 "Bebas Neue"; }
+      .dot { position: absolute; left: -84px; top: 0; width: 34px; height: 34px; border-radius: 50%; border: 3px solid #ff5b14; background: #161616; }
+      .contact { background: #1d1d1d; padding: 160px 60px 900px; }
       #drop {
         position: absolute;
         inset: 0;
@@ -161,12 +170,12 @@
       id="root"
       data-composition-id="main"
       data-start="0"
-      data-duration="8"
+      data-duration="10"
       data-fps="30"
       data-width="1080"
       data-height="1920"
     >
-      <section id="scene" class="clip" data-start="0" data-duration="8" data-track-index="0">
+      <section id="scene" class="clip" data-start="0" data-duration="10" data-track-index="0">
         <div id="page">
           <div class="hero">
             <div class="logo"><div id="logo-mark"></div><b>LUCAS DOMINGUEZ</b></div>
@@ -187,6 +196,17 @@
             <div class="plan"></div>
             <div class="plan"></div>
           </div>
+          <div class="process" id="process">
+            <h2>DE LA INTENCIÓN<br /><em>A LA PRESENCIA.</em></h2>
+            <ol>
+              <li><span class="dot"></span><b>01 ESCUCHO</b></li>
+              <li><span class="dot"></span><b>02 DEFINO</b></li>
+              <li><span class="dot"></span><b>03 DISEÑO</b></li>
+              <li><span class="dot"></span><b>04 AJUSTO</b></li>
+              <li><span class="dot"></span><b>05 ENTREGO</b></li>
+            </ol>
+          </div>
+          <div class="contact"><h2>TODA MARCA<br />COMIENZA <em>CON UNA IDEA.</em></h2></div>
         </div>
         <canvas id="drop" width="1080" height="1920"></canvas>
       </section>
@@ -212,12 +232,17 @@
         /* Scroll profile (page offset in px) as a pure function of time. */
         var keys = [
           [0, 0],
-          [0.7, 0],
-          [2.3, 1350],
-          [3.1, 1350],
-          [5.1, 2900],
-          [6.3, 3150],
-          [8, 3150],
+          [0.5, 0],
+          [1.9, 1300],
+          [2.4, 1300],
+          [4.2, 4200],
+          [4.6, 4200],
+          [5.4, 4520],
+          [5.8, 4520],
+          [6.6, 4840],
+          [7.0, 4840],
+          [8.4, 6000],
+          [10, 6000],
         ];
         function ease(u) {
           return u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2;
@@ -231,15 +256,30 @@
           return keys[keys.length - 1][1];
         }
 
-        /* Route: right margin, with ONE zigzag stretch through the projects. */
-        var ZIG_FROM = 1900;
-        var ZIG_TO = 3000;
+        /* Route: one crossing at the start, down the right margin to the process,
+           step by step along its timeline, then one last crossing to the end. */
+        function sm(a, b, v) {
+          var u = Math.min(1, Math.max(0, (v - a) / (b - a)));
+          return u * u * (3 - 2 * u);
+        }
+        var proc = { top: 0, dotX: 0, last: 0 };
+        function measure() {
+          var el = document.getElementById("process");
+          var dots = el.querySelectorAll(".dot");
+          var page = document.getElementById("page").getBoundingClientRect();
+          var d0 = dots[0].getBoundingClientRect();
+          var dl = dots[dots.length - 1].getBoundingClientRect();
+          proc.top = d0.top - page.top + d0.height / 2;
+          proc.dotX = d0.left - page.left + d0.width / 2;
+          proc.last = dl.top - page.top + dl.height / 2;
+        }
         function routeX(py) {
+          var left = MARGIN;
           var right = W - MARGIN;
-          if (py < ZIG_FROM || py > ZIG_TO) return right;
-          var u = (py - ZIG_FROM) / (ZIG_TO - ZIG_FROM); // 0..1 over the stretch
-          var swing = 0.5 - 0.5 * Math.cos(u * Math.PI * 4); // two crossings and back
-          return right - swing * (W - 2 * MARGIN);
+          var x = left + (right - left) * sm(560, 980, py); // first crossing
+          x += (proc.dotX - right) * sm(proc.top - 420, proc.top, py); // into the timeline
+          x += (right - proc.dotX) * sm(proc.last + 120, proc.last + 620, py); // last crossing
+          return x;
         }
         var logo = { x: 98, y: 108 };
         function ballAt(t) {
@@ -256,6 +296,7 @@
           return ((h ^ (h >>> 13)) >>> 0) / 4294967295;
         }
 
+        measure();
         var ctx = document.getElementById("drop").getContext("2d");
         var clock = { t: 0 };
         var LIFE = 0.9;
@@ -268,29 +309,40 @@
           document.getElementById("logo-mark").style.opacity = String(1 - Math.min(1, sc / 120));
 
           ctx.clearRect(0, 0, W, H);
-          /* Paint drops: shed behind the ball while it moves, each one fading out. */
+          /* Stretched tail: the ball's recent path, tapering to a point. */
+          var b = ballAt(t);
+          var N = 24;
+          ctx.lineCap = "round";
+          for (var i = N; i > 0; i--) {
+            var a = ballAt(Math.max(0, t - i * 0.012));
+            var c = ballAt(Math.max(0, t - (i - 1) * 0.012));
+            var k = 1 - i / N;
+            ctx.strokeStyle = "rgba(255,91,20," + (0.15 + 0.85 * k).toFixed(3) + ")";
+            ctx.lineWidth = Math.max(1, b.r * 2 * k * k);
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.py - sc);
+            ctx.lineTo(c.x, c.py - sc);
+            ctx.stroke();
+          }
+          /* Paint drops flicked off the tail when it moves fast; they sag and fade. */
           var first = Math.max(0, Math.floor((t - LIFE) / STEP));
-          for (var k = first; k * STEP <= t; k++) {
-            var te = k * STEP;
+          for (var k2 = first; k2 * STEP <= t; k2++) {
+            var te = k2 * STEP;
             var p0 = ballAt(te);
             var p1 = ballAt(te + STEP);
             var speed = Math.hypot(p1.x - p0.x, p1.py - p0.py);
-            if (speed < 6 || p0.sc < 60) continue;
+            if (speed < 18 || p0.sc < 60 || hash(k2) > 0.55) continue;
             var age = (t - te) / LIFE;
-            var n = hash(k);
-            var size = p0.r * (0.25 + 0.45 * n) * Math.min(1, speed / 40) * (1 - age * 0.6);
-            var jitter = (hash(k + 999) - 0.5) * p0.r * 1.2;
-            var bx = p0.x + jitter;
-            var by = p0.py - sc;
-            ctx.globalAlpha = Math.max(0, 1 - age) * 0.9;
+            var n = hash(k2 + 77);
+            var size = p0.r * (0.18 + 0.3 * n);
+            ctx.globalAlpha = Math.max(0, 1 - age);
             ctx.fillStyle = "#ff5b14";
             ctx.beginPath();
-            ctx.arc(bx, by, Math.max(1, size), 0, Math.PI * 2);
+            ctx.arc(p0.x + (n - 0.5) * p0.r * 2.2, p0.py - sc + age * age * 60, size * (1 - age * 0.5), 0, Math.PI * 2);
             ctx.fill();
           }
           ctx.globalAlpha = 1;
           /* The ball. */
-          var b = ballAt(t);
           var nb = ballAt(Math.max(0, t - STEP));
           var v = Math.hypot(b.x - nb.x, b.py - nb.py);
           var ang = Math.atan2(b.py - nb.py, b.x - nb.x);
@@ -317,7 +369,7 @@
         }
 
         var tl = gsap.timeline({ paused: true });
-        tl.to(clock, { t: 8, duration: 8, ease: "none", onUpdate: paint }, 0);
+        tl.to(clock, { t: 10, duration: 10, ease: "none", onUpdate: paint }, 0);
         window.__timelines = window.__timelines || {};
         window.__timelines["main"] = tl;
         tl.seek(0);
