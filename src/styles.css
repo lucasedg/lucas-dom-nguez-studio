@@ -4306,3 +4306,10 @@ html {
 @media (prefers-reduced-motion: reduce) {
   .services-band-track { animation: none; }
 }
+
+/* Sin fórmulas de plantilla: el naranja resalta solo la portada y las acciones,
+   y las flechas quedan solo en los enlaces que salen de la web. */
+.services-section .section-title em, #estudio .about-title em, .process-section .section-title em,
+.qualifier-section .cta-title em, .motion-showcase h2 em { color: inherit; }
+.glass-button:not([target]) svg, .creative-plan-cta svg, .about-link svg, .service-guide-link svg,
+.qualifier-submit svg, .project-card-caption > svg { display: none; }
