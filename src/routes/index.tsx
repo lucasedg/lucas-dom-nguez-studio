@@ -110,7 +110,7 @@ const projects = [
   {
     name: "Buba",
     category: "Identidad de marca",
-    type: "Identidad visual · Streetwear",
+    type: "Identidad visual y Streetwear",
     focus: ["Identidad visual", "Dirección de arte", "Presencia de marca"],
     image: bubaCover,
     width: 2161,
@@ -143,32 +143,32 @@ const projects = [
               src: bubaImage,
               width: 1402,
               height: 1122,
-              caption: "Core Collection · Aplicaciones esenciales y acabados tono sobre tono.",
+              caption: "Core Collection. Aplicaciones esenciales y acabados tono sobre tono.",
             },
             {
               src: bubaNoSleep,
               width: 1402,
               height: 1122,
-              caption: "No Sleep Club · Aplicación de la gráfica Statement en una prenda.",
+              caption: "No Sleep Club. Aplicación de la gráfica Statement en una prenda.",
             },
             {
               src: bubaStatement,
               width: 1536,
               height: 1024,
               caption:
-                "Statement Collection · Mensajes que convierten la prenda en una declaración.",
+                "Statement Collection. Mensajes que convierten la prenda en una declaración.",
             },
             {
               src: bubaLimited,
               width: 1402,
               height: 1122,
-              caption: "Limited Collection · Exploraciones gráficas Afterdark y Nightfall.",
+              caption: "Limited Collection. Exploraciones gráficas Afterdark y Nightfall.",
             },
             {
               src: bubaTank,
               width: 1402,
               height: 1122,
-              caption: "Aplicación en camiseta de tirantes · Logotipo, símbolo y coordenadas.",
+              caption: "Aplicación en camiseta de tirantes. Logotipo, símbolo y coordenadas.",
             },
           ],
         },
@@ -180,7 +180,7 @@ const projects = [
               src: bubaSocialCover,
               width: 2161,
               height: 2701,
-              caption: "Portada del carrusel · La firma sobre textura textil.",
+              caption: "Portada del carrusel. La firma sobre textura textil.",
             },
             {
               src: bubaSocialPhone,
@@ -198,7 +198,7 @@ const projects = [
               src: bubaSocialCampaign,
               width: 2161,
               height: 2701,
-              caption: "Imagen de campaña · El universo nocturno de BUBA.",
+              caption: "Imagen de campaña. El universo nocturno de BUBA.",
             },
           ],
         },
@@ -207,8 +207,8 @@ const projects = [
   },
   {
     name: "VIORA",
-    category: "Branding · Diseño de app",
-    type: "Identidad visual · UX/UI",
+    category: "Branding y Diseño de app",
+    type: "Identidad visual y UX/UI",
     focus: ["Branding", "Diseño de interfaz", "Experiencia de usuario"],
     image: vioraIdentity,
     width: 1440,
@@ -227,13 +227,13 @@ const projects = [
               src: vioraApplication,
               width: 1440,
               height: 1800,
-              caption: "Branding y UX/UI · La identidad en la aplicación.",
+              caption: "Branding y UX/UI. La identidad en la aplicación.",
             },
             {
               src: vioraWelcome,
               width: 1440,
               height: 1800,
-              caption: "Bienvenida · Primeros pasos para configurar el seguimiento.",
+              caption: "Bienvenida. Primeros pasos para configurar el seguimiento.",
             },
           ],
         },
@@ -245,7 +245,7 @@ const projects = [
               src: vioraInterface,
               width: 1440,
               height: 1800,
-              caption: "Diseño de interfaz · Registro, calendario y visualización del progreso.",
+              caption: "Diseño de interfaz. Registro, calendario y visualización del progreso.",
             },
           ],
         },
@@ -257,13 +257,13 @@ const projects = [
               src: vioraCampaign,
               width: 1440,
               height: 1800,
-              caption: "Visualización de campaña · Aplicación de la marca en publicidad exterior.",
+              caption: "Visualización de campaña. Aplicación de la marca en publicidad exterior.",
             },
             {
               src: vioraIdentity,
               width: 1440,
               height: 1800,
-              caption: "Identidad visual · Símbolo y logotipo de VIORA.",
+              caption: "Identidad visual. Símbolo y logotipo de VIORA.",
             },
           ],
         },
@@ -273,7 +273,7 @@ const projects = [
   {
     name: "Florecer",
     category: "Identidad de marca",
-    type: "Identidad visual · Indumentaria deportiva y urbana",
+    type: "Identidad visual y Indumentaria deportiva y urbana",
     focus: ["Identidad visual", "Aplicaciones en prendas", "Comunicación de marca"],
     image: florecerAccessories,
     width: 1122,
@@ -292,13 +292,13 @@ const projects = [
               src: florecerTop,
               width: 1122,
               height: 1402,
-              caption: "Aplicación en top deportivo · Símbolo y nombre de marca.",
+              caption: "Aplicación en top deportivo. Símbolo y nombre de marca.",
             },
             {
               src: florecerShirt,
               width: 1122,
               height: 1402,
-              caption: "Aplicación en camiseta · El fénix como firma.",
+              caption: "Aplicación en camiseta. El fénix como firma.",
             },
           ],
         },
@@ -310,7 +310,7 @@ const projects = [
               src: florecerAccessories,
               width: 1122,
               height: 1402,
-              caption: "Aplicaciones de marca · Botella, etiqueta y textil.",
+              caption: "Aplicaciones de marca. Botella, etiqueta y textil.",
             },
           ],
         },
@@ -322,13 +322,13 @@ const projects = [
               src: florecerIcon,
               width: 1122,
               height: 1402,
-              caption: "Aplicación digital · El fénix como icono.",
+              caption: "Aplicación digital. El fénix como icono.",
             },
             {
               src: florecerDigital,
               width: 1122,
               height: 1402,
-              caption: "Un sistema coherente · Identidad en pantalla y accesorios.",
+              caption: "Un sistema coherente. Identidad en pantalla y accesorios.",
             },
           ],
         },
@@ -337,8 +337,8 @@ const projects = [
   },
   {
     name: "Hotel Alma Rosa",
-    category: "Identidad de marca · Diseño web",
-    type: "Rediseño de marca · Desarrollo web",
+    category: "Identidad de marca y Diseño web",
+    type: "Rediseño de marca y Desarrollo web",
     focus: ["Identidad visual", "Desarrollo web", "Fotografía y edición"],
     image: almaRosaImage,
     width: 1536,
@@ -358,7 +358,7 @@ const projects = [
               src: almaRosaIdentity,
               width: 1492,
               height: 1054,
-              caption: "Sistema de identidad · Monograma, paleta y aplicaciones de marca.",
+              caption: "Sistema de identidad. Monograma, paleta y aplicaciones de marca.",
             },
           ],
         },
@@ -371,7 +371,7 @@ const projects = [
               width: 1536,
               height: 1024,
               caption:
-                "Diseño y desarrollo web · Presentación de la identidad en ordenador y móvil.",
+                "Diseño y desarrollo web. Presentación de la identidad en ordenador y móvil.",
             },
           ],
         },
@@ -380,8 +380,8 @@ const projects = [
   },
   {
     name: "Código Perro",
-    category: "Identidad digital · Contenido",
-    type: "Identidad digital · Estrategia de contenido",
+    category: "Identidad digital y Contenido",
+    type: "Identidad digital y Estrategia de contenido",
     focus: ["Identidad visual", "Contenido para redes", "Copywriting"],
     image: codigoPerroImage,
     width: 1491,
@@ -401,7 +401,7 @@ const projects = [
               src: codigoPerroIdentity,
               width: 1492,
               height: 1054,
-              caption: "Identidad visual · Logotipo y paleta de marca.",
+              caption: "Identidad visual. Logotipo y paleta de marca.",
             },
           ],
         },
@@ -682,7 +682,7 @@ function Hero() {
         <Header />
         <div className="brand-hero-grid">
           <div className="brand-hero-copy">
-            <p className="hero-kicker">Diseñador gráfico · Málaga, España</p>
+            <p className="hero-kicker">Diseñador gráfico en Málaga</p>
             <h1 className="brand-headline">
               Diseño marcas <em>con carácter.</em>
             </h1>
@@ -770,9 +770,6 @@ function Studio() {
     >
       <div className="section-veil section-veil-light" aria-hidden="true" />
       <div className="relative mx-auto max-w-[1500px]">
-        <Reveal>
-          <p className="section-label">Sobre mí</p>
-        </Reveal>
         <div className="about-composition" data-motion>
           <Reveal className="about-heading">
             <h2 className="about-title">
@@ -832,7 +829,6 @@ function Services() {
       <div className="services-glow" aria-hidden="true" />
       <div className="relative mx-auto max-w-[1500px]">
         <Reveal>
-          <p className="section-label">Servicios</p>
           <h2 id="services-title" className="section-title mt-8">
             Diseño para tu marca.
             <br />
@@ -894,7 +890,7 @@ function Services() {
             </ul>
           </SmoothDetails>
           <p className="creative-plans-notes">
-            Planes mes a mes · Precios sin IVA · Alta inicial: 290 € cuando sea necesaria; no se
+            Planes mes a mes, precios sin IVA. Alta inicial: 290 € cuando sea necesaria; no se
             aplica si ya hemos creado tu identidad. Las piezas se acuerdan al comenzar cada mes.
             <br />
             Incluye diseño y entrega; tú publicas y gestionas tus cuentas. Foto, vídeo, desarrollo
@@ -1008,7 +1004,6 @@ function ProjectExperience({ project }: { project: (typeof projects)[number] }) 
               </div>
             </div>
             <div className="project-app-story">
-              <span className="section-label">El universo de marca</span>
               <DialogDescription id={`project-description-${project.name.replaceAll(" ", "-")}`}>
                 {project.statement}
               </DialogDescription>
@@ -1138,7 +1133,6 @@ function Process() {
       </div>
       <div className="relative mx-auto max-w-[1500px]">
         <Reveal>
-          <p className="section-label text-studio-ivory/55">Proceso</p>
           <h2 className="section-title mt-10">
             De la intención
             <br />
@@ -1209,7 +1203,6 @@ function ProjectQualifier() {
       </div>
       <div className="relative mx-auto grid max-w-[1500px] gap-14 lg:grid-cols-[minmax(0,0.9fr)_minmax(400px,0.7fr)] lg:gap-20">
         <Reveal>
-          <p className="section-label border-studio-black/30">Hablemos</p>
           <h2 className="cta-title mt-10 uppercase">
             Toda marca
             <br />

@@ -4306,3 +4306,68 @@ html {
 @media (prefers-reduced-motion: reduce) {
   .services-band-track { animation: none; }
 }
+
+/* ==========================================================================
+   Refinado 2026 · formas, tamaños y calma (referencia: galería de producto)
+   Un sistema de radios por jerarquía, superficies planas separadas por color,
+   más aire entre capítulos y un solo momento de movimiento (la intro).
+   ========================================================================== */
+:root {
+  --r-media: 28px;   /* fotos y tarjetas grandes */
+  --r-panel: 22px;   /* paneles internos */
+  --r-field: 14px;   /* campos de formulario */
+  --r-pill: 9999px;  /* botones y chips */
+  --chapter: clamp(96px, 12vw, 160px);
+}
+@media (max-width: 767px) {
+  :root { --r-media: 22px; --r-panel: 18px; }
+}
+
+/* Ritmo: capítulos separados con el mismo aire. */
+.studio-section, .services-section, .work-section, .process-section, .qualifier-section {
+  padding-block: var(--chapter);
+}
+
+/* Tipografía: titulares compactos, texto de lectura a 17px. */
+.section-title, .about-title, .cta-title {
+  line-height: 0.92;
+  letter-spacing: -0.005em;
+}
+.section-title, .about-title { font-size: clamp(3rem, 8.5vw, 6.75rem); }
+.service-guide-intro, .about-copy p, .contact-lead, .project-case-intro {
+  font-size: 1.0625rem;
+  line-height: 1.47;
+  letter-spacing: -0.01em;
+  max-width: 34rem;
+}
+/* El naranja deja de resaltar frases: queda solo en la portada y en las acciones. */
+.services-section .section-title em, #estudio .about-title em, .process-section .section-title em,
+.qualifier-section .cta-title em { color: inherit; }
+
+/* Formas: un radio para cada nivel. */
+.project-media, .project-media img, .portrait-frame, .portrait-frame img,
+.creative-plan, .contact-card, .project-case-gallery img { border-radius: var(--r-media); }
+.project-media { overflow: hidden; }
+.contact-card .contact-channels a, .qualifier-options button { border-radius: var(--r-panel); }
+.contact-card .qualifier-field input, .contact-card .qualifier-field textarea { border-radius: var(--r-field); }
+.glass-button, .creative-plan-cta, .contact-card .qualifier-submit, .service-guide-link,
+.studio-dock, .studio-dock a { border-radius: var(--r-pill); }
+
+/* Superficies planas: la separación la da el color, no la sombra ni el brillo. */
+.creative-plan, .creative-plan-featured, .contact-card, .qualifier-form, .glass-button,
+.qualifier-submit, .contact-channels a, .contact-card .contact-channels .contact-whatsapp {
+  box-shadow: none !important;
+}
+.creative-plan { background: #262626; border: 0; padding: clamp(1.75rem, 3vw, 2.5rem); }
+.creative-plan-featured { background: var(--studio-ivory); }
+.contact-card { background: rgb(255 255 255 / 5%); border: 0; backdrop-filter: none; -webkit-backdrop-filter: none; }
+.services-glow, .section-veil, .process-ambient, .qualifier-shape, .section-transition { display: none !important; }
+.brand-hero { background: var(--studio-petrol) !important; }
+.creative-plan:hover, .creative-plan:active { transform: none; }
+
+/* Flechas solo donde el enlace sale de la web. */
+.glass-button:not([target]) svg, .creative-plan-cta svg, .about-link svg, .service-guide-link svg,
+.qualifier-submit svg, .project-card-caption > svg { display: none; }
+
+/* Sin aparición en cascada de cada bloque: el contenido ya está ahí. */
+.reveal, .reveal.is-visible { opacity: 1 !important; transform: none !important; transition: none !important; }
