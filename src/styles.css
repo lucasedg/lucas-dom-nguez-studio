@@ -4313,3 +4313,39 @@ html {
 .qualifier-section .cta-title em, .motion-showcase h2 em { color: inherit; }
 .glass-button:not([target]) svg, .creative-plan-cta svg, .about-link svg, .service-guide-link svg,
 .qualifier-submit svg, .project-card-caption > svg { display: none; }
+
+/* Proporciones en móvil: todo a la escala de una pantalla de bolsillo. */
+@media (max-width: 767px) {
+  /* Cabecera */
+  .brand-logo-symbol { width: 30px; height: 30px; }
+  .brand-logo-name { font-size: 11px; }
+  .brand-logo-studio { font-size: 7px; }
+
+  /* Portada: símbolo, titular y botón en equilibrio. */
+  .hero-mark { width: min(50vw, 30svh, 240px); }
+  .graphite-logo-scene { margin-bottom: 20px; }
+  .hero-stage .brand-headline { font-size: clamp(2.5rem, 11.5vw, 3.15rem); line-height: 0.95; }
+  .hero-stage .brand-intro { font-size: 0.95rem; }
+  .brand-actions .glass-button {
+    min-height: 46px; width: auto; padding: 0 1.6rem;
+    font-size: 0.875rem;
+  }
+  .brand-actions { justify-content: center; }
+
+  /* Barra inferior más ligera */
+  .studio-dock { padding: 0.3rem; gap: 0.1rem; }
+  .studio-dock a { min-height: 38px; padding: 0.4rem 0.75rem; font-size: 0.72rem; }
+  footer > div { gap: 1.75rem; }
+
+  /* Contacto */
+  .contact-card .qualifier-submit { min-height: 50px; font-size: 0.75rem; letter-spacing: 0.1em; }
+  .qualifier-shape { display: none; }
+  .qualifier-section { padding-bottom: 72px; }
+
+  /* Pie */
+  .brand-logo-footer .brand-logo-symbol { width: 40px; height: 40px; }
+  .brand-logo-footer .brand-logo-name { font-size: 15px; }
+  .brand-logo-footer .brand-logo-studio { font-size: 8px; }
+  footer .text-\[10px\] { font-size: 9.5px; }
+  .graphics-toggle { font-size: 0.75rem; border-bottom: 0; padding: 0.25rem 0; color: var(--studio-steel); }
+}
