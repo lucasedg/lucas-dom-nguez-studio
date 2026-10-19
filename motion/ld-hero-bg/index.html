@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>LD · fondo de portada</title>
+    <script src="assets/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Bebas Neue"; src: url("assets/bebas-neue-latin-400-normal.woff2") format("woff2"); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body, #root { width: 100%; height: 100%; overflow: hidden; background: #161616; }
+      #scene { position: absolute; inset: 0; overflow: hidden; background: #1d1d1d; }
+      /* Blueprint grid, fading out towards the edges. */
+      #grid {
+        position: absolute; inset: -80px;
+        background-image:
+          linear-gradient(rgb(247 245 242 / 5.5%) 1px, transparent 1px),
+          linear-gradient(90deg, rgb(247 245 242 / 5.5%) 1px, transparent 1px);
+        background-size: 88px 88px;
+        -webkit-mask-image: radial-gradient(ellipse 70% 60% at 62% 40%, #000 30%, transparent 75%);
+        mask-image: radial-gradient(ellipse 70% 60% at 62% 40%, #000 30%, transparent 75%);
+      }
+      /* Spotlight from above, like a lamp over the work. */
+      #spot {
+        position: absolute; left: 50%; top: -40%; width: 1800px; height: 1800px; margin-left: -900px;
+        background: conic-gradient(from 180deg at 50% 0%, transparent 44%, rgb(255 140 90 / 14%) 49%, rgb(255 160 110 / 22%) 50%, rgb(255 140 90 / 14%) 51%, transparent 56%);
+        filter: blur(30px);
+      }
+      /* Two warm glows drifting slowly behind the symbol. */
+      .glow { position: absolute; border-radius: 50%; filter: blur(90px); }
+      #g1 { width: 760px; height: 760px; left: 980px; top: 120px; background: rgb(255 91 20 / 26%); }
+      #g2 { width: 520px; height: 520px; left: 700px; top: 420px; background: rgb(255 170 120 / 14%); }
+      #mark { position: absolute; left: 1150px; top: 300px; width: 460px; height: 460px; background: #ff5b14;
+        box-shadow: inset 0 2px 2px rgb(255 230 210 / 45%), 0 50px 90px rgb(0 0 0 / 45%), 0 0 120px rgb(255 91 20 / 25%); }
+      h1 { position: absolute; left: 140px; top: 520px; font: 400 170px/0.9 "Bebas Neue"; color: #f7f5f2; }
+      h1 em { font-style: normal; color: #ff5b14; }
+      #fade { position: absolute; left: 0; right: 0; bottom: 0; height: 260px; background: linear-gradient(transparent, #1a1a1a); }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="8" data-fps="30" data-width="1920" data-height="1080">
+      <section id="scene" class="clip" data-start="0" data-duration="8" data-track-index="0">
+        <div id="grid"></div>
+        <div id="spot"></div>
+        <div class="glow" id="g1"></div>
+        <div class="glow" id="g2"></div>
+        <div id="mark"></div>
+        <h1>DISEÑO MARCAS<br /><em>CON CARÁCTER.</em></h1>
+        <div id="fade"></div>
+      </section>
+    </div>
+    <script>
+      var tl = gsap.timeline({ paused: true });
+      /* 8 s seamless loop: glows drift on an ellipse, grid breathes, spotlight sways. */
+      tl.fromTo("#g1", { x: 0, y: 0, scale: 1 }, { keyframes: [ { x: -120, y: 60, scale: 1.08, duration: 4 }, { x: 0, y: 0, scale: 1, duration: 4 } ], ease: "sine.inOut" }, 0);
+      tl.fromTo("#g2", { x: 0, y: 0 }, { keyframes: [ { x: 140, y: -50, duration: 4 }, { x: 0, y: 0, duration: 4 } ], ease: "sine.inOut" }, 0);
+      tl.fromTo("#grid", { x: 0, y: 0 }, { x: 88, y: 88, duration: 8, ease: "none" }, 0);
+      tl.fromTo("#spot", { rotation: -4 }, { keyframes: [ { rotation: 4, duration: 4 }, { rotation: -4, duration: 4 } ], ease: "sine.inOut" }, 0);
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

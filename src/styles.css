@@ -4371,3 +4371,123 @@ html {
 
 /* Sin aparición en cascada de cada bloque: el contenido ya está ahí. */
 .reveal, .reveal.is-visible { opacity: 1 !important; transform: none !important; transition: none !important; }
+
+/* ==========================================================================
+   Profundidad 2026 · relieve, sombras, atmósfera y transiciones entre capítulos
+   Paleta cálida de la marca: la luz es naranja y el relieve, blanco roto.
+   ========================================================================== */
+:root {
+  /* Relieve sobre fondo oscuro: filo de luz arriba, brillo interior y sombra profunda. */
+  --elev-dark:
+    inset 0 1px 1px rgb(255 236 224 / 16%),
+    inset 0 24px 48px rgb(255 140 90 / 4%),
+    0 24px 40px -8px rgb(0 0 0 / 55%),
+    0 2px 6px rgb(0 0 0 / 30%);
+  /* Relieve sobre papel: sombra corta de contacto + sombra larga y suave. */
+  --elev-light:
+    0 1px 2px rgb(29 29 29 / 8%),
+    0 12px 24px -6px rgb(29 29 29 / 14%),
+    0 40px 70px -24px rgb(29 29 29 / 28%);
+  --edge-dark: inset 0 0 0 1px rgb(255 236 224 / 9%);
+}
+
+/* Portada: atmósfera viva detrás del símbolo. */
+.hero-stage { position: relative; isolation: isolate; overflow: hidden; }
+.hero-atmos { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+.hero-atmos-grid {
+  position: absolute; inset: -88px;
+  background-image:
+    linear-gradient(rgb(247 245 242 / 6%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(247 245 242 / 6%) 1px, transparent 1px);
+  background-size: 88px 88px;
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 62% 40%, #000 25%, transparent 75%);
+  mask-image: radial-gradient(ellipse 70% 60% at 62% 40%, #000 25%, transparent 75%);
+  animation: atmos-grid 16s linear infinite;
+}
+.hero-atmos-spot {
+  position: absolute; left: 50%; top: -60%; width: 180vmax; height: 180vmax; margin-left: -90vmax;
+  background: conic-gradient(from 180deg at 50% 0%, transparent 44%, rgb(255 140 90 / 12%) 49%, rgb(255 160 110 / 20%) 50%, rgb(255 140 90 / 12%) 51%, transparent 56%);
+  filter: blur(30px);
+  transform-origin: 50% 0;
+  animation: atmos-sway 16s ease-in-out infinite;
+}
+.hero-atmos-glow { position: absolute; border-radius: 50%; filter: blur(90px); will-change: transform; }
+.hero-atmos-glow-a { width: 46vmax; height: 46vmax; right: -6vmax; top: 4%; background: rgb(255 91 20 / 24%); animation: atmos-a 16s ease-in-out infinite; }
+.hero-atmos-glow-b { width: 30vmax; height: 30vmax; right: 18vmax; top: 38%; background: rgb(255 170 120 / 12%); animation: atmos-b 16s ease-in-out infinite; }
+@keyframes atmos-grid { to { transform: translate(88px, 88px); } }
+@keyframes atmos-sway { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg); } }
+@keyframes atmos-a { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(-8vmax, 4vmax) scale(1.08); } }
+@keyframes atmos-b { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(9vmax, -3vmax); } }
+@media (max-width: 767px) {
+  .hero-atmos-glow-a { right: -20vmax; top: 6%; }
+  .hero-atmos-glow-b { right: 0; top: 30%; }
+}
+[data-graphics-paused="true"] .hero-atmos * { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) { .hero-atmos * { animation: none !important; } }
+
+/* El símbolo de portada y sus carteles flotan sobre la luz. */
+.hero-mark-symbol { filter: drop-shadow(0 40px 60px rgb(0 0 0 / 50%)) drop-shadow(0 0 80px rgb(255 91 20 / 22%)); }
+.hero-mark-tag { box-shadow: 0 1px 1px rgb(255 255 255 / 25%) inset, 0 14px 28px -6px rgb(0 0 0 / 55%), 0 3px 8px rgb(0 0 0 / 25%) !important; }
+
+/* Capítulos claros como hojas que suben sobre el oscuro: el borde redondeado y la
+   sombra unen las secciones en vez de cortarlas. */
+.work-section, .services-section {
+  position: relative; z-index: 2;
+  margin-top: -44px;
+  border-radius: 44px 44px 0 0;
+  box-shadow: 0 -24px 60px rgb(0 0 0 / 35%);
+}
+@media (max-width: 767px) {
+  .work-section, .services-section { margin-top: -28px; border-radius: 28px 28px 0 0; }
+}
+.services-band { padding-bottom: calc(clamp(1.75rem, 4vw, 3rem) + 44px); }
+.services-section { background: linear-gradient(180deg, #f3efe9, var(--studio-cream) 30%); }
+.studio-section { background: linear-gradient(180deg, var(--studio-cream), var(--studio-ivory) 40%); }
+
+/* Del claro al oscuro: un fundido largo en vez de un corte. */
+.process-section { background: linear-gradient(180deg, #2a2724 0%, var(--studio-black) 22%) !important; }
+.process-section::before, .qualifier-section::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgb(247 245 242 / 4%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(247 245 242 / 4%) 1px, transparent 1px);
+  background-size: 88px 88px;
+  -webkit-mask-image: radial-gradient(ellipse 60% 50% at 50% 30%, #000, transparent 75%);
+  mask-image: radial-gradient(ellipse 60% 50% at 50% 30%, #000, transparent 75%);
+}
+.qualifier-section {
+  background:
+    radial-gradient(ellipse 70% 45% at 85% 0%, rgb(255 91 20 / 14%), transparent 70%),
+    linear-gradient(180deg, var(--studio-black), #141414) !important;
+}
+.process-section > *, .qualifier-section > * { position: relative; }
+
+/* Relieve de tarjetas y paneles. */
+.creative-plan {
+  background: linear-gradient(180deg, #2b2b2b, #222) !important;
+  box-shadow: var(--elev-dark), var(--elev-light) !important;
+}
+.creative-plan-featured {
+  background: linear-gradient(180deg, #fffdfa, var(--studio-ivory)) !important;
+  box-shadow: 0 1px 1px rgb(255 255 255) inset, var(--elev-light), 0 30px 60px -20px rgb(255 91 20 / 28%) !important;
+}
+.project-media { box-shadow: var(--elev-light); }
+.portrait-frame { box-shadow: var(--elev-light); }
+.contact-card {
+  background: linear-gradient(180deg, rgb(255 255 255 / 6%), rgb(255 255 255 / 2.5%)) !important;
+  box-shadow: var(--edge-dark), var(--elev-dark) !important;
+  backdrop-filter: blur(16px) !important; -webkit-backdrop-filter: blur(16px) !important;
+}
+.contact-card .contact-channels a { box-shadow: var(--edge-dark); }
+.contact-card .contact-channels .contact-whatsapp {
+  box-shadow: inset 0 1px 1px rgb(255 230 210 / 50%), 0 14px 30px -8px rgb(255 91 20 / 45%) !important;
+}
+.contact-card .qualifier-field input, .contact-card .qualifier-field textarea {
+  box-shadow: inset 0 2px 4px rgb(0 0 0 / 35%), var(--edge-dark);
+}
+.glass-button-primary, .contact-card .qualifier-submit {
+  box-shadow: inset 0 1px 1px rgb(255 255 255 / 40%), 0 10px 24px -8px rgb(0 0 0 / 45%) !important;
+}
+.glass-button-primary { box-shadow: inset 0 1px 1px rgb(255 230 210 / 55%), 0 12px 28px -8px rgb(255 91 20 / 50%) !important; }
+.process-step > span:first-child { box-shadow: 0 0 0 4px rgb(255 91 20 / 10%), 0 0 18px rgb(255 91 20 / 35%); }
+.creative-plan-featured, .creative-plan-featured li, .creative-plan-featured .creative-plan-description { color: var(--studio-black) !important; }

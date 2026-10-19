@@ -676,6 +676,13 @@ function Hero() {
   return (
     <section id="inicio" className="hero-scroll-scene">
       <div className="hero-stage hero brand-hero cinema-surface sculptural-hero graphite-hero">
+        {/* Ambient background, designed in HyperFrames (motion/ld-hero-bg). */}
+        <div className="hero-atmos" aria-hidden="true">
+          <span className="hero-atmos-grid" />
+          <span className="hero-atmos-spot" />
+          <span className="hero-atmos-glow hero-atmos-glow-a" />
+          <span className="hero-atmos-glow hero-atmos-glow-b" />
+        </div>
         <div className="graphite-logo-scene">
           <HeroBrandMark />
         </div>
