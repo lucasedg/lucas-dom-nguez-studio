@@ -110,7 +110,7 @@ const projects = [
   {
     name: "Buba",
     category: "Identidad de marca",
-    type: "Identidad visual y Streetwear",
+    type: "Identidad visual y streetwear",
     focus: ["Identidad visual", "Dirección de arte", "Presencia de marca"],
     image: bubaCover,
     width: 2161,
@@ -207,7 +207,7 @@ const projects = [
   },
   {
     name: "VIORA",
-    category: "Branding y Diseño de app",
+    category: "Branding y diseño de app",
     type: "Identidad visual y UX/UI",
     focus: ["Branding", "Diseño de interfaz", "Experiencia de usuario"],
     image: vioraIdentity,
@@ -273,7 +273,7 @@ const projects = [
   {
     name: "Florecer",
     category: "Identidad de marca",
-    type: "Identidad visual y Indumentaria deportiva y urbana",
+    type: "Identidad visual y indumentaria deportiva y urbana",
     focus: ["Identidad visual", "Aplicaciones en prendas", "Comunicación de marca"],
     image: florecerAccessories,
     width: 1122,
@@ -337,8 +337,8 @@ const projects = [
   },
   {
     name: "Hotel Alma Rosa",
-    category: "Identidad de marca y Diseño web",
-    type: "Rediseño de marca y Desarrollo web",
+    category: "Identidad de marca y diseño web",
+    type: "Rediseño de marca y desarrollo web",
     focus: ["Identidad visual", "Desarrollo web", "Fotografía y edición"],
     image: almaRosaImage,
     width: 1536,
@@ -380,8 +380,8 @@ const projects = [
   },
   {
     name: "Código Perro",
-    category: "Identidad digital y Contenido",
-    type: "Identidad digital y Estrategia de contenido",
+    category: "Identidad digital y contenido",
+    type: "Identidad digital y estrategia de contenido",
     focus: ["Identidad visual", "Contenido para redes", "Copywriting"],
     image: codigoPerroImage,
     width: 1491,
