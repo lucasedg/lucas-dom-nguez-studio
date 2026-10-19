@@ -110,7 +110,7 @@ const projects = [
   {
     name: "Buba",
     category: "Identidad de marca",
-    type: "Identidad visual y streetwear",
+    type: "Identidad visual para streetwear",
     focus: ["Identidad visual", "Dirección de arte", "Presencia de marca"],
     image: bubaCover,
     width: 2161,
@@ -273,7 +273,7 @@ const projects = [
   {
     name: "Florecer",
     category: "Identidad de marca",
-    type: "Identidad visual y indumentaria deportiva y urbana",
+    type: "Identidad visual para indumentaria deportiva y urbana",
     focus: ["Identidad visual", "Aplicaciones en prendas", "Comunicación de marca"],
     image: florecerAccessories,
     width: 1122,
