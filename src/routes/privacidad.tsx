@@ -44,6 +44,13 @@ function Privacidad() {
           para responderte.
         </p>
         <p>
+          Si trabajamos juntos, te envío un enlace privado para aceptar las condiciones del encargo.
+          Ahí recojo tu nombre, el de tu negocio, tu NIF o CIF, tu domicilio fiscal y teléfono si
+          los indicas, tu correo, la referencia del presupuesto, tu firma escrita y, como
+          justificante, la fecha y la hora, la versión de las condiciones aceptadas, tu dirección IP
+          y el tipo de navegador.
+        </p>
+        <p>
           Esta web no usa herramientas de analítica ni publicidad, y no crea perfiles de las
           personas que la visitan.
         </p>
@@ -61,6 +68,15 @@ function Privacidad() {
             facturación. La base legal es la ejecución del contrato y el cumplimiento de
             obligaciones legales.
           </li>
+          <li>
+            <strong>Registrar que aceptas las condiciones del encargo y enviarte una copia</strong>{" "}
+            por correo. La base legal es la ejecución del contrato y mi interés legítimo en poder
+            demostrar lo acordado.
+          </li>
+          <li>
+            <strong>Enviarte novedades del estudio</strong>, solo si marcas esa casilla. Puedes
+            retirar el permiso cuando quieras.
+          </li>
         </ul>
         <p>No usaré tus datos para enviarte publicidad sin tu permiso.</p>
       </LegalSection>
@@ -69,7 +85,8 @@ function Privacidad() {
         <p>
           Si no llegamos a trabajar juntos, conservo tus mensajes un máximo de un año y después los
           elimino. Si hay encargo, conservo los datos mientras dure la relación y, después, el
-          tiempo que exijan las obligaciones fiscales y legales.
+          tiempo que exijan las obligaciones fiscales y legales (en general, hasta 6 años). El
+          justificante de aceptación de las condiciones se conserva el mismo tiempo.
         </p>
       </LegalSection>
 
@@ -80,8 +97,12 @@ function Privacidad() {
         </p>
         <ul>
           <li>
-            <strong>FormSubmit</strong> (formsubmit.co): recibe el formulario y lo reenvía a mi
-            correo.
+            <strong>FormSubmit</strong> (formsubmit.co): recibe el formulario de contacto y me lo
+            reenvía.
+          </li>
+          <li>
+            <strong>Resend</strong> (resend.com): cuando aceptas las condiciones, envía desde mi web
+            tu copia por correo y mi justificante.
           </li>
           <li>
             <strong>Google</strong> (Gmail): es el servicio de correo donde recibo y respondo los

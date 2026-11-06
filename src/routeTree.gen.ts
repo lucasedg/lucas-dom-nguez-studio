@@ -10,13 +10,20 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AcuerdoRouteImport } from './routes/acuerdo'
 import { Route as AvisoLegalRouteImport } from './routes/aviso-legal'
 import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as PrivacidadRouteImport } from './routes/privacidad'
+import { Route as ApiAcuerdoRouteImport } from './routes/api/acuerdo'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AcuerdoRoute = AcuerdoRouteImport.update({
+  id: '/acuerdo',
+  path: '/acuerdo',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AvisoLegalRoute = AvisoLegalRouteImport.update({
@@ -34,39 +41,71 @@ const PrivacidadRoute = PrivacidadRouteImport.update({
   path: '/privacidad',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAcuerdoRoute = ApiAcuerdoRouteImport.update({
+  id: '/api/acuerdo',
+  path: '/api/acuerdo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/acuerdo': typeof AcuerdoRoute
   '/aviso-legal': typeof AvisoLegalRoute
   '/cookies': typeof CookiesRoute
   '/privacidad': typeof PrivacidadRoute
+  '/api/acuerdo': typeof ApiAcuerdoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/acuerdo': typeof AcuerdoRoute
   '/aviso-legal': typeof AvisoLegalRoute
   '/cookies': typeof CookiesRoute
   '/privacidad': typeof PrivacidadRoute
+  '/api/acuerdo': typeof ApiAcuerdoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/acuerdo': typeof AcuerdoRoute
   '/aviso-legal': typeof AvisoLegalRoute
   '/cookies': typeof CookiesRoute
   '/privacidad': typeof PrivacidadRoute
+  '/api/acuerdo': typeof ApiAcuerdoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/aviso-legal' | '/cookies' | '/privacidad'
+  fullPaths:
+    | '/'
+    | '/acuerdo'
+    | '/aviso-legal'
+    | '/cookies'
+    | '/privacidad'
+    | '/api/acuerdo'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/aviso-legal' | '/cookies' | '/privacidad'
-  id: '__root__' | '/' | '/aviso-legal' | '/cookies' | '/privacidad'
+  to:
+    | '/'
+    | '/acuerdo'
+    | '/aviso-legal'
+    | '/cookies'
+    | '/privacidad'
+    | '/api/acuerdo'
+  id:
+    | '__root__'
+    | '/'
+    | '/acuerdo'
+    | '/aviso-legal'
+    | '/cookies'
+    | '/privacidad'
+    | '/api/acuerdo'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AcuerdoRoute: typeof AcuerdoRoute
   AvisoLegalRoute: typeof AvisoLegalRoute
   CookiesRoute: typeof CookiesRoute
   PrivacidadRoute: typeof PrivacidadRoute
+  ApiAcuerdoRoute: typeof ApiAcuerdoRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -76,6 +115,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/acuerdo': {
+      id: '/acuerdo'
+      path: '/acuerdo'
+      fullPath: '/acuerdo'
+      preLoaderRoute: typeof AcuerdoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/aviso-legal': {
@@ -99,14 +145,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivacidadRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/acuerdo': {
+      id: '/api/acuerdo'
+      path: '/api/acuerdo'
+      fullPath: '/api/acuerdo'
+      preLoaderRoute: typeof ApiAcuerdoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AcuerdoRoute: AcuerdoRoute,
   AvisoLegalRoute: AvisoLegalRoute,
   CookiesRoute: CookiesRoute,
   PrivacidadRoute: PrivacidadRoute,
+  ApiAcuerdoRoute: ApiAcuerdoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
