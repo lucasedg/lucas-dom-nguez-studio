@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AcuerdoRouteImport } from './routes/acuerdo'
 import { Route as AvisoLegalRouteImport } from './routes/aviso-legal'
 import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as PrivacidadRouteImport } from './routes/privacidad'
@@ -17,6 +18,11 @@ import { Route as PrivacidadRouteImport } from './routes/privacidad'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AcuerdoRoute = AcuerdoRouteImport.update({
+  id: '/acuerdo',
+  path: '/acuerdo',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AvisoLegalRoute = AvisoLegalRouteImport.update({
@@ -37,12 +43,14 @@ const PrivacidadRoute = PrivacidadRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/acuerdo': typeof AcuerdoRoute
   '/aviso-legal': typeof AvisoLegalRoute
   '/cookies': typeof CookiesRoute
   '/privacidad': typeof PrivacidadRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/acuerdo': typeof AcuerdoRoute
   '/aviso-legal': typeof AvisoLegalRoute
   '/cookies': typeof CookiesRoute
   '/privacidad': typeof PrivacidadRoute
@@ -50,20 +58,23 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/acuerdo': typeof AcuerdoRoute
   '/aviso-legal': typeof AvisoLegalRoute
   '/cookies': typeof CookiesRoute
   '/privacidad': typeof PrivacidadRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/aviso-legal' | '/cookies' | '/privacidad'
+  fullPaths: '/' | '/acuerdo' | '/aviso-legal' | '/cookies' | '/privacidad'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/aviso-legal' | '/cookies' | '/privacidad'
-  id: '__root__' | '/' | '/aviso-legal' | '/cookies' | '/privacidad'
+  to: '/' | '/acuerdo' | '/aviso-legal' | '/cookies' | '/privacidad'
+  id:
+    '__root__' | '/' | '/acuerdo' | '/aviso-legal' | '/cookies' | '/privacidad'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AcuerdoRoute: typeof AcuerdoRoute
   AvisoLegalRoute: typeof AvisoLegalRoute
   CookiesRoute: typeof CookiesRoute
   PrivacidadRoute: typeof PrivacidadRoute
@@ -76,6 +87,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/acuerdo': {
+      id: '/acuerdo'
+      path: '/acuerdo'
+      fullPath: '/acuerdo'
+      preLoaderRoute: typeof AcuerdoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/aviso-legal': {
@@ -104,6 +122,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AcuerdoRoute: AcuerdoRoute,
   AvisoLegalRoute: AvisoLegalRoute,
   CookiesRoute: CookiesRoute,
   PrivacidadRoute: PrivacidadRoute,
