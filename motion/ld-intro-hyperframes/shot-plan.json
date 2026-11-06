@@ -1,0 +1,29 @@
+{
+  "category": "logo-reveal",
+  "duration_s": 5.6,
+  "fps": 30,
+  "canvas": { "w": 1920, "h": 1080, "aspect": "16:9" },
+  "style": "Dark, cinematic, brand-led. A single orange ball flies at the viewer, hits the glass and releases a shockwave of micro-hexagons with acid orange glowing between the cells; the wave leaves the frame, everything is black, and the ball becomes the framing-L logo.",
+  "palette": ["#FF5B14", "#1D1D1D", "#F7F5F2", "#C9CDD2", "#050505"],
+  "font": "Montserrat (local woff2)",
+  "beats": [1.1, 1.3, 3.0, 3.35],
+  "export": "mp4",
+  "asset_needs": [
+    { "role": "logo", "kind": "svg", "source": "brand manual geometry (viewBox -60 -60 320 320, two L polygons) — inlined", "treatment": "none" }
+  ],
+  "block": null,
+  "customize": {},
+  "content": {
+    "logo": "inline SVG: orange badge #FF5B14 + L1/L2 in #1D1D1D",
+    "tagline": "LUCAS DOMINGUEZ / STUDIO",
+    "url": null,
+    "phases": [
+      { "id": "approach", "start": 0.0, "end": 1.1, "motion": "perspective z-approach: size ∝ 1/z, slight drift to centre, growing glow" },
+      { "id": "impact", "start": 1.1, "end": 1.35, "motion": "splat against the glass + warm flash + 2px camera shake" },
+      { "id": "shockwave", "start": 1.1, "end": 3.1, "motion": "canvas micro-hex ring expands past the frame; cells shrink at the front so orange glows between them; two rings; leaves pure black" },
+      { "id": "morph", "start": 2.55, "end": 3.6, "motion": "ball rotates -90→0 and squares off into the badge; L pieces slide in from opposite corners" },
+      { "id": "lockup", "start": 3.35, "end": 5.6, "motion": "LUCAS DOMINGUEZ / STUDIO tracks in, hold" }
+    ]
+  },
+  "notes": "Registry search (hexagon shockwave ripple / honeycomb grid reveal / logo reveal ball impact) returned no items, so the hex shockwave is hand-authored on a seek-safe canvas driven by the paused timeline."
+}

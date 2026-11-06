@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>LD intro · bola, onda hexagonal y logo</title>
+    <script src="assets/gsap.min.js"></script>
+    <script src="assets/hexwave.js"></script>
+    <style>
+      @font-face {
+        font-family: "Montserrat";
+        font-style: normal;
+        font-weight: 100 900;
+        src: url("assets/montserrat-latin-wght-normal.woff2") format("woff2");
+      }
+      :root {
+        --orange: #ff5b14;
+        --carbon: #1d1d1d;
+        --bone: #f7f5f2;
+        --steel: #c9cdd2;
+        --void: #050505;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: var(--void);
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: var(--void);
+        font-family: "Montserrat", system-ui, sans-serif;
+      }
+      #scene {
+        position: absolute;
+        inset: 0;
+      }
+      #world {
+        position: absolute;
+        inset: 0;
+      }
+      #wave {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      /* Hero frame: logo centred, name under it. */
+      #lockup {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 34px;
+        padding: 120px 160px;
+      }
+      #mark {
+        position: relative;
+        width: 280px;
+        height: 280px;
+      }
+      #body {
+        position: absolute;
+        inset: 0;
+      }
+      #ball {
+        position: absolute;
+        inset: 0;
+        display: block;
+        border-radius: 50%;
+        background: var(--orange);
+        box-shadow: 0 0 90px rgb(255 91 20 / 55%);
+      }
+      #ball-shade {
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: radial-gradient(
+          circle at 34% 28%,
+          rgb(255 220 196 / 95%) 0%,
+          rgb(255 140 80 / 35%) 26%,
+          rgb(0 0 0 / 0%) 52%,
+          rgb(90 20 0 / 50%) 100%
+        );
+      }
+      #mark svg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+        fill: var(--carbon);
+      }
+      #name {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        color: var(--bone);
+        font-weight: 800;
+        font-size: 30px;
+        letter-spacing: 0.18em;
+        line-height: 1;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+      #name-main {
+        display: flex;
+      }
+      #name-main .glyph {
+        display: inline-block;
+      }
+      #name small {
+        display: block;
+        color: var(--steel);
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 0.5em;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="5.6"
+      data-fps="30"
+      data-width="1920"
+      data-height="1080"
+    >
+      <section id="scene" class="clip" data-start="0" data-duration="5.6" data-track-index="0">
+        <div id="world">
+          <canvas id="wave" width="1920" height="1080" data-layout-allow-overflow="true"></canvas>
+          <div id="lockup">
+            <div id="mark">
+              <div id="body">
+                <div id="ball"><div id="ball-shade"></div></div>
+                <svg viewBox="-60 -60 320 320" aria-hidden="true">
+                  <polygon id="l1" points="0,56 40,56 40,160 144,160 144,200 0,200" />
+                  <polygon id="l2" points="56,0 200,0 200,144 160,144 160,40 56,40" />
+                </svg>
+              </div>
+            </div>
+            <div id="name">
+              <span id="name-main">Lucas Dominguez</span>
+              <small id="name-studio">Studio</small>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <script>
+      (function () {
+        var DUR = 5.6;
+        var IMPACT = 1.1;
+        var canvas = document.getElementById("wave");
+        var ctx = canvas.getContext("2d");
+        var W = canvas.width;
+        var H = canvas.height;
+
+        /* The wave is a pure function of timeline time: redraw on every seek. */
+        var clock = { t: 0 };
+        function paint() {
+          window.LDHexWave.draw(ctx, W, H, clock.t, { impact: IMPACT, cx: W / 2, cy: origin });
+        }
+
+        /* Perspective approach: on-screen size is proportional to 1/z. */
+        var cam = { z: 18 };
+        var ball = document.getElementById("mark");
+        /* The wave starts exactly where the ball hits: the centre of the mark (layout, not transforms). */
+        var origin = ball.offsetTop + ball.offsetHeight / 2 + document.getElementById("lockup").offsetTop;
+        function place() {
+          var s = 1 / cam.z;
+          var drift = cam.z - 1;
+          ball.style.transform =
+            "translate(" + (-drift * 9).toFixed(2) + "px," + (-drift * 6).toFixed(2) + "px) scale(" + s.toFixed(4) + ")";
+        }
+
+        var tl = gsap.timeline({ paused: true });
+        tl.to(clock, { t: DUR, duration: DUR, ease: "none", onUpdate: paint }, 0);
+
+        /* 1 · The ball comes at us. */
+        tl.fromTo("#ball", { opacity: 0 }, { opacity: 1, duration: 0.25, ease: "sine.out" }, 0.15);
+        tl.fromTo(cam, { z: 18 }, { z: 1, duration: 0.95, ease: "power1.in", onUpdate: place }, 0.15);
+
+        /* 2 · Impact against the glass: splat, flash (canvas), camera shake. */
+        tl.fromTo(
+          "#body",
+          { scale: 1 },
+          { scale: 1.34, duration: 0.12, ease: "power4.out" },
+          IMPACT,
+        );
+        tl.to("#body", { scale: 0.6, duration: 1.1, ease: "elastic.out(1, 0.45)" }, IMPACT + 0.12);
+        tl.fromTo(
+          "#world",
+          { x: 0, y: 0 },
+          {
+            keyframes: [
+              { x: 7, y: -5, duration: 0.05 },
+              { x: -6, y: 4, duration: 0.06 },
+              { x: 3, y: -2, duration: 0.07 },
+              { x: 0, y: 0, duration: 0.1 },
+            ],
+            ease: "power2.out",
+          },
+          IMPACT,
+        );
+
+        /* 3 · Once the wave has left the frame, the ball becomes the badge. */
+        tl.fromTo(
+          "#ball",
+          { borderRadius: "50%" },
+          { borderRadius: "0%", duration: 0.6, ease: "power2.inOut" },
+          2.6,
+        );
+        tl.fromTo("#ball", { rotation: -90 }, { rotation: 0, duration: 0.65, ease: "power3.out" }, 2.6);
+        tl.fromTo(
+          "#ball",
+          { boxShadow: "0 0 90px rgba(255,91,20,0.55)" },
+          { boxShadow: "0 0 0px rgba(255,91,20,0)", duration: 0.6, ease: "sine.inOut" },
+          2.6,
+        );
+        tl.fromTo("#ball-shade", { opacity: 1 }, { opacity: 0, duration: 0.4, ease: "sine.in" }, 2.65);
+        tl.fromTo(
+          "#l1",
+          { x: -150, y: 150, opacity: 0 },
+          { x: 0, y: 0, opacity: 1, duration: 0.7, ease: "expo.out" },
+          3.0,
+        );
+        tl.fromTo(
+          "#l2",
+          { x: 150, y: -150, opacity: 0 },
+          { x: 0, y: 0, opacity: 1, duration: 0.7, ease: "expo.out" },
+          3.06,
+        );
+
+        /* 4 · Name tracks in under the symbol, then stillness. */
+        /* Tracking-in without reflow: each glyph travels in from a wider spread. */
+        var nameEl = document.getElementById("name-main");
+        var text = nameEl.textContent;
+        nameEl.textContent = "";
+        var glyphs = [];
+        for (var c = 0; c < text.length; c++) {
+          var g = document.createElement("span");
+          g.className = "glyph";
+          g.textContent = text[c] === " " ? "\u00a0" : text[c];
+          nameEl.appendChild(g);
+          glyphs.push(g);
+        }
+        var mid = (glyphs.length - 1) / 2;
+        glyphs.forEach(function (g, idx) {
+          tl.fromTo(
+            g,
+            { x: (idx - mid) * 14, opacity: 0 },
+            { x: 0, opacity: 1, duration: 0.9, ease: "power3.out" },
+            3.35,
+          );
+        });
+        tl.fromTo("#name-studio", { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "sine.out" }, 3.6);
+
+        window.__timelines["main"] = tl;
+        tl.seek(0);
+        place();
+        paint();
+      })();
+    </script>
+  </body>
+</html>

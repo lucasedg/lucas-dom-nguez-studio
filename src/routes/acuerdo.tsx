@@ -22,6 +22,7 @@ import {
   type TermsBlock,
   type TermsItem,
 } from "@/lib/acuerdo";
+import { BrandLogo, BrandSymbol } from "@/components/brand";
 import { sendAcuerdo } from "@/lib/acuerdo-send";
 import { LEGAL_OWNER as O } from "@/lib/legal";
 
@@ -174,26 +175,6 @@ function Block({ block }: { block: TermsBlock }) {
   return typeof block === "string" ? <p>{block}</p> : <Items items={block} />;
 }
 
-function Orbit({ className = "" }: { className?: string }) {
-  return (
-    <svg className={`ac-orbit ${className}`} viewBox="0 0 200 200" fill="none" aria-hidden="true">
-      <g>
-        {[0, 45, 90, 135].map((angle) => (
-          <ellipse
-            key={angle}
-            cx="100"
-            cy="100"
-            rx="82"
-            ry="32"
-            transform={`rotate(${angle} 100 100)`}
-          />
-        ))}
-      </g>
-      <circle cx="100" cy="100" r="8" />
-    </svg>
-  );
-}
-
 /* ------------------------------------------------------------------ page */
 
 type Status =
@@ -342,8 +323,7 @@ function Acuerdo() {
     <div className="ac-page">
       <header className="ac-top">
         <a href="/" className="ac-brand" aria-label="Lucas Domínguez Studio, ir a la web">
-          <span className="ac-brand-mark">LD</span>
-          <span className="ac-brand-name">Lucas Domínguez Studio</span>
+          <BrandLogo />
         </a>
         <p className="ac-top-step" aria-live="polite">
           {status.kind === "sent" ? (
@@ -383,7 +363,7 @@ function Acuerdo() {
                 Al terminar te llega una copia a tu correo.
               </p>
             </div>
-            <Orbit className="ac-hero-orbit" />
+            <BrandSymbol className="ac-hero-orbit" />
           </section>
 
           <div className="ac-layout" ref={top}>

@@ -1,7 +1,14 @@
 import { Content as DialogContent } from "@radix-ui/react-dialog";
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowUpRight, Menu, MoveRight, X } from "lucide-react";
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from "react";
 
 import {
   Dialog,
@@ -12,8 +19,9 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { BrandIntro, BrandLogo, HeroBrandMark, LogoMotion } from "@/components/brand";
+import { SmoothDetails } from "@/components/smooth-details";
 
-import studioLogo from "@/assets/ld-transparent.webp";
 import lucasPortrait from "@/assets/lucas-sobre-mi.webp";
 import almaRosaImage from "@/assets/alma-rosa/web.jpg";
 import almaRosaIdentity from "@/assets/alma-rosa/identidad.jpg";
@@ -42,7 +50,7 @@ import vioraCampaign from "@/assets/viora/campana.jpg";
 import vioraInterface from "@/assets/viora/interfaz.jpg";
 import vioraApplication from "@/assets/viora/aplicacion.jpg";
 
-const SITE_URL = "https://lucas-dominguez-studio.vercel.app";
+const SITE_URL = "https://lucasdominguezstudio.es";
 const SITE_TITLE = "Lucas Domínguez Studio — Diseño de imagen de marca en Málaga";
 const SITE_DESCRIPTION =
   "Soy Lucas Domínguez, diseñador gráfico en Málaga. En mi estudio diseño la imagen de tu marca: estrategia, identidad visual y comunicación.";
@@ -102,7 +110,7 @@ const projects = [
   {
     name: "Buba",
     category: "Identidad de marca",
-    type: "Identidad visual · Streetwear",
+    type: "Identidad visual para streetwear",
     focus: ["Identidad visual", "Dirección de arte", "Presencia de marca"],
     image: bubaCover,
     width: 2161,
@@ -135,32 +143,32 @@ const projects = [
               src: bubaImage,
               width: 1402,
               height: 1122,
-              caption: "Core Collection · Aplicaciones esenciales y acabados tono sobre tono.",
+              caption: "Core Collection. Aplicaciones esenciales y acabados tono sobre tono.",
             },
             {
               src: bubaNoSleep,
               width: 1402,
               height: 1122,
-              caption: "No Sleep Club · Aplicación de la gráfica Statement en una prenda.",
+              caption: "No Sleep Club. Aplicación de la gráfica Statement en una prenda.",
             },
             {
               src: bubaStatement,
               width: 1536,
               height: 1024,
               caption:
-                "Statement Collection · Mensajes que convierten la prenda en una declaración.",
+                "Statement Collection. Mensajes que convierten la prenda en una declaración.",
             },
             {
               src: bubaLimited,
               width: 1402,
               height: 1122,
-              caption: "Limited Collection · Exploraciones gráficas Afterdark y Nightfall.",
+              caption: "Limited Collection. Exploraciones gráficas Afterdark y Nightfall.",
             },
             {
               src: bubaTank,
               width: 1402,
               height: 1122,
-              caption: "Aplicación en camiseta de tirantes · Logotipo, símbolo y coordenadas.",
+              caption: "Aplicación en camiseta de tirantes. Logotipo, símbolo y coordenadas.",
             },
           ],
         },
@@ -172,7 +180,7 @@ const projects = [
               src: bubaSocialCover,
               width: 2161,
               height: 2701,
-              caption: "Portada del carrusel · La firma sobre textura textil.",
+              caption: "Portada del carrusel. La firma sobre textura textil.",
             },
             {
               src: bubaSocialPhone,
@@ -190,7 +198,7 @@ const projects = [
               src: bubaSocialCampaign,
               width: 2161,
               height: 2701,
-              caption: "Imagen de campaña · El universo nocturno de BUBA.",
+              caption: "Imagen de campaña. El universo nocturno de BUBA.",
             },
           ],
         },
@@ -199,8 +207,8 @@ const projects = [
   },
   {
     name: "VIORA",
-    category: "Branding · Diseño de app",
-    type: "Identidad visual · UX/UI",
+    category: "Branding y diseño de app",
+    type: "Identidad visual y UX/UI",
     focus: ["Branding", "Diseño de interfaz", "Experiencia de usuario"],
     image: vioraIdentity,
     width: 1440,
@@ -219,13 +227,13 @@ const projects = [
               src: vioraApplication,
               width: 1440,
               height: 1800,
-              caption: "Branding y UX/UI · La identidad en la aplicación.",
+              caption: "Branding y UX/UI. La identidad en la aplicación.",
             },
             {
               src: vioraWelcome,
               width: 1440,
               height: 1800,
-              caption: "Bienvenida · Primeros pasos para configurar el seguimiento.",
+              caption: "Bienvenida. Primeros pasos para configurar el seguimiento.",
             },
           ],
         },
@@ -237,7 +245,7 @@ const projects = [
               src: vioraInterface,
               width: 1440,
               height: 1800,
-              caption: "Diseño de interfaz · Registro, calendario y visualización del progreso.",
+              caption: "Diseño de interfaz. Registro, calendario y visualización del progreso.",
             },
           ],
         },
@@ -249,13 +257,13 @@ const projects = [
               src: vioraCampaign,
               width: 1440,
               height: 1800,
-              caption: "Visualización de campaña · Aplicación de la marca en publicidad exterior.",
+              caption: "Visualización de campaña. Aplicación de la marca en publicidad exterior.",
             },
             {
               src: vioraIdentity,
               width: 1440,
               height: 1800,
-              caption: "Identidad visual · Símbolo y logotipo de VIORA.",
+              caption: "Identidad visual. Símbolo y logotipo de VIORA.",
             },
           ],
         },
@@ -265,7 +273,7 @@ const projects = [
   {
     name: "Florecer",
     category: "Identidad de marca",
-    type: "Identidad visual · Indumentaria deportiva y urbana",
+    type: "Identidad visual para indumentaria deportiva y urbana",
     focus: ["Identidad visual", "Aplicaciones en prendas", "Comunicación de marca"],
     image: florecerAccessories,
     width: 1122,
@@ -284,13 +292,13 @@ const projects = [
               src: florecerTop,
               width: 1122,
               height: 1402,
-              caption: "Aplicación en top deportivo · Símbolo y nombre de marca.",
+              caption: "Aplicación en top deportivo. Símbolo y nombre de marca.",
             },
             {
               src: florecerShirt,
               width: 1122,
               height: 1402,
-              caption: "Aplicación en camiseta · El fénix como firma.",
+              caption: "Aplicación en camiseta. El fénix como firma.",
             },
           ],
         },
@@ -302,7 +310,7 @@ const projects = [
               src: florecerAccessories,
               width: 1122,
               height: 1402,
-              caption: "Aplicaciones de marca · Botella, etiqueta y textil.",
+              caption: "Aplicaciones de marca. Botella, etiqueta y textil.",
             },
           ],
         },
@@ -314,13 +322,13 @@ const projects = [
               src: florecerIcon,
               width: 1122,
               height: 1402,
-              caption: "Aplicación digital · El fénix como icono.",
+              caption: "Aplicación digital. El fénix como icono.",
             },
             {
               src: florecerDigital,
               width: 1122,
               height: 1402,
-              caption: "Un sistema coherente · Identidad en pantalla y accesorios.",
+              caption: "Un sistema coherente. Identidad en pantalla y accesorios.",
             },
           ],
         },
@@ -329,8 +337,8 @@ const projects = [
   },
   {
     name: "Hotel Alma Rosa",
-    category: "Identidad de marca · Diseño web",
-    type: "Rediseño de marca · Desarrollo web",
+    category: "Identidad de marca y diseño web",
+    type: "Rediseño de marca y desarrollo web",
     focus: ["Identidad visual", "Desarrollo web", "Fotografía y edición"],
     image: almaRosaImage,
     width: 1536,
@@ -350,7 +358,7 @@ const projects = [
               src: almaRosaIdentity,
               width: 1492,
               height: 1054,
-              caption: "Sistema de identidad · Monograma, paleta y aplicaciones de marca.",
+              caption: "Sistema de identidad. Monograma, paleta y aplicaciones de marca.",
             },
           ],
         },
@@ -363,7 +371,7 @@ const projects = [
               width: 1536,
               height: 1024,
               caption:
-                "Diseño y desarrollo web · Presentación de la identidad en ordenador y móvil.",
+                "Diseño y desarrollo web. Presentación de la identidad en ordenador y móvil.",
             },
           ],
         },
@@ -372,8 +380,8 @@ const projects = [
   },
   {
     name: "Código Perro",
-    category: "Identidad digital · Contenido",
-    type: "Identidad digital · Estrategia de contenido",
+    category: "Identidad digital y contenido",
+    type: "Identidad digital y estrategia de contenido",
     focus: ["Identidad visual", "Contenido para redes", "Copywriting"],
     image: codigoPerroImage,
     width: 1491,
@@ -393,7 +401,7 @@ const projects = [
               src: codigoPerroIdentity,
               width: 1492,
               height: 1054,
-              caption: "Identidad visual · Logotipo y paleta de marca.",
+              caption: "Identidad visual. Logotipo y paleta de marca.",
             },
           ],
         },
@@ -611,11 +619,10 @@ function Header() {
         <a
           href="#inicio"
           data-cursor="HOME"
-          className="min-w-0 text-[11px] font-semibold uppercase leading-tight tracking-[0.16em] sm:text-xs"
+          className="min-w-0"
+          aria-label="Lucas Domínguez Studio, inicio"
         >
-          Lucas Domínguez
-          <br />
-          Studio
+          <BrandLogo />
         </a>
         <nav className="hidden items-center gap-8 lg:flex" aria-label="Navegación principal">
           {links.map(([label, href]) => (
@@ -642,24 +649,25 @@ function Header() {
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
-      {open && (
-        <nav
-          id="mobile-navigation"
-          className="mobile-menu absolute inset-x-0 top-full border-t border-studio-ivory/15 bg-studio-black px-5 pb-8 pt-4 lg:hidden"
-          aria-label="Navegación móvil"
-        >
-          {links.map(([label, href]) => (
-            <a
-              key={href}
-              href={href}
-              onClick={() => setOpen(false)}
-              className="flex min-h-16 items-center justify-between border-b border-studio-ivory/15 py-4 font-serif text-3xl"
-            >
-              {label}
-            </a>
-          ))}
-        </nav>
-      )}
+      <nav
+        id="mobile-navigation"
+        className="mobile-menu absolute inset-x-0 top-full border-t border-studio-ivory/15 bg-studio-black px-5 pb-8 pt-4 lg:hidden"
+        aria-label="Navegación móvil"
+        data-open={open}
+        inert={!open}
+      >
+        {links.map(([label, href], index) => (
+          <a
+            key={href}
+            href={href}
+            onClick={() => setOpen(false)}
+            style={{ "--i": index } as CSSProperties}
+            className="flex min-h-16 items-center justify-between border-b border-studio-ivory/15 py-4 font-serif text-3xl"
+          >
+            {label}
+          </a>
+        ))}
+      </nav>
     </header>
   );
 }
@@ -669,19 +677,12 @@ function Hero() {
     <section id="inicio" className="hero-scroll-scene">
       <div className="hero-stage hero brand-hero cinema-surface sculptural-hero graphite-hero">
         <div className="graphite-logo-scene">
-          <img
-            className="graphite-logo"
-            src={studioLogo}
-            width={1106}
-            height={1422}
-            alt="LD, monograma de Lucas Domínguez Studio en metal con relieve"
-            fetchPriority="high"
-          />
+          <HeroBrandMark />
         </div>
         <Header />
         <div className="brand-hero-grid">
           <div className="brand-hero-copy">
-            <p className="hero-kicker">Diseñador gráfico · Málaga, España</p>
+            <p className="hero-kicker">Diseñador gráfico en Málaga</p>
             <h1 className="brand-headline">
               Diseño marcas <em>con carácter.</em>
             </h1>
@@ -769,9 +770,6 @@ function Studio() {
     >
       <div className="section-veil section-veil-light" aria-hidden="true" />
       <div className="relative mx-auto max-w-[1500px]">
-        <Reveal>
-          <p className="section-label">Sobre mí</p>
-        </Reveal>
         <div className="about-composition" data-motion>
           <Reveal className="about-heading">
             <h2 className="about-title">
@@ -831,7 +829,6 @@ function Services() {
       <div className="services-glow" aria-hidden="true" />
       <div className="relative mx-auto max-w-[1500px]">
         <Reveal>
-          <p className="section-label">Servicios</p>
           <h2 id="services-title" className="section-title mt-8">
             Diseño para tu marca.
             <br />
@@ -863,14 +860,16 @@ function Services() {
                     <li key={feature}>{feature}</li>
                   ))}
                 </ul>
-                <details className="plan-mobile-details mobile-content-only">
-                  <summary>Qué incluye</summary>
+                <SmoothDetails
+                  className="plan-mobile-details mobile-content-only"
+                  summary="Qué incluye"
+                >
                   <ul>
                     {plan.features.map((feature) => (
                       <li key={feature}>{feature}</li>
                     ))}
                   </ul>
-                </details>
+                </SmoothDetails>
                 <a
                   className="creative-plan-cta"
                   href={`/?plan=${encodeURIComponent(plan.name)}#contacto`}
@@ -880,16 +879,18 @@ function Services() {
               </article>
             ))}
           </div>
-          <details className="creative-plans-details">
-            <summary>¿Qué cuenta como una unidad de diseño?</summary>
+          <SmoothDetails
+            className="creative-plans-details"
+            summary="¿Qué cuenta como una unidad de diseño?"
+          >
             <ul>
               {designUnitExamples.map((example) => (
                 <li key={example}>{example}</li>
               ))}
             </ul>
-          </details>
+          </SmoothDetails>
           <p className="creative-plans-notes">
-            Planes mes a mes · Precios sin IVA · Alta inicial: 290 € cuando sea necesaria; no se
+            Planes mes a mes, precios sin IVA. Alta inicial: 290 € cuando sea necesaria; no se
             aplica si ya hemos creado tu identidad. Las piezas se acuerdan al comenzar cada mes.
             <br />
             Incluye diseño y entrega; tú publicas y gestionas tus cuentas. Foto, vídeo, desarrollo
@@ -1003,7 +1004,6 @@ function ProjectExperience({ project }: { project: (typeof projects)[number] }) 
               </div>
             </div>
             <div className="project-app-story">
-              <span className="section-label">El universo de marca</span>
               <DialogDescription id={`project-description-${project.name.replaceAll(" ", "-")}`}>
                 {project.statement}
               </DialogDescription>
@@ -1133,7 +1133,6 @@ function Process() {
       </div>
       <div className="relative mx-auto max-w-[1500px]">
         <Reveal>
-          <p className="section-label text-studio-ivory/55">Proceso</p>
           <h2 className="section-title mt-10">
             De la intención
             <br />
@@ -1204,7 +1203,6 @@ function ProjectQualifier() {
       </div>
       <div className="relative mx-auto grid max-w-[1500px] gap-14 lg:grid-cols-[minmax(0,0.9fr)_minmax(400px,0.7fr)] lg:gap-20">
         <Reveal>
-          <p className="section-label border-studio-black/30">Hablemos</p>
           <h2 className="cta-title mt-10 uppercase">
             Toda marca
             <br />
@@ -1212,125 +1210,136 @@ function ProjectQualifier() {
             <br />
             <em>con una idea.</em>
           </h2>
-          <p className="mt-10 max-w-md font-serif text-2xl leading-tight sm:text-3xl">
-            Cuéntame qué quieres transformar. Me encantará conocer tu proyecto.
+          <p className="contact-lead mt-10 max-w-md text-xl leading-snug sm:text-2xl">
+            Elige cómo prefieres escribirme.
           </p>
         </Reveal>
         <Reveal delay={100}>
-          <div className="contact-channels">
-            <a
-              className="contact-whatsapp"
-              href={`https://wa.me/34622688942?text=${encodeURIComponent(details || "Hola Lucas, me gustaría hablar de un proyecto.")}`}
-              target="_blank"
-              rel="noopener noreferrer"
+          <div className="contact-steps">
+            <div className="contact-card contact-card-quick">
+              <p className="contact-step">
+                <span>1</span> Lo más rápido
+              </p>
+              <div className="contact-channels">
+                <a
+                  className="contact-whatsapp"
+                  href={`https://wa.me/34622688942?text=${encodeURIComponent(details || "Hola Lucas, me gustaría hablar de un proyecto.")}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span>
+                    <strong>WhatsApp</strong>
+                    <small>Abre un chat conmigo</small>
+                  </span>
+                  <ArrowUpRight aria-hidden="true" />
+                </a>
+                <a
+                  className="contact-instagram"
+                  href="https://www.instagram.com/lucasdominguez.studio/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span>
+                    <strong>Instagram</strong>
+                    <small>@lucasdominguez.studio</small>
+                  </span>
+                  <ArrowUpRight aria-hidden="true" />
+                </a>
+              </div>
+            </div>
+
+            <form
+              className="qualifier-form contact-card"
+              action="https://formsubmit.co/lucase.dominguezguridi@gmail.com"
+              method="POST"
             >
-              Escribir por WhatsApp <ArrowUpRight aria-hidden="true" />
-            </a>
-            <a
-              href="https://www.instagram.com/lucasdominguez.studio/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Instagram · @lucasdominguez.studio <ArrowUpRight aria-hidden="true" />
-            </a>
-          </div>
-          <form
-            className="qualifier-form"
-            action="https://formsubmit.co/lucase.dominguezguridi@gmail.com"
-            method="POST"
-          >
-            <input type="hidden" name="_subject" value="Nuevo proyecto · Lucas Domínguez Studio" />
-            <input type="hidden" name="Objetivo" value={goal} />
-            <label className="qualifier-field">
-              <span>Tu nombre</span>
+              <p className="contact-step">
+                <span>2</span> O déjame un mensaje
+              </p>
               <input
-                name="name"
-                autoComplete="name"
-                required
-                maxLength={120}
-                placeholder="¿Cómo te llamas?"
+                type="hidden"
+                name="_subject"
+                value="Nuevo proyecto · Lucas Domínguez Studio"
               />
-            </label>
-            <label className="qualifier-field">
-              <span>Tu correo</span>
-              <input
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                maxLength={254}
-                placeholder="Para poder responderte"
-              />
-            </label>
-            <label className="qualifier-field">
-              <span>Cuéntame brevemente qué tienes en mente.</span>
-              <textarea
-                name="message"
-                required
-                maxLength={5000}
-                value={brief}
-                onChange={(event) => setBrief(event.target.value)}
-                placeholder="El punto de partida, el momento en el que está tu marca o lo que te gustaría cambiar."
-                rows={4}
-              />
-            </label>
-            <details className="contact-optional">
-              <summary>Añadir detalles del negocio (opcional)</summary>
-              <fieldset>
-                <legend>¿Qué quieres conseguir?</legend>
-                <div className="qualifier-options">
-                  {goals.map((option) => (
-                    <button
-                      key={option}
-                      type="button"
-                      onClick={() => setGoal(option)}
-                      className={goal === option ? "is-selected" : ""}
-                      aria-pressed={goal === option}
-                    >
-                      {option}
-                    </button>
-                  ))}
-                </div>
-              </fieldset>
+              <input type="hidden" name="Objetivo" value={goal} />
               <label className="qualifier-field">
-                <span>¿Qué tipo de negocio tienes?</span>
+                <span>Nombre</span>
                 <input
-                  name="Negocio"
-                  maxLength={200}
-                  value={business}
-                  onChange={(event) => setBusiness(event.target.value)}
-                  placeholder="Por ejemplo: hotel, marca de moda, startup…"
+                  name="name"
+                  autoComplete="name"
+                  required
+                  maxLength={120}
+                  placeholder="Tu nombre"
                 />
               </label>
-            </details>
-            <label className="flex items-start gap-3 text-xs leading-relaxed">
-              <input
-                type="checkbox"
-                name="Privacidad"
-                value="Aceptada"
-                required
-                className="mt-0.5 h-4 w-4 shrink-0 accent-current"
-              />
-              <span>
-                He leído la{" "}
-                <a className="underline underline-offset-4" href="/privacidad" target="_blank">
-                  política de privacidad
-                </a>{" "}
-                y acepto que uses mis datos para responder a mi mensaje.
-              </span>
-            </label>
-            <button type="submit" className="qualifier-submit">
-              Enviar mensaje <ArrowUpRight className="h-5 w-5" aria-hidden="true" />
-            </button>
-            <p className="text-xs leading-relaxed">
-              El mensaje se envía a mi correo mediante FormSubmit. También puedes escribirme
-              directamente a{" "}
-              <a className="underline underline-offset-4 break-all" href={mailHref}>
-                lucase.dominguezguridi@gmail.com
-              </a>
-              .
-            </p>
-          </form>
+              <label className="qualifier-field">
+                <span>Correo</span>
+                <input
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  maxLength={254}
+                  placeholder="tu@correo.com"
+                />
+              </label>
+              <label className="qualifier-field">
+                <span>Tu idea</span>
+                <textarea
+                  name="message"
+                  required
+                  maxLength={5000}
+                  value={brief}
+                  onChange={(event) => setBrief(event.target.value)}
+                  placeholder="Qué necesitas para tu marca"
+                  rows={4}
+                />
+              </label>
+              <SmoothDetails className="contact-optional" summary="Añadir más detalles (opcional)">
+                <fieldset>
+                  <legend>¿Qué quieres conseguir?</legend>
+                  <div className="qualifier-options">
+                    {goals.map((option) => (
+                      <button
+                        key={option}
+                        type="button"
+                        onClick={() => setGoal(option)}
+                        className={goal === option ? "is-selected" : ""}
+                        aria-pressed={goal === option}
+                      >
+                        {option}
+                      </button>
+                    ))}
+                  </div>
+                </fieldset>
+                <label className="qualifier-field">
+                  <span>Tipo de negocio</span>
+                  <input
+                    name="Negocio"
+                    maxLength={200}
+                    value={business}
+                    onChange={(event) => setBusiness(event.target.value)}
+                    placeholder="Hotel, moda, startup…"
+                  />
+                </label>
+              </SmoothDetails>
+              <label className="contact-consent">
+                <input type="checkbox" name="Privacidad" value="Aceptada" required />
+                <span>
+                  Acepto la{" "}
+                  <a href="/privacidad" target="_blank">
+                    política de privacidad
+                  </a>
+                </span>
+              </label>
+              <button type="submit" className="qualifier-submit">
+                Enviar mensaje <ArrowUpRight className="h-5 w-5" aria-hidden="true" />
+              </button>
+              <p className="contact-mail">
+                ¿Prefieres el correo? <a href={mailHref}>lucase.dominguezguridi@gmail.com</a>
+              </p>
+            </form>
+          </div>
         </Reveal>
       </div>
     </section>
@@ -1342,7 +1351,7 @@ function Footer() {
     <footer className="bg-studio-black px-5 py-10 text-studio-ivory sm:px-8 lg:px-12">
       <div className="mx-auto grid max-w-[1500px] gap-10 border-t border-studio-ivory/20 pt-8 md:grid-cols-[1fr_auto] md:items-end">
         <div>
-          <p className="font-serif text-2xl uppercase">Lucas Domínguez Studio</p>
+          <BrandLogo className="brand-logo-footer" />
           <p className="mt-2 text-[10px] uppercase tracking-[0.16em] text-studio-ivory/50">
             Málaga, España
           </p>
@@ -1410,19 +1419,45 @@ function MotionGraphic({ variant = "orbit" }: { variant?: "orbit" | "tiles" | "s
           ))}
         </g>
       ) : (
-        <g className="motion-star">
-          {Array.from({ length: 12 }, (_, ray) => (
-            <path
-              key={ray}
-              d="M100 22 L107 77 L100 92 L93 77 Z"
-              fill="currentColor"
-              stroke="none"
-              transform={`rotate(${ray * 30} 100 100)`}
-            />
-          ))}
+        <g className="motion-star" fill="currentColor" stroke="none">
+          <polygon points="20,62 52,62 52,148 138,148 138,180 20,180" />
+          <polygon points="62,20 180,20 180,138 148,138 148,52 62,52" />
         </g>
       )}
     </svg>
+  );
+}
+
+const bandItems = [
+  "Branding",
+  "Identidad visual",
+  "Diseño web",
+  "UX/UI",
+  "Motion graphics",
+  "Campañas",
+  "Contenido para redes",
+  "Dirección creativa",
+];
+
+/* Band that keeps running between the hero and the work: what the studio does. */
+function ServicesBand() {
+  const row = bandItems.map((item) => (
+    <span key={item}>
+      {item}
+      <i aria-hidden="true" />
+    </span>
+  ));
+  return (
+    <section className="services-band" data-motion aria-label="Servicios del estudio">
+      <div className="services-band-strip">
+        <div className="services-band-track">
+          <div className="services-band-row">{row}</div>
+          <div className="services-band-row" aria-hidden="true">
+            {row}
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -1437,8 +1472,8 @@ function MotionShowcase() {
         </h2>
         <p>Motion graphics para dar vida a tu marca.</p>
       </div>
-      <div className="motion-showcase-art">
-        <MotionGraphic />
+      <div className="motion-showcase-art" data-motion>
+        <LogoMotion />
       </div>
     </section>
   );
@@ -1479,8 +1514,10 @@ function GraphicMotionControl() {
 function StudioPage() {
   return (
     <main className="studio-page" tabIndex={-1}>
+      <BrandIntro />
       <CinematicCursor />
       <Hero />
+      <ServicesBand />
       <Work />
       <MotionShowcase />
       <Services />

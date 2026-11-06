@@ -45,8 +45,8 @@ function rows(items: [string, string][]) {
   return items
     .map(
       ([k, v]) => `<tr>
-  <td style="padding:10px 0;border-bottom:1px solid #ebe5da;font:600 11px/1.4 Arial,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#7a7067;width:38%;vertical-align:top">${esc(k)}</td>
-  <td style="padding:10px 0;border-bottom:1px solid #ebe5da;font:15px/1.5 Arial,sans-serif;color:#16130f;vertical-align:top">${esc(v)}</td>
+  <td style="padding:10px 0;border-bottom:1px solid #ebe5da;font:600 11px/1.4 Arial,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#62676e;width:38%;vertical-align:top">${esc(k)}</td>
+  <td style="padding:10px 0;border-bottom:1px solid #ebe5da;font:15px/1.5 Arial,sans-serif;color:#1d1d1d;vertical-align:top">${esc(v)}</td>
 </tr>`,
     )
     .join("");
@@ -54,16 +54,16 @@ function rows(items: [string, string][]) {
 
 function layout(title: string, intro: string, body: string) {
   return `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}</title></head>
-<body style="margin:0;padding:0;background:#f8f5ef">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8f5ef"><tr><td align="center" style="padding:32px 16px">
+<body style="margin:0;padding:0;background:#f7f5f2">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f7f5f2"><tr><td align="center" style="padding:32px 16px">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px">
-<tr><td style="padding:0 0 24px;font:600 11px/1 Arial,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#16130f">Lucas Domínguez Studio</td></tr>
-<tr><td style="background:#fffdf9;border:1px solid #ebe5da;border-radius:14px;padding:36px 32px">
-<p style="margin:0 0 12px;font:600 11px/1 Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#8b4d33">${esc(intro)}</p>
-<h1 style="margin:0 0 20px;font:400 34px/1.1 Georgia,'Times New Roman',serif;color:#16130f">${title}</h1>
+<tr><td style="padding:0 0 24px;font:600 11px/1 Arial,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#1d1d1d">Lucas Domínguez Studio</td></tr>
+<tr><td style="background:#fbfaf8;border:1px solid #ebe5da;border-radius:14px;padding:36px 32px">
+<p style="margin:0 0 12px;font:600 11px/1 Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#c2410c">${esc(intro)}</p>
+<h1 style="margin:0 0 20px;font:400 40px/1 'Bebas Neue',Impact,'Arial Narrow',sans-serif;letter-spacing:.01em;text-transform:uppercase;color:#1d1d1d">${title}</h1>
 ${body}
 </td></tr>
-<tr><td style="padding:24px 4px 0;font:12px/1.6 Arial,sans-serif;color:#7a7067">${esc(LEGAL_OWNER.brand)} · ${esc(LEGAL_OWNER.location)}<br>${esc(LEGAL_OWNER.phone)} · ${esc(LEGAL_OWNER.email)}</td></tr>
+<tr><td style="padding:24px 4px 0;font:12px/1.6 Arial,sans-serif;color:#62676e">${esc(LEGAL_OWNER.brand)} · ${esc(LEGAL_OWNER.location)}<br>${esc(LEGAL_OWNER.phone)} · ${esc(LEGAL_OWNER.email)}</td></tr>
 </table></td></tr></table></body></html>`;
 }
 
@@ -71,9 +71,9 @@ function clientEmail(d: AcuerdoInput, when: string) {
   const first = d.nombre.split(" ")[0] ?? d.nombre;
   const pdf = `${ACUERDO_SITE}${TERMS_PDF}`;
   const html = layout(
-    `Gracias, <em style="color:#b87555">${esc(first)}</em>.`,
+    `Gracias, <em style="color:#ff5b14">${esc(first)}</em>.`,
     "Acuerdo firmado",
-    `<p style="margin:0 0 24px;font:16px/1.6 Arial,sans-serif;color:#4a433c">Este correo es tu copia de lo que aceptaste. Te adjunto las condiciones en PDF. Guárdalo: es tu justificante.</p>
+    `<p style="margin:0 0 24px;font:16px/1.6 Arial,sans-serif;color:#3f4247">Este correo es tu copia de lo que aceptaste. Te adjunto las condiciones en PDF. Guárdalo: es tu justificante.</p>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 28px">${rows(
       [
         ["Negocio", d.negocio],
@@ -83,8 +83,8 @@ function clientEmail(d: AcuerdoInput, when: string) {
         ["Firma", d.firma],
       ],
     )}</table>
-<a href="${pdf}" style="display:inline-block;background:#16130f;color:#f8f5ef;text-decoration:none;font:600 15px/1 Arial,sans-serif;padding:16px 28px;border-radius:999px">Descargar condiciones (PDF)</a>
-<p style="margin:28px 0 0;font:14px/1.6 Arial,sans-serif;color:#7a7067">Si algún dato no es correcto, responde a este correo y lo corrijo. Puedes ver cómo trato tus datos en <a href="${ACUERDO_SITE}/privacidad" style="color:#8b4d33">mi política de privacidad</a>.</p>`,
+<a href="${pdf}" style="display:inline-block;background:#ff5b14;color:#1d1d1d;text-decoration:none;font:700 15px/1 Arial,sans-serif;padding:16px 28px;border-radius:999px">Descargar condiciones (PDF)</a>
+<p style="margin:28px 0 0;font:14px/1.6 Arial,sans-serif;color:#62676e">Si algún dato no es correcto, responde a este correo y lo corrijo. Puedes ver cómo trato tus datos en <a href="${ACUERDO_SITE}/privacidad" style="color:#c2410c">mi política de privacidad</a>.</p>`,
   );
   const text = [
     `Hola, ${first}:`,
@@ -133,7 +133,7 @@ function proofEmail(d: AcuerdoInput, when: string, utc: string, ip: string, agen
     esc(d.negocio),
     `Nuevo acuerdo firmado · ${d.presupuesto}`,
     `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 28px">${rows(data)}</table>
-<p style="margin:0 0 4px;font:600 11px/1 Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#8b4d33">Justificante</p>
+<p style="margin:0 0 4px;font:600 11px/1 Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#c2410c">Justificante</p>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0">${rows(proof)}</table>`,
   );
   const text = [...data, ...proof].map(([k, v]) => `${k}: ${v}`).join("\n");

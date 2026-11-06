@@ -19,7 +19,7 @@
 
 ## Design and interaction
 
-- Preserve the deliberate editorial visual language: black, ivory, cream, and restrained gold accents; Cormorant Garamond for editorial display type and Manrope for interface text.
+- Follow the 2026 rebrand: carbón #1D1D1D, blanco roto #F7F5F2, naranja ácido #FF5B14 only as an accent (#C2410C for orange text on light backgrounds) and petróleo #132433 for special sections; Bebas Neue (uppercase) for headlines and Montserrat for everything else. The framing symbol and logo live in `src/components/brand.tsx`; never redraw or distort the symbol.
 - Treat mobile as an intentional layout, not a scaled-down desktop view. Maintain the established responsive breakpoints and navigation behavior.
 - Respect `prefers-reduced-motion` and use small, GPU-friendly transitions. Avoid animation that is decorative without helping hierarchy or feedback.
 - Keep the public-facing copy and accessible labels in Spanish unless a requested content change calls for another language.
