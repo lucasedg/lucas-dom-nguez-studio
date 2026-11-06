@@ -1,4 +1,4 @@
-import { LEGAL_OWNER } from "@/lib/legal";
+import { LEGAL_OWNER } from "./legal";
 
 /**
  * Private client agreement (/acuerdo). The page is unlisted: it is not linked from the site,

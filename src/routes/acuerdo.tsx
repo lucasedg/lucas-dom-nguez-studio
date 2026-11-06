@@ -23,7 +23,7 @@ import {
   type TermsItem,
 } from "@/lib/acuerdo";
 import { BrandLogo, BrandSymbol } from "@/components/brand";
-import { sendAcuerdo } from "@/lib/acuerdo-send";
+import type { AcuerdoInput, AcuerdoResult } from "@/lib/acuerdo-mail";
 import { LEGAL_OWNER as O } from "@/lib/legal";
 
 type Search = { ref?: string | undefined };
@@ -279,28 +279,31 @@ function Acuerdo() {
     setStatus({ kind: "sending" });
     try {
       // Never leave the visitor waiting on a spinner: give up after 25 seconds.
-      const timeout = new Promise<never>((_, reject) =>
-        window.setTimeout(() => reject(new Error("timeout")), 25000),
-      );
-      const result = await Promise.race([
-        sendAcuerdo({
-          data: {
-            nombre: data.nombre.trim(),
-            negocio: data.negocio.trim(),
-            nif: data.nif.trim().toUpperCase(),
-            domicilio: data.domicilio.trim(),
-            email: data.email.trim(),
-            telefono: data.telefono.trim(),
-            presupuesto: data.presupuesto.trim(),
-            firma: firma.trim(),
-            novedades: checks.novedades,
-            apartadosLeidos: read.length,
-            pagina: window.location.href.slice(0, 500),
-            website: honey.current?.value ?? "",
-          },
-        }),
-        timeout,
-      ]);
+      const controller = new AbortController();
+      const timer = window.setTimeout(() => controller.abort(), 25000);
+      const payload: AcuerdoInput = {
+        nombre: data.nombre.trim(),
+        negocio: data.negocio.trim(),
+        nif: data.nif.trim().toUpperCase(),
+        domicilio: data.domicilio.trim(),
+        email: data.email.trim(),
+        telefono: data.telefono.trim(),
+        presupuesto: data.presupuesto.trim(),
+        firma: firma.trim(),
+        novedades: checks.novedades,
+        apartadosLeidos: read.length,
+        pagina: window.location.href.slice(0, 500),
+        website: honey.current?.value ?? "",
+      };
+      const response = await fetch("/api/acuerdo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(payload),
+        signal: controller.signal,
+      }).finally(() => window.clearTimeout(timer));
+      const result = (await response
+        .json()
+        .catch(() => ({ ok: false, reason: "send" }))) as AcuerdoResult;
       if (!result.ok) throw new Error(result.reason);
       setStatus({
         kind: "sent",

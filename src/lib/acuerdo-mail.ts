@@ -1,19 +1,36 @@
-import { createServerFn } from "@tanstack/react-start";
-import { getRequestHeader, getRequestIP, getRequestUrl } from "@tanstack/react-start/server";
 import { z } from "zod";
 
-import { ACUERDO_SITE, TERMS_DATE, TERMS_PDF, TERMS_VERSION, madridTimestamp } from "@/lib/acuerdo";
-import { LEGAL_OWNER } from "@/lib/legal";
+import { ACUERDO_SITE, TERMS_DATE, TERMS_PDF, TERMS_VERSION, madridTimestamp } from "./acuerdo";
+import { LEGAL_OWNER } from "./legal";
 
 /**
- * Sends the two agreement emails through Resend from the site's own server:
- * the client's copy (with the terms PDF attached) and Lucas's proof record.
+ * Agreement emails, shared by the Cloudflare Worker (production, worker/index.ts) and the
+ * local /api/acuerdo route (dev and the Vercel copy). Pure fetch + zod: no Node or framework APIs,
+ * so it runs unchanged in a Worker.
  *
- * Environment (Vercel → Settings → Environment Variables):
- * - RESEND_API_KEY  required in production; without it, local dev runs a dry run.
+ * Sends through Resend: Lucas's proof record first, then the client's copy with the terms PDF.
+ *
+ * Environment (Cloudflare → Workers → lucas-dom-nguez-studio → Settings → Variables and Secrets):
+ * - RESEND_API_KEY  secret, required in production; without it, local dev runs a dry run.
  * - ACUERDO_FROM    optional sender, default "Lucas Domínguez Studio <estudio@lucasdominguezstudio.es>".
  * - ACUERDO_NOTIFY  optional inbox for the proof record, default LEGAL_OWNER.email.
  */
+
+export type AcuerdoEnv = {
+  RESEND_API_KEY?: string | undefined;
+  ACUERDO_FROM?: string | undefined;
+  ACUERDO_NOTIFY?: string | undefined;
+};
+
+export type AcuerdoContext = {
+  env: AcuerdoEnv;
+  ip: string;
+  agent: string;
+  /** Origin the PDF is fetched from to attach it. */
+  origin: string;
+  /** Allow a dry run (no emails) when the key is missing. Never true in production. */
+  allowDryRun: boolean;
+};
 
 const schema = z.object({
   nombre: z.string().trim().min(2).max(120),
@@ -33,7 +50,8 @@ const schema = z.object({
 
 export type AcuerdoInput = z.infer<typeof schema>;
 export type AcuerdoResult =
-  { ok: true; when: string; dryRun?: boolean } | { ok: false; reason: "config" | "send" };
+  | { ok: true; when: string; dryRun?: boolean }
+  | { ok: false; reason: "config" | "send" | "invalid" };
 
 const esc = (value: string) =>
   value.replace(
@@ -151,70 +169,75 @@ async function resend(key: string, body: Record<string, unknown>) {
   }
 }
 
-async function termsAttachment() {
+function toBase64(bytes: Uint8Array) {
+  let binary = "";
+  for (let i = 0; i < bytes.length; i += 0x8000) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  }
+  return btoa(binary);
+}
+
+async function termsAttachment(origin: string) {
   try {
-    const origin = new URL(getRequestUrl().toString()).origin;
     const response = await fetch(`${origin}${TERMS_PDF}`);
     if (!response.ok) return [];
-    const content = Buffer.from(await response.arrayBuffer()).toString("base64");
+    const content = toBase64(new Uint8Array(await response.arrayBuffer()));
     return [{ filename: `Condiciones-Lucas-Dominguez-Studio-v${TERMS_VERSION}.pdf`, content }];
   } catch {
     return [];
   }
 }
 
-export const sendAcuerdo = createServerFn({ method: "POST" })
-  .validator((input: unknown) => schema.parse(input))
-  .handler(async ({ data }): Promise<AcuerdoResult> => {
-    const now = new Date();
-    const when = madridTimestamp(now);
-    if (data.website) return { ok: true, when };
+export async function handleAcuerdo(input: unknown, ctx: AcuerdoContext): Promise<AcuerdoResult> {
+  const parsed = schema.safeParse(input);
+  if (!parsed.success) return { ok: false, reason: "invalid" };
+  const data = parsed.data;
+  const now = new Date();
+  const when = madridTimestamp(now);
+  if (data.website) return { ok: true, when };
 
-    const ip = getRequestIP({ xForwardedFor: true }) ?? "desconocida";
-    const agent = getRequestHeader("user-agent")?.slice(0, 300) ?? "desconocido";
-    const key = process.env["RESEND_API_KEY"];
-    const from =
-      process.env["ACUERDO_FROM"] || "Lucas Domínguez Studio <estudio@lucasdominguezstudio.es>";
-    const notify = process.env["ACUERDO_NOTIFY"] || LEGAL_OWNER.email;
-    const client = clientEmail(data, when);
-    const proof = proofEmail(data, when, now.toISOString(), ip, agent);
+  const key = ctx.env.RESEND_API_KEY;
+  const from = ctx.env.ACUERDO_FROM || "Lucas Domínguez Studio <estudio@lucasdominguezstudio.es>";
+  const notify = ctx.env.ACUERDO_NOTIFY || LEGAL_OWNER.email;
+  const client = clientEmail(data, when);
+  const proof = proofEmail(data, when, now.toISOString(), ctx.ip, ctx.agent.slice(0, 300));
 
-    if (!key) {
-      if (process.env["NODE_ENV"] === "production") {
-        console.error("[acuerdo] RESEND_API_KEY is not set; emails were not sent.");
-        return { ok: false, reason: "config" };
-      }
-      console.info("[acuerdo] Dry run (no RESEND_API_KEY):", {
-        to: data.email,
-        notify,
-        subject: `Acuerdo firmado · ${data.negocio} · ${data.presupuesto}`,
-        ip,
-      });
-      return { ok: true, when, dryRun: true };
+  if (!key) {
+    if (!ctx.allowDryRun) {
+      console.error("[acuerdo] RESEND_API_KEY is not set; emails were not sent.");
+      return { ok: false, reason: "config" };
     }
+    console.info("[acuerdo] Dry run (no RESEND_API_KEY):", {
+      to: data.email,
+      notify,
+      subject: `Acuerdo firmado · ${data.negocio} · ${data.presupuesto}`,
+      ip: ctx.ip,
+    });
+    return { ok: true, when, dryRun: true };
+  }
 
-    try {
-      // Proof first: if this fails, the client is told to retry and nothing half-done reaches them.
-      await resend(key, {
-        from,
-        to: [notify],
-        reply_to: data.email,
-        subject: `Acuerdo firmado · ${data.negocio} · ${data.presupuesto}`,
-        html: proof.html,
-        text: proof.text,
-      });
-      await resend(key, {
-        from,
-        to: [data.email],
-        reply_to: LEGAL_OWNER.email,
-        subject: `Tu copia del acuerdo · ${LEGAL_OWNER.brand}`,
-        html: client.html,
-        text: client.text,
-        attachments: await termsAttachment(),
-      });
-      return { ok: true, when };
-    } catch (error) {
-      console.error("[acuerdo] Email sending failed:", error);
-      return { ok: false, reason: "send" };
-    }
-  });
+  try {
+    // Proof first: if it fails, the client is asked to retry and nothing half-done reaches them.
+    await resend(key, {
+      from,
+      to: [notify],
+      reply_to: data.email,
+      subject: `Acuerdo firmado · ${data.negocio} · ${data.presupuesto}`,
+      html: proof.html,
+      text: proof.text,
+    });
+    await resend(key, {
+      from,
+      to: [data.email],
+      reply_to: LEGAL_OWNER.email,
+      subject: `Tu copia del acuerdo · ${LEGAL_OWNER.brand}`,
+      html: client.html,
+      text: client.text,
+      attachments: await termsAttachment(ctx.origin),
+    });
+    return { ok: true, when };
+  } catch (error) {
+    console.error("[acuerdo] Email sending failed:", error);
+    return { ok: false, reason: "send" };
+  }
+}

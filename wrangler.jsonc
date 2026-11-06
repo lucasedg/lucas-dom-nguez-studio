@@ -1,12 +1,16 @@
 {
-  // Cloudflare Workers (static assets only): the prerendered site in .output/public.
+  // Cloudflare Workers: the prerendered site in .output/public, plus worker/index.ts for /api/*.
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "lucas-dom-nguez-studio",
   "compatibility_date": "2026-10-01",
+  // Small Worker for /api/* only (agreement emails); everything else is served as static files.
+  "main": "worker/index.ts",
   // Builds the site right before every deploy, so CI works even with an empty build command.
   "build": { "command": "npm run build" },
   "assets": {
     "directory": "./.output/public",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*"],
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "none"
   }
