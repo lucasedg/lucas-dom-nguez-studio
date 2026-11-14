@@ -19,6 +19,8 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { AmbientDriver } from "@/components/ambient-scroll";
+import { AuroraBackground } from "@/components/aurora-background";
 import { BrandIntro, BrandLogo, HeroBrandMark, LogoMotion } from "@/components/brand";
 import { SmoothDetails } from "@/components/smooth-details";
 
@@ -844,6 +846,7 @@ function Services() {
             {creativePlans.map((plan) => (
               <article
                 className={`creative-plan${plan.featured ? " creative-plan-featured" : ""}`}
+                data-float
                 key={plan.name}
                 aria-label={`Plan ${plan.name}`}
               >
@@ -1514,6 +1517,7 @@ function GraphicMotionControl() {
 function StudioPage() {
   return (
     <main className="studio-page" tabIndex={-1}>
+      <AuroraBackground />
       <BrandIntro />
       <CinematicCursor />
       <Hero />
@@ -1526,6 +1530,7 @@ function StudioPage() {
       <ProjectQualifier />
       <Footer />
       <StudioDock />
+      <AmbientDriver />
     </main>
   );
 }
