@@ -4759,19 +4759,22 @@ html {
 .aurora-on .hero-scroll-scene,
 .aurora-on .brand-hero,
 .aurora-on .hero-stage,
-.aurora-on .work-section,
-.aurora-on .services-section,
-.aurora-on #estudio,
 .aurora-on .process-section,
 .aurora-on .motion-showcase,
 .aurora-on .qualifier-section,
 .aurora-on .studio-page > footer {
   background: transparent !important;
 }
-.aurora-on .section-transition,
-.aurora-on .section-veil,
 .aurora-on .qualifier-section::after {
   display: none !important;
+}
+/* Light sections keep their own paper background, painted with the content, so it never
+   lags behind the scroll; the aurora lives in the dark parts of the page. */
+.aurora-on .work-section,
+.aurora-on .services-section,
+.aurora-on #estudio {
+  position: relative;
+  z-index: 1;
 }
 
 /* Planes: a dark stage that floats on the page, cards of glass above it. */
