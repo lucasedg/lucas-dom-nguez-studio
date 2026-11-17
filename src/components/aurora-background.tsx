@@ -10,7 +10,7 @@ import { useEffect, useRef } from "react";
  */
 
 /** Sections painted in blanco roto; everything else is carbón. */
-const LIGHT_SECTIONS = [".work-section", ".services-section", "#estudio"];
+const LIGHT_SECTIONS: string[] = [];
 const MAX_LIGHT = 6;
 
 const VERT = `
@@ -38,7 +38,7 @@ float noise(vec2 p){
 }
 float fbm(vec2 p){
   float v = 0.0, a = 0.5;
-  for (int i = 0; i < 4; i++){ v += a * noise(p); p *= 2.02; a *= 0.5; }
+  for (int i = 0; i < 3; i++){ v += a * noise(p); p *= 2.02; a *= 0.5; }
   return v;
 }
 
@@ -85,7 +85,7 @@ void main(){
   vec2 q = vec2(src.x / uRes.x * aspect, src.y / uRes.y);
   float reach = mix(mix(0.05, 1.7, pOut), 0.2, pIn * hold);
   reach = mix(reach, 4.0, pRel);
-  float introMask = smoothstep(reach, reach * 0.3, r);
+  float introMask = mix(smoothstep(reach, reach * 0.3, r), 1.0, pRel);
   float introCore = exp(-r * r * 30.0) * pIn * hold;
 
   // How "light" this pixel's section is (rects arrive in canvas pixels, y from the bottom).
@@ -186,7 +186,7 @@ export function AuroraBackground() {
     const small = window.matchMedia("(max-width: 767px)").matches;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     // The light is soft, so it can render below the screen's resolution without showing.
-    const scale = dpr * (small ? 0.5 : 0.6);
+    const scale = dpr * (small ? 0.42 : 0.6);
     const lights = LIGHT_SECTIONS.map((sel) => document.querySelector(sel)).filter(
       (el): el is Element => Boolean(el),
     );
