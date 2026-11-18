@@ -78,7 +78,7 @@ export function LogoMotion() {
  * ("ld-intro-on"). Returning visitors and reduced motion: only the loader ("ld-intro-off").
  * The timeout is a safety net: if the app never boots, the hero is released anyway.
  */
-const INTRO_GATE = `(function(){var d=document.documentElement,s=false,r=false;try{r=window.matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){}try{s=!!sessionStorage.getItem('ld-intro')}catch(e){}d.classList.add(s||r?'ld-intro-off':'ld-intro-on');setTimeout(function(){d.classList.add('ld-ready','ld-intro-go')},9000)})();`;
+const INTRO_GATE = `(function(){var d=document.documentElement,s=false,r=false;try{r=window.matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){}try{s=!!sessionStorage.getItem('ld-intro')}catch(e){}d.classList.add(s||r?'ld-intro-off':'ld-intro-on');window.__ldGate=setTimeout(function(){d.classList.add('ld-ready','ld-intro-go','ld-handed')},9000)})();`;
 
 /*
  * The light of the intro, in seconds from the moment the page is ready:
@@ -301,7 +301,41 @@ function whenReady(cap: number) {
   ]);
 }
 
-const INTRO_ENDS = new Set(["ld-intro-out", "ld-intro-skip", "ld-intro-fallback", "ld-loader-out"]);
+/* Seconds after the start when the formed symbol flies to its place in the hero. */
+const HANDOFF_AT = 4450;
+
+/*
+ * The symbol formed by the light becomes the hero symbol: it flies and scales onto it while the
+ * black and the light fade away, and the hero symbol takes over on the very same pixels.
+ * If the hero symbol is not on screen (the page was reloaded lower down), the curtain just opens.
+ */
+function handOff(intro: HTMLElement, finish: () => void) {
+  const slot = intro.querySelector<HTMLElement>(".ld-intro-slot");
+  const target = document.querySelector<SVGElement>(".hero-mark-symbol");
+  const from = slot?.getBoundingClientRect();
+  const to = target?.getBoundingClientRect();
+  const onScreen = to && to.width > 0 && to.bottom > 0 && to.top < window.innerHeight;
+  if (!slot || !from || !to || !onScreen || !slot.animate) {
+    intro.classList.add("is-skipping");
+    return;
+  }
+  const dx = to.left + to.width / 2 - (from.left + from.width / 2);
+  const dy = to.top + to.height / 2 - (from.top + from.height / 2);
+  const scale = to.width / from.width;
+  intro.classList.add("is-handoff");
+  const flight = slot.animate(
+    [{ transform: "none" }, { transform: `translate(${dx}px, ${dy}px) scale(${scale})` }],
+    { duration: 1150, easing: "cubic-bezier(0.65, 0, 0.35, 1)", fill: "forwards" },
+  );
+  flight.onfinish = finish;
+}
+
+const INTRO_ENDS = new Set([
+  "ld-intro-skip",
+  "ld-intro-fallback",
+  "ld-intro-late",
+  "ld-loader-out",
+]);
 
 /*
  * Loader + entrance. While the page loads, a small seed of aurora light breathes in the centre.
@@ -319,12 +353,14 @@ export function BrandIntro() {
     const root = document.documentElement;
     const intro = introRef.current;
     if (!intro) return;
+    /* The app is running: from here on it decides when the intro ends, not the gate's safety net. */
+    window.clearTimeout((window as unknown as { __ldGate?: number }).__ldGate);
     const full = root.classList.contains("ld-intro-on");
     let stopLight: (() => void) | null = null;
     let cancelled = false;
 
     const finish = () => {
-      root.classList.add("ld-ready", "ld-intro-go");
+      root.classList.add("ld-ready", "ld-intro-go", "ld-handed");
       setVisible(false);
     };
     const onEnd = (event: AnimationEvent) => {
@@ -332,6 +368,9 @@ export function BrandIntro() {
     };
     intro.addEventListener("animationend", onEnd);
 
+    const frozen =
+      import.meta.env.DEV && new URLSearchParams(window.location.search).has("ld-seek");
+    let handoffTimer = 0;
     whenReady(full ? 3500 : 2500).then(() => {
       if (cancelled) return;
       if (!full) {
@@ -351,16 +390,16 @@ export function BrandIntro() {
       if (!stopLight) intro.classList.add("no-light");
       intro.classList.add("is-playing");
       root.classList.add("ld-intro-go");
+      if (!frozen) handoffTimer = window.setTimeout(() => handOff(intro, finish), HANDOFF_AT);
     });
 
-    const frozen =
-      import.meta.env.DEV && new URLSearchParams(window.location.search).has("ld-seek");
     const safety = frozen ? 0 : window.setTimeout(finish, 14000);
     return () => {
       cancelled = true;
       stopLight?.();
       intro.removeEventListener("animationend", onEnd);
       window.clearTimeout(safety);
+      window.clearTimeout(handoffTimer);
     };
   }, []);
 

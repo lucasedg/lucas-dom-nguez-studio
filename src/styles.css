@@ -3964,7 +3964,24 @@ html {
   aspect-ratio: 1;
 }
 .ld-intro-on .hero-mark {
-  --hero-delay: 5.1s;
+  --hero-delay: 4.6s;
+}
+/* With the intro, the hero symbol is the one the light formed: it is already assembled, it only
+   shows up when the intro's symbol lands on it, and then the frames and tags join in. */
+.ld-intro-on:not(.ld-handed) .hero-mark-symbol {
+  opacity: 0;
+}
+.ld-intro-on:not(.ld-handed) .hero-mark-float {
+  animation-play-state: paused;
+}
+.ld-intro-on .hero-mark-symbol .brand-symbol-badge {
+  animation: none;
+}
+.ld-intro-on .hero-mark-symbol .brand-symbol-l1 {
+  animation: hero-l1-frame 7s calc(var(--hero-delay) + 2.5s) cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+.ld-intro-on .hero-mark-symbol .brand-symbol-l2 {
+  animation: hero-l2-frame 7s calc(var(--hero-delay) + 2.5s) cubic-bezier(0.65, 0, 0.35, 1) infinite;
 }
 .hero-mark-float {
   position: absolute;
@@ -4207,16 +4224,38 @@ html {
   animation: ld-intro-fallback 0.6s 9s forwards;
 }
 .ld-intro.is-playing {
-  animation: ld-intro-out 0.9s cubic-bezier(0.76, 0, 0.24, 1) 4.75s forwards;
+  /* The end is driven by the hand-off in brand.tsx; this only closes it if that never runs. */
+  animation: ld-intro-late 0.6s 7.5s forwards;
+}
+@keyframes ld-intro-late {
+  to { opacity: 0; visibility: hidden; }
+}
+/* Hand-off: the black and the light fade away while the symbol flies onto the hero symbol. */
+.ld-intro.is-handoff {
+  pointer-events: none;
+  background-color: rgb(5 5 5 / 0%);
+  transition: background-color 0.85s 0.2s ease-in-out;
+}
+.ld-intro.is-handoff .ld-intro-light {
+  opacity: 0;
+  transition: opacity 0.8s 0.1s ease-in-out;
+}
+.ld-intro.is-playing.is-handoff .ld-intro-name {
+  opacity: 0;
+  transition: opacity 0.35s ease-out;
+}
+.ld-intro.is-playing.is-handoff .ld-intro-skip {
+  visibility: hidden;
+}
+.ld-intro.is-handoff .ld-intro-slot {
+  filter: drop-shadow(0 40px 60px rgb(0 0 0 / 45%)) drop-shadow(0 0 80px rgb(255 91 20 / 22%));
+  transition: filter 1s ease-out;
 }
 .ld-intro.is-skipping {
   animation: ld-intro-skip 0.55s cubic-bezier(0.76, 0, 0.24, 1) forwards;
 }
 .ld-intro.is-leaving {
   animation: ld-loader-out 0.6s cubic-bezier(0.33, 1, 0.68, 1) forwards;
-}
-@keyframes ld-intro-out {
-  to { clip-path: inset(50% 0 50% 0); visibility: hidden; }
 }
 @keyframes ld-intro-skip {
   to { clip-path: inset(50% 0 50% 0); visibility: hidden; }
