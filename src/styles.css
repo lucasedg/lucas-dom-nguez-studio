@@ -3964,7 +3964,7 @@ html {
   aspect-ratio: 1;
 }
 .ld-intro-on .hero-mark {
-  --hero-delay: 4.6s;
+  --hero-delay: 3.7s;
 }
 /* With the intro, the hero symbol is the one the light formed: it is already assembled, it only
    shows up when the intro's symbol lands on it, and then the frames and tags join in. */
@@ -4209,9 +4209,9 @@ html {
 }
 
 /* Loader + entrance intro. While the page loads, a seed of aurora light breathes in the centre.
-   First visit of the session (".is-playing", timed from the moment the page is ready): the seed
-   comes at the viewer, hits the glass in a shockwave of aurora light (WebGL, in brand.tsx), and
-   the light returns to the centre to become the symbol. Returning visitors only see the loader. */
+   First visit of the session (".is-playing", timed from the moment the page is ready): points of
+   light spiral in from the edges, charge a circle and bend it into the symbol (WebGL, brand.tsx),
+   which then flies to the hero and stays as the page's logo. Returning visitors only see the loader. */
 .ld-intro {
   --ld-mark: clamp(84px, 15.6vmin, 180px);
   position: fixed;
@@ -4239,10 +4239,6 @@ html {
 .ld-intro.is-handoff .ld-intro-light {
   opacity: 0;
   transition: opacity 0.8s 0.1s ease-in-out;
-}
-.ld-intro.is-playing.is-handoff .ld-intro-name {
-  opacity: 0;
-  transition: opacity 0.35s ease-out;
 }
 .ld-intro.is-playing.is-handoff .ld-intro-skip {
   visibility: hidden;
@@ -4328,13 +4324,15 @@ html {
   to { transform: rotate(1turn); }
 }
 .ld-intro.is-playing .ld-intro-seed {
-  animation: ld-seed-hand 0.35s ease-out forwards;
+  opacity: 0;
+  transition: opacity 0.25s ease-out;
+}
+.ld-intro.is-playing .ld-intro-seed,
+.ld-intro.is-playing .ld-intro-seed::after {
+  animation: none;
 }
 .ld-intro.is-leaving .ld-intro-seed {
   animation: ld-seed-bloom 0.6s cubic-bezier(0.33, 1, 0.68, 1) forwards;
-}
-@keyframes ld-seed-hand {
-  to { transform: scale(1.4); opacity: 0; }
 }
 @keyframes ld-seed-bloom {
   to { transform: scale(5); opacity: 0; }
@@ -4350,7 +4348,7 @@ html {
   opacity: 0;
 }
 .ld-intro.is-playing .ld-intro-mark {
-  animation: ld-mark 1s 2.95s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: ld-fade-in 0.2s 2.62s ease-out both;
 }
 .ld-intro-badge {
   fill: #ff5b14;
@@ -4361,63 +4359,14 @@ html {
 .ld-intro-l2 {
   fill: #1d1d1d;
 }
-.ld-intro.is-playing .ld-intro-badge {
-  animation: ld-badge 1s 2.95s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
 .ld-intro.is-playing .ld-intro-l1 {
-  animation: ld-l1 0.8s 3.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: ld-l1 0.7s 2.65s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 .ld-intro.is-playing .ld-intro-l2 {
-  animation: ld-l2 0.8s 3.31s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: ld-l2 0.7s 2.7s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
-@keyframes ld-mark {
-  0% { opacity: 0; filter: blur(12px) brightness(1.9); }
-  35% { opacity: 1; filter: blur(3px) brightness(1.35); }
-  100% { opacity: 1; filter: blur(0) brightness(1); }
-}
-@keyframes ld-badge {
-  0% { transform: scale(0.15) rotate(-18deg); border-radius: 50%; }
-  55% { transform: scale(1.06) rotate(2deg); }
-  100% { transform: none; }
-}
-@keyframes ld-l1 { from { transform: translate(-70px, 70px); opacity: 0; } }
-@keyframes ld-l2 { from { transform: translate(70px, -70px); opacity: 0; } }
-
-.ld-intro-name {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  color: #f7f5f2;
-  font-size: clamp(16px, 1.6vw, 30px);
-  font-weight: 800;
-  line-height: 1;
-  text-align: center;
-  text-transform: uppercase;
-  white-space: nowrap;
-  opacity: 0;
-}
-.ld-intro.is-playing .ld-intro-name {
-  opacity: 1;
-}
-.ld-intro-name span {
-  letter-spacing: 0.18em;
-}
-.ld-intro-name small {
-  color: #c9cdd2;
-  font-size: 0.47em;
-  font-weight: 600;
-  letter-spacing: 0.5em;
-}
-.ld-intro.is-playing .ld-intro-name span {
-  animation: ld-name 1s 3.55s cubic-bezier(0.215, 0.61, 0.355, 1) both;
-}
-.ld-intro.is-playing .ld-intro-name small {
-  animation: ld-fade-in 0.6s 3.85s ease-out both;
-}
-@keyframes ld-name {
-  from { opacity: 0; letter-spacing: 0.6em; filter: blur(6px); }
-}
+@keyframes ld-l1 { from { transform: translate(-50px, 50px); opacity: 0; } }
+@keyframes ld-l2 { from { transform: translate(50px, -50px); opacity: 0; } }
 
 /* Without WebGL the symbol still condenses, with a CSS glow behind it. */
 .ld-intro.no-light .ld-intro-slot::before {
@@ -4426,7 +4375,7 @@ html {
   inset: -60%;
   border-radius: 50%;
   background: radial-gradient(circle, rgb(255 91 20 / 45%), rgb(19 36 51 / 0%) 65%);
-  animation: ld-fade-in 1s 2.8s both;
+  animation: ld-fade-in 1s 1.8s both;
 }
 
 .ld-intro-skip {
@@ -4472,11 +4421,11 @@ html:not(.ld-intro-go):not(.ld-ready) .hero-disciplines {
 .ld-intro-on .brand-hero-copy > *,
 .ld-intro-on .hero-disciplines {
   animation: ld-rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
-  animation-delay: 5s;
+  animation-delay: 3.95s;
 }
-.ld-intro-on .brand-hero-copy > :nth-child(2) { animation-delay: 5.1s; }
-.ld-intro-on .brand-hero-copy > :nth-child(n + 3) { animation-delay: 5.25s; }
-.ld-intro-on .hero-disciplines { animation-delay: 5.45s; }
+.ld-intro-on .brand-hero-copy > :nth-child(2) { animation-delay: 4.05s; }
+.ld-intro-on .brand-hero-copy > :nth-child(n + 3) { animation-delay: 4.2s; }
+.ld-intro-on .hero-disciplines { animation-delay: 4.4s; }
 @keyframes ld-rise {
   from { transform: translateY(28px); opacity: 0; }
   to { transform: none; opacity: 1; }
