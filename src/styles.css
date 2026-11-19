@@ -3964,7 +3964,7 @@ html {
   aspect-ratio: 1;
 }
 .ld-intro-on .hero-mark {
-  --hero-delay: 3.3s;
+  --hero-delay: 3.7s;
 }
 /* With the intro, the hero symbol is the one the light formed: it is already assembled, it only
    shows up when the intro's symbol lands on it, and then the frames and tags join in. */
@@ -4348,7 +4348,7 @@ html {
   opacity: 0;
 }
 .ld-intro.is-playing .ld-intro-mark {
-  animation: ld-fade-in 0.2s 2.42s ease-out both;
+  animation: ld-fade-in 0.2s 2.62s ease-out both;
 }
 .ld-intro-badge {
   fill: #ff5b14;
@@ -4360,10 +4360,10 @@ html {
   fill: #1d1d1d;
 }
 .ld-intro.is-playing .ld-intro-l1 {
-  animation: ld-l1 0.7s 2.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: ld-l1 0.7s 2.65s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 .ld-intro.is-playing .ld-intro-l2 {
-  animation: ld-l2 0.7s 2.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: ld-l2 0.7s 2.7s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 @keyframes ld-l1 { from { transform: translate(-50px, 50px); opacity: 0; } }
 @keyframes ld-l2 { from { transform: translate(50px, -50px); opacity: 0; } }
@@ -4421,11 +4421,11 @@ html:not(.ld-intro-go):not(.ld-ready) .hero-disciplines {
 .ld-intro-on .brand-hero-copy > *,
 .ld-intro-on .hero-disciplines {
   animation: ld-rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
-  animation-delay: 3.55s;
+  animation-delay: 3.95s;
 }
-.ld-intro-on .brand-hero-copy > :nth-child(2) { animation-delay: 3.65s; }
-.ld-intro-on .brand-hero-copy > :nth-child(n + 3) { animation-delay: 3.8s; }
-.ld-intro-on .hero-disciplines { animation-delay: 4s; }
+.ld-intro-on .brand-hero-copy > :nth-child(2) { animation-delay: 4.05s; }
+.ld-intro-on .brand-hero-copy > :nth-child(n + 3) { animation-delay: 4.2s; }
+.ld-intro-on .hero-disciplines { animation-delay: 4.4s; }
 @keyframes ld-rise {
   from { transform: translateY(28px); opacity: 0; }
   to { transform: none; opacity: 1; }

@@ -83,11 +83,12 @@ const INTRO_GATE = `(function(){var d=document.documentElement,s=false,r=false;t
 /*
  * The light of the intro, in seconds from the moment the page is ready. Everything is soft and
  * continuous, like real light: the same aurora ribbons as the page background, with their halo.
- * 0 → 2.0    aurora ribbons pour in from every edge, curling towards the centre, and their light
- *            slowly gathers into a glowing circle
- * 1.9 → 2.45 the glow condenses: its edge sharpens while it bends into the square of the symbol
- * 2.45 →     the real symbol takes over; the aurora keeps turning softly behind it
- * 3.1        the symbol flies to the hero and becomes the logo of the page (see handOff)
+ * 0          black
+ * 0 → 2.3    aurora ribbons pour in from every edge, curling towards the centre. They have a head
+ *            and a tail: the light gathers into a glowing circle until the last of it arrives
+ * 2.15 → 2.65 the glow condenses: its edge sharpens while it bends into the square of the symbol
+ * 2.65 →     the real symbol, alone on black with a warm halo
+ * 3.5        the symbol flies to the hero and becomes the logo of the page (see handOff)
  */
 const INTRO_VERT = `
 attribute vec2 aPos;
@@ -143,7 +144,7 @@ void main(){
   float t = uT;
   float L = uLogo;
   /* A slow push-in that lands exactly on the symbol's size when it forms. */
-  float zoom = mix(1.06, 1.0, smoothstep(0.0, 2.45, t));
+  float zoom = mix(1.06, 1.0, smoothstep(0.0, 2.65, t));
   vec2 p = (gl_FragCoord.xy - uC) / uUnit * zoom;
   float r = max(length(p), 1e-4);
   float lr = log(r);
@@ -156,8 +157,8 @@ void main(){
   vec3 col = vec3(0.0);
 
   float Rd = L * 1.45;
-  float gather = smoothstep(0.15, 2.0, t);
-  float m = smoothstep(1.9, 2.45, t);
+  float gather = smoothstep(0.3, 2.3, t);
+  float m = smoothstep(2.15, 2.65, t);
 
   /* 1 · Aurora arms curling in from the edges. The spiral tightens a little as time goes on. */
   float spin = 1.9 + 0.5 * smoothstep(0.0, 2.4, t);
@@ -168,10 +169,14 @@ void main(){
   float a4 = arm(ang * -1.0 + 0.6, lr, 1.0, t * 0.8, 0.22) * 0.35;
   vec3 aur = orange * a1 + teal * a2 + mix(ivory, orange, 0.5) * a3 + warm * a4;
   /* Where the light is: it enters softly from the edges and is absorbed into the circle. */
-  float front = mix(0.55, Rd * 1.2, smoothstep(0.0, 1.7, t));
-  float reach = smoothstep(front - 0.35, front + 0.25, r);
+  /* Head: from beyond the corners to the circle. Tail: follows, faster at the end, and is
+     swallowed by the circle, so when the symbol forms there is no aurora left. */
+  float front = mix(1.3, Rd * 1.2, smoothstep(0.0, 1.4, t));
+  float reach = smoothstep(front - 0.3, front + 0.2, r);
+  float tail = mix(2.2, Rd * 0.8, pow(smoothstep(0.6, 2.3, t), 1.6));
+  float ends = 1.0 - smoothstep(tail - 0.45, tail + 0.1, r);
   float absorb = smoothstep(Rd * 0.7, Rd * 2.2, r);
-  float level = smoothstep(0.0, 0.35, t) * mix(1.0, 0.45, smoothstep(2.2, 3.0, t));
+  float level = ends;
   /* The arms get brighter and thinner as they near the centre, like light being funnelled. */
   float funnel = 0.75 + 0.6 * exp(-r * 2.0);
   col += aur * reach * absorb * level * funnel * 0.95;
@@ -193,18 +198,18 @@ void main(){
   col += mix(orange, warm, 0.3) * exp(-max(sd, 0.0) / (L * 0.9)) * charge * 0.55;
 
   /* 3 · A soft swell of light at the moment it becomes the symbol. */
-  float swell = exp(-pow((t - 2.2) / 0.3, 2.0));
+  float swell = exp(-pow((t - 2.42) / 0.3, 2.0));
   col += warm * exp(-r / (L * 2.5)) * swell * 0.7;
 
   /* 4 · Afterwards: a warm halo behind the symbol. */
-  float after = smoothstep(2.3, 2.9, t);
+  float after = smoothstep(2.55, 3.1, t);
   float box = sdRoundBox(p, vec2(L), 0.0);
   col += orange * exp(-max(box, 0.0) / (L * 0.7)) * 0.45 * after;
 
   col = 1.0 - exp(-col * 1.05);
   /* The symbol's square ends in the exact brand orange, so the real symbol takes over seamlessly. */
   float crisp = 1.0 - smoothstep(-0.0015, 0.0015, sd);
-  col = mix(col, orange, crisp * smoothstep(2.05, 2.45, t));
+  col = mix(col, orange, crisp * smoothstep(2.3, 2.65, t));
   float vignette = 1.0 - smoothstep(0.6, 1.5, length((gl_FragCoord.xy - uC) / uUnit));
   col *= mix(0.8, 1.0, vignette);
   col += vec3(0.0196);
@@ -316,7 +321,7 @@ function whenReady(cap: number) {
 }
 
 /* Seconds after the start when the formed symbol flies to its place in the hero. */
-const HANDOFF_AT = 3100;
+const HANDOFF_AT = 3500;
 
 /*
  * The symbol formed by the light becomes the hero symbol: it flies and scales onto it while the
