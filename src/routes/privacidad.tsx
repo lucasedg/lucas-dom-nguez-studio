@@ -73,10 +73,6 @@ function Privacidad() {
             por correo. La base legal es la ejecución del contrato y mi interés legítimo en poder
             demostrar lo acordado.
           </li>
-          <li>
-            <strong>Enviarte novedades del estudio</strong>, solo si marcas esa casilla. Puedes
-            retirar el permiso cuando quieras.
-          </li>
         </ul>
         <p>No usaré tus datos para enviarte publicidad sin tu permiso.</p>
       </LegalSection>
@@ -109,8 +105,13 @@ function Privacidad() {
             mensajes.
           </li>
           <li>
-            <strong>Vercel Inc.</strong>: aloja la web y, como cualquier servidor, registra datos
-            técnicos de la conexión, como la dirección IP, por motivos de seguridad.
+            <strong>Cloudflare, Inc.</strong>: aloja y sirve la web, y envía los correos del acuerdo
+            a Resend. Como cualquier servidor, trata datos técnicos de la conexión, como la
+            dirección IP, para entregar la página y por seguridad.
+          </li>
+          <li>
+            <strong>Vercel Inc.</strong>: guarda una copia de respaldo de la web. Si la visitas
+            desde esa copia, trata los mismos datos técnicos de conexión.
           </li>
         </ul>
         <p>

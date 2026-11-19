@@ -4673,6 +4673,12 @@ html:not(.ld-intro-go):not(.ld-ready) .hero-disciplines {
 }
 .contact-consent input { width: 1.15rem; height: 1.15rem; accent-color: var(--studio-copper); }
 .contact-consent a { text-decoration: underline; text-underline-offset: 3px; }
+/* First layer of the privacy information (LOPDGDD art. 11), right before the consent box. */
+.contact-privacy-note {
+  font-size: 0.74rem;
+  line-height: 1.5;
+  color: rgb(247 245 242 / 68%);
+}
 .contact-card .qualifier-submit {
   justify-content: center;
   min-height: 3.5rem;
