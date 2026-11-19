@@ -8,7 +8,7 @@ export const LEGAL_OWNER = {
   site: "https://lucasdominguezstudio.es",
 };
 
-export const LEGAL_UPDATED = "5 de noviembre de 2026";
+export const LEGAL_UPDATED = "20 de noviembre de 2026";
 
 export function legalHead(title: string, description: string, path: string) {
   return {

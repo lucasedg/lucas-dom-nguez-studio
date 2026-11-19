@@ -1326,6 +1326,11 @@ function ProjectQualifier() {
                   />
                 </label>
               </SmoothDetails>
+              <p className="contact-privacy-note">
+                Responsable: Lucas Emanuel Domínguez Guridi. Uso tus datos solo para responderte y,
+                si me lo pides, preparar tu presupuesto. Puedes acceder a ellos, corregirlos o
+                borrarlos escribiéndome. Más información en la política de privacidad.
+              </p>
               <label className="contact-consent">
                 <input type="checkbox" name="Privacidad" value="Aceptada" required />
                 <span>
