@@ -1,6 +1,16 @@
 import { z } from "zod";
 
-import { ACUERDO_SITE, TERMS_DATE, TERMS_PDF, TERMS_VERSION, madridTimestamp } from "./acuerdo";
+import {
+  ACUERDO_SITE,
+  DESISTIR_PATH,
+  MODEL_FORM,
+  TERMS_DATE,
+  TERMS_PDF,
+  TERMS_VERSION,
+  WITHDRAWAL_DAYS,
+  madridTimestamp,
+  withdrawalDeadline,
+} from "./acuerdo";
 import { LEGAL_OWNER } from "./legal";
 
 /**
@@ -32,21 +42,27 @@ export type AcuerdoContext = {
   allowDryRun: boolean;
 };
 
-const schema = z.object({
-  nombre: z.string().trim().min(2).max(120),
-  negocio: z.string().trim().min(1).max(160),
-  nif: z.string().trim().min(8).max(20),
-  domicilio: z.string().trim().max(200),
-  email: z.string().trim().email().max(254),
-  telefono: z.string().trim().max(30),
-  presupuesto: z.string().trim().min(1).max(60),
-  firma: z.string().trim().min(2).max(120),
-  novedades: z.boolean(),
-  apartadosLeidos: z.number().int().min(0).max(100),
-  pagina: z.string().max(500),
-  /** Honeypot: real people never fill it. */
-  website: z.string().max(200),
-});
+const schema = z
+  .object({
+    nombre: z.string().trim().min(2).max(120),
+    /** Business or consumer: consumers get the withdrawal information and function. */
+    tipo: z.enum(["empresa", "particular"]),
+    /** Consumer only: asked to start before the withdrawal period ends. */
+    inicioAnticipado: z.boolean(),
+    negocio: z.string().trim().max(160),
+    nif: z.string().trim().min(8).max(20),
+    domicilio: z.string().trim().max(200),
+    email: z.string().trim().email().max(254),
+    telefono: z.string().trim().max(30),
+    presupuesto: z.string().trim().min(1).max(60),
+    firma: z.string().trim().min(2).max(120),
+    novedades: z.boolean(),
+    apartadosLeidos: z.number().int().min(0).max(100),
+    pagina: z.string().max(500),
+    /** Honeypot: real people never fill it. */
+    website: z.string().max(200),
+  })
+  .refine((d) => d.tipo === "particular" || d.negocio.length > 0, { path: ["negocio"] });
 
 export type AcuerdoInput = z.infer<typeof schema>;
 export type AcuerdoResult =
@@ -85,22 +101,61 @@ ${body}
 </table></td></tr></table></body></html>`;
 }
 
-function clientEmail(d: AcuerdoInput, when: string) {
+const whoLabel = (d: AcuerdoInput) => (d.tipo === "particular" ? d.negocio || d.nombre : d.negocio);
+
+const startLabel = (d: AcuerdoInput, deadline: string) =>
+  d.inicioAnticipado
+    ? "Pidió empezar antes de que terminen los 14 días"
+    : `Empezar después del ${deadline}, salvo que lo pida`;
+
+/** Withdrawal block for consumers: deadline, the function on the web and the model form. */
+function withdrawalHtml(deadline: string, early: boolean) {
+  const link = `${ACUERDO_SITE}${DESISTIR_PATH}`;
+  const form = MODEL_FORM.map((line) => (line ? esc(line) : "&nbsp;")).join("<br>");
+  return `<div style="margin:0 0 28px;padding:20px 22px;background:#f2eee8;border-radius:12px">
+<p style="margin:0 0 10px;font:600 11px/1 Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#c2410c">Tu derecho a desistir</p>
+<p style="margin:0 0 12px;font:15px/1.6 Arial,sans-serif;color:#1d1d1d">Como particular, puedes desistir sin dar motivos y sin coste hasta el <strong>${esc(deadline)}</strong> (${WITHDRAWAL_DAYS} días naturales). Te devuelvo lo pagado en un máximo de 14 días.${
+    early
+      ? " Me pediste empezar antes: si desistes, pagarás solo la parte ya hecha, y si el trabajo se termina del todo en ese plazo ya no podrás desistir."
+      : " No empezaré el trabajo hasta que pase ese plazo, salvo que me pidas empezar antes."
+  }</p>
+<p style="margin:0 0 14px;font:15px/1.6 Arial,sans-serif;color:#1d1d1d">Para hacerlo, usa <a href="${link}" style="color:#c2410c">Desistir del contrato</a>, responde a este correo o envíame este formulario:</p>
+<p style="margin:0;font:13px/1.6 Arial,sans-serif;color:#3f4247">${form}</p>
+</div>`;
+}
+
+function withdrawalText(deadline: string, early: boolean) {
+  return [
+    "TU DERECHO A DESISTIR",
+    `Como particular, puedes desistir sin dar motivos y sin coste hasta el ${deadline} (${WITHDRAWAL_DAYS} días naturales). Te devuelvo lo pagado en un máximo de 14 días.`,
+    early
+      ? "Me pediste empezar antes: si desistes, pagarás solo la parte ya hecha, y si el trabajo se termina del todo en ese plazo ya no podrás desistir."
+      : "No empezaré el trabajo hasta que pase ese plazo, salvo que me pidas empezar antes.",
+    `Para hacerlo: ${ACUERDO_SITE}${DESISTIR_PATH}, responde a este correo o envíame este formulario:`,
+    "",
+    ...MODEL_FORM,
+    "",
+  ];
+}
+
+function clientEmail(d: AcuerdoInput, when: string, deadline: string) {
   const first = d.nombre.split(" ")[0] ?? d.nombre;
   const pdf = `${ACUERDO_SITE}${TERMS_PDF}`;
+  const consumer = d.tipo === "particular";
   const html = layout(
     `Gracias, <em style="color:#ff5b14">${esc(first)}</em>.`,
     "Acuerdo firmado",
     `<p style="margin:0 0 24px;font:16px/1.6 Arial,sans-serif;color:#3f4247">Este correo es tu copia de lo que aceptaste. Te adjunto las condiciones en PDF. Guárdalo: es tu justificante.</p>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 28px">${rows(
       [
-        ["Negocio", d.negocio],
+        consumer ? ["Contratas como", "Particular"] : ["Negocio", d.negocio],
         ["Presupuesto", d.presupuesto],
         ["Condiciones", `Versión ${TERMS_VERSION}, del ${TERMS_DATE}`],
         ["Firmado", `${when} (hora de España)`],
         ["Firma", d.firma],
       ],
     )}</table>
+${consumer ? withdrawalHtml(deadline, d.inicioAnticipado) : ""}
 <a href="${pdf}" style="display:inline-block;background:#ff5b14;color:#1d1d1d;text-decoration:none;font:700 15px/1 Arial,sans-serif;padding:16px 28px;border-radius:999px">Descargar condiciones (PDF)</a>
 <p style="margin:28px 0 0;font:14px/1.6 Arial,sans-serif;color:#62676e">Si algún dato no es correcto, responde a este correo y lo corrijo. Puedes ver cómo trato tus datos en <a href="${ACUERDO_SITE}/privacidad" style="color:#c2410c">mi política de privacidad</a>.</p>`,
   );
@@ -109,7 +164,7 @@ function clientEmail(d: AcuerdoInput, when: string) {
     "",
     `Este correo es tu copia de la aceptación de las condiciones de trabajo de ${LEGAL_OWNER.brand}.`,
     "",
-    `· Negocio: ${d.negocio}`,
+    consumer ? "· Contratas como: particular" : `· Negocio: ${d.negocio}`,
     `· Presupuesto: ${d.presupuesto}`,
     `· Condiciones: versión ${TERMS_VERSION}, del ${TERMS_DATE}`,
     `· Firmado: ${when} (hora de España)`,
@@ -118,6 +173,8 @@ function clientEmail(d: AcuerdoInput, when: string) {
     `Condiciones en PDF: ${pdf}`,
     `Política de privacidad: ${ACUERDO_SITE}/privacidad`,
     "",
+    "",
+    ...(consumer ? withdrawalText(deadline, d.inicioAnticipado) : []),
     "Si algún dato no es correcto, responde a este correo y lo corrijo.",
     "",
     `Lucas · ${LEGAL_OWNER.brand}`,
@@ -125,16 +182,31 @@ function clientEmail(d: AcuerdoInput, when: string) {
   return { html, text };
 }
 
-function proofEmail(d: AcuerdoInput, when: string, utc: string, ip: string, agent: string) {
+function proofEmail(
+  d: AcuerdoInput,
+  when: string,
+  utc: string,
+  ip: string,
+  agent: string,
+  deadline: string,
+) {
+  const consumer = d.tipo === "particular";
   const data: [string, string][] = [
     ["Nombre", d.nombre],
-    ["Negocio", d.negocio],
+    ["Contrata como", consumer ? "Particular (consumidor)" : "Negocio o profesional"],
+    ["Negocio", d.negocio || "—"],
     ["NIF / CIF", d.nif.toUpperCase()],
     ["Domicilio fiscal", d.domicilio || "—"],
     ["Correo", d.email],
     ["Teléfono", d.telefono || "—"],
     ["Presupuesto", d.presupuesto],
     ["Novedades", d.novedades ? "Sí, acepta recibirlas" : "No"],
+    ...(consumer
+      ? ([
+          ["Puede desistir hasta", deadline],
+          ["Inicio del trabajo", startLabel(d, deadline)],
+        ] as [string, string][])
+      : []),
   ];
   const proof: [string, string][] = [
     ["Condiciones", `Versión ${TERMS_VERSION} (${TERMS_DATE})`],
@@ -148,7 +220,7 @@ function proofEmail(d: AcuerdoInput, when: string, utc: string, ip: string, agen
     ["Página", d.pagina],
   ];
   const html = layout(
-    esc(d.negocio),
+    esc(whoLabel(d)),
     `Nuevo acuerdo firmado · ${d.presupuesto}`,
     `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 28px">${rows(data)}</table>
 <p style="margin:0 0 4px;font:600 11px/1 Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#c2410c">Justificante</p>
@@ -199,8 +271,17 @@ export async function handleAcuerdo(input: unknown, ctx: AcuerdoContext): Promis
   const key = ctx.env.RESEND_API_KEY;
   const from = ctx.env.ACUERDO_FROM || "Lucas Domínguez Studio <estudio@lucasdominguezstudio.es>";
   const notify = ctx.env.ACUERDO_NOTIFY || LEGAL_OWNER.email;
-  const client = clientEmail(data, when);
-  const proof = proofEmail(data, when, now.toISOString(), ctx.ip, ctx.agent.slice(0, 300));
+  const deadline = withdrawalDeadline(now);
+  const who = whoLabel(data);
+  const client = clientEmail(data, when, deadline);
+  const proof = proofEmail(
+    data,
+    when,
+    now.toISOString(),
+    ctx.ip,
+    ctx.agent.slice(0, 300),
+    deadline,
+  );
 
   if (!key) {
     if (!ctx.allowDryRun) {
@@ -210,7 +291,7 @@ export async function handleAcuerdo(input: unknown, ctx: AcuerdoContext): Promis
     console.info("[acuerdo] Dry run (no RESEND_API_KEY):", {
       to: data.email,
       notify,
-      subject: `Acuerdo firmado · ${data.negocio} · ${data.presupuesto}`,
+      subject: `Acuerdo firmado · ${who} · ${data.presupuesto}`,
       ip: ctx.ip,
     });
     return { ok: true, when, dryRun: true };
@@ -222,7 +303,7 @@ export async function handleAcuerdo(input: unknown, ctx: AcuerdoContext): Promis
       from,
       to: [notify],
       reply_to: data.email,
-      subject: `Acuerdo firmado · ${data.negocio} · ${data.presupuesto}`,
+      subject: `Acuerdo firmado · ${who} · ${data.presupuesto}`,
       html: proof.html,
       text: proof.text,
     });

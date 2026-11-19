@@ -15,6 +15,7 @@ import { useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNod
 import {
   ACUERDO_PRIVACY,
   ACUERDO_SITE,
+  DESISTIR_PATH,
   TERMS,
   TERMS_DATE,
   TERMS_PDF,
@@ -64,7 +65,9 @@ const STEPS = [
 
 type FieldName = "nombre" | "negocio" | "nif" | "domicilio" | "email" | "telefono" | "presupuesto";
 type Data = Record<FieldName, string>;
-type Checks = { condiciones: boolean; privacidad: boolean; novedades: boolean };
+type Checks = { condiciones: boolean; privacidad: boolean; novedades: boolean; inicio: boolean };
+/** Business or consumer. Empty until the client picks one. */
+type Tipo = "" | "empresa" | "particular";
 
 const FIELDS: {
   name: FieldName;
@@ -128,10 +131,11 @@ function validTaxId(raw: string) {
   return /^[ABCDEFGHJNPQRSUVW]\d{7}[0-9A-J]$/.test(v);
 }
 
-function fieldError(name: FieldName, value: string) {
+function fieldError(name: FieldName, value: string, tipo: Tipo) {
   const v = value.trim();
   const field = FIELDS.find((f) => f.name === name);
-  if (field?.required && !v) return "Este dato es necesario.";
+  const required = name === "negocio" ? tipo !== "particular" : field?.required;
+  if (required && !v) return "Este dato es necesario.";
   if (name === "email" && v && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v))
     return "Revisa el correo: falta algo.";
   if (name === "nif" && v && !validTaxId(v)) return "Este NIF, NIE o CIF no parece correcto.";
@@ -204,7 +208,10 @@ function Acuerdo() {
     condiciones: false,
     privacidad: false,
     novedades: false,
+    inicio: false,
   });
+  const [tipo, setTipo] = useState<Tipo>("");
+  const [tipoTried, setTipoTried] = useState(false);
   const [firma, setFirma] = useState("");
   const [tried, setTried] = useState(false);
   const [status, setStatus] = useState<Status>({ kind: "idle" });
@@ -213,13 +220,12 @@ function Acuerdo() {
 
   const errors = useMemo(
     () =>
-      Object.fromEntries(FIELDS.map((f) => [f.name, fieldError(f.name, data[f.name])])) as Record<
-        FieldName,
-        string
-      >,
-    [data],
+      Object.fromEntries(
+        FIELDS.map((f) => [f.name, fieldError(f.name, data[f.name], tipo)]),
+      ) as Record<FieldName, string>,
+    [data, tipo],
   );
-  const dataValid = FIELDS.every((f) => !errors[f.name]);
+  const dataValid = tipo !== "" && FIELDS.every((f) => !errors[f.name]);
   const firmaOk = firma.trim().length > 0 && normalize(firma) === normalize(data.nombre);
   const today = useMemo(
     () =>
@@ -241,8 +247,10 @@ function Acuerdo() {
       setStep(1);
       setMaxStep((m) => Math.max(m, 1));
       setTouched(Object.fromEntries(FIELDS.map((f) => [f.name, true])));
+      setTipoTried(true);
       const first = FIELDS.find((f) => errors[f.name]);
-      window.setTimeout(() => document.getElementById(`ac-${first?.name}`)?.focus(), 80);
+      const target = tipo === "" ? "ac-tipo-empresa" : `ac-${first?.name}`;
+      window.setTimeout(() => document.getElementById(target)?.focus(), 80);
       return;
     }
     setStep(next);
@@ -283,6 +291,8 @@ function Acuerdo() {
       const timer = window.setTimeout(() => controller.abort(), 25000);
       const payload: AcuerdoInput = {
         nombre: data.nombre.trim(),
+        tipo: tipo === "particular" ? "particular" : "empresa",
+        inicioAnticipado: tipo === "particular" && checks.inicio,
         negocio: data.negocio.trim(),
         nif: data.nif.trim().toUpperCase(),
         domicilio: data.domicilio.trim(),
@@ -446,6 +456,9 @@ function Acuerdo() {
                 ) : null}
                 {step === 1 ? (
                   <StepData
+                    tipo={tipo}
+                    setTipo={setTipo}
+                    tipoMissing={tipoTried && tipo === ""}
                     data={data}
                     setData={setData}
                     errors={errors}
@@ -456,6 +469,7 @@ function Acuerdo() {
                 ) : null}
                 {step === 2 ? (
                   <StepSign
+                    tipo={tipo}
                     data={data}
                     checks={checks}
                     setChecks={setChecks}
@@ -528,6 +542,7 @@ function Acuerdo() {
         <nav aria-label="Información legal">
           <a href="/privacidad">Privacidad</a>
           <a href="/aviso-legal">Aviso legal</a>
+          <a href="/desistir">Desistir del contrato</a>
           <a href="/">Web del estudio</a>
         </nav>
       </footer>
@@ -636,6 +651,9 @@ function StepRead({
 /* ---------------------------------------------------------------- step 2 */
 
 function StepData({
+  tipo,
+  setTipo,
+  tipoMissing,
   data,
   setData,
   errors,
@@ -643,6 +661,9 @@ function StepData({
   setTouched,
   locked,
 }: {
+  tipo: Tipo;
+  setTipo: (t: Tipo) => void;
+  tipoMissing: boolean;
   data: Data;
   setData: (fn: (d: Data) => Data) => void;
   errors: Record<FieldName, string>;
@@ -657,6 +678,32 @@ function StepData({
       <StepHead n={2} id="ac-step2" title="Tus datos">
         Los uso solo para este encargo y para la factura. Los marcados con * son necesarios.
       </StepHead>
+      <fieldset className="ac-tipo" data-missing={tipoMissing}>
+        <legend className="ac-label">Contratas como *</legend>
+        {(
+          [
+            ["empresa", "Negocio o profesional", "Empresa, autónomo o profesional"],
+            ["particular", "Particular", "Para ti, no para un negocio"],
+          ] as const
+        ).map(([value, title, sub]) => (
+          <label key={value} className="ac-tipo-option">
+            <input
+              id={`ac-tipo-${value}`}
+              type="radio"
+              name="tipo"
+              value={value}
+              checked={tipo === value}
+              onChange={() => setTipo(value)}
+            />
+            <span className="ac-tipo-dot" aria-hidden="true" />
+            <span>
+              <strong>{title}</strong>
+              <small>{sub}</small>
+            </span>
+          </label>
+        ))}
+        {tipoMissing ? <p className="ac-tipo-msg">Elige una opción para seguir.</p> : null}
+      </fieldset>
       <div className="ac-fields">
         {FIELDS.map((f) => {
           const value = data[f.name];
@@ -693,13 +740,19 @@ function StepData({
               />
               <label htmlFor={`ac-${f.name}`}>
                 {f.label}
-                {f.required ? " *" : ""}
+                {f.required && !(f.name === "negocio" && tipo === "particular") ? " *" : ""}
               </label>
               <span className="ac-field-ok" aria-hidden="true">
                 <Check />
               </span>
               <p id={`ac-${f.name}-msg`} className="ac-field-msg">
-                {error || (readOnly ? "Viene de tu enlace" : f.hint) || " "}
+                {error ||
+                  (readOnly
+                    ? "Viene de tu enlace"
+                    : f.name === "negocio" && tipo === "particular"
+                      ? "Opcional si contratas como particular"
+                      : f.hint) ||
+                  " "}
               </p>
             </div>
           );
@@ -712,6 +765,7 @@ function StepData({
 /* ---------------------------------------------------------------- step 3 */
 
 function StepSign({
+  tipo,
   data,
   checks,
   setChecks,
@@ -723,6 +777,7 @@ function StepSign({
   onEdit,
   error,
 }: {
+  tipo: Tipo;
   data: Data;
   checks: Checks;
   setChecks: (fn: (c: Checks) => Checks) => void;
@@ -735,9 +790,11 @@ function StepSign({
   error: boolean;
 }) {
   const firmaError = (tried || firma.trim().length > 3) && !firmaOk;
+  const consumer = tipo === "particular";
   const rows: [string, string][] = [
     ["Nombre", data.nombre],
-    ["Negocio", data.negocio],
+    ["Contratas como", consumer ? "Particular" : "Negocio o profesional"],
+    ["Negocio", data.negocio || "—"],
     ["NIF / CIF", data.nif.toUpperCase()],
     ["Correo", data.email],
     ["Presupuesto", data.presupuesto],
@@ -809,6 +866,31 @@ function StepSign({
           false,
         )}
       </fieldset>
+
+      {consumer ? (
+        <div className="ac-consumer">
+          <p className="ac-label">Tus derechos como particular</p>
+          <p>
+            Tienes <strong>14 días naturales</strong> desde hoy para desistir, sin dar motivos y sin
+            coste: con el botón de{" "}
+            <a href={DESISTIR_PATH} target="_blank" rel="noopener">
+              Desistir del contrato
+            </a>
+            , escribiéndome o con el formulario modelo que te llega con tu copia. Te devuelvo lo
+            pagado en un máximo de 14 días. El precio final incluye el IVA.
+          </p>
+          <p>No empezaré el trabajo hasta que pase ese plazo, salvo que me lo pidas aquí.</p>
+          {box(
+            "inicio",
+            <>
+              Quiero que empieces antes de que terminen los 14 días. Entiendo que, si desisto,
+              pagaré la parte del trabajo ya hecha, y que si el trabajo se termina del todo en ese
+              plazo ya no podré desistir. Opcional.
+            </>,
+            false,
+          )}
+        </div>
+      ) : null}
 
       <div className="ac-sign" data-ok={firmaOk}>
         <p className="ac-label">Tu firma</p>
