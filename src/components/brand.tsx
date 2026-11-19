@@ -81,12 +81,12 @@ export function LogoMotion() {
 const INTRO_GATE = `(function(){var d=document.documentElement,s=false,r=false;try{r=window.matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){}try{s=!!sessionStorage.getItem('ld-intro')}catch(e){}d.classList.add(s||r?'ld-intro-off':'ld-intro-on');window.__ldGate=setTimeout(function(){d.classList.add('ld-ready','ld-intro-go','ld-handed')},9000)})();`;
 
 /*
- * The light of the intro, in seconds from the moment the page is ready. It plays like a shot,
- * not like a UI animation: motion streaks, a slow push-in, a lens flare and colour fringes.
- * 0 → 2.0    points of light pour in from every edge, spiralling towards the centre, and slowly
- *            fill a circle of light, like something charging up
- * 1.95 → 2.45 the full circle bends, organically, into the square of the symbol (with a flare)
- * 2.45 →     the real symbol takes over; the light stays behind it as a soft halo
+ * The light of the intro, in seconds from the moment the page is ready. Everything is soft and
+ * continuous, like real light: the same aurora ribbons as the page background, with their halo.
+ * 0 → 2.0    aurora ribbons pour in from every edge, curling towards the centre, and their light
+ *            slowly gathers into a glowing circle
+ * 1.9 → 2.45 the glow condenses: its edge sharpens while it bends into the square of the symbol
+ * 2.45 →     the real symbol takes over; the aurora keeps turning softly behind it
  * 3.1        the symbol flies to the hero and becomes the logo of the page (see handOff)
  */
 const INTRO_VERT = `
@@ -102,8 +102,7 @@ uniform float uT;
 uniform float uLogo;
 
 const float TAU = 6.2831853;
-const float LANES = 30.0;
-const float TWIST = 2.6;
+const float PI = 3.1415927;
 
 float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
 float noise(vec2 p){
@@ -114,40 +113,25 @@ float noise(vec2 p){
 }
 float fbm(vec2 p){
   float v = 0.0, a = 0.5;
-  for (int i = 0; i < 4; i++){ v += a * noise(p); p = p * 2.03 + vec2(1.7, 9.2); a *= 0.5; }
+  for (int i = 0; i < 3; i++){ v += a * noise(p); p *= 2.02; a *= 0.5; }
   return v;
 }
 
-/* Points of light on a log-spiral grid: each one keeps its lane while the phase pulls it in,
-   so it turns faster and gets smaller as it nears the centre. Stretched along the lane: streaks. */
-float vortex(vec2 p, float phase){
-  float r = max(length(p), 1e-4);
-  float lr = log(r);
-  float a = atan(p.y, p.x);
-  vec2 g = vec2((a + TWIST * lr) / TAU * LANES, lr * 3.4 + phase);
-  vec2 id = floor(g);
-  vec2 f = fract(g);
-  float acc = 0.0;
-  for (int j = -1; j <= 1; j++){
-    for (int i = -1; i <= 1; i++){
-      vec2 c = id + vec2(float(i), float(j));
-      c.x = mod(c.x, LANES);
-      float h = hash(c);
-      if (h < 0.64) continue;
-      vec2 o = vec2(hash(c + 3.1), hash(c + 7.7)) * 0.8 + 0.1;
-      vec2 d = vec2(float(i), float(j)) + o - f;
-      /* Back to screen units: along the lane is the motion, across it the size of the point. */
-      float dlr = d.y / 3.4;
-      float da = d.x * TAU / LANES - TWIST * dlr;
-      vec2 ds = r * vec2(dlr, da);
-      float w = 0.0035 + 0.006 * r;
-      vec2 dir = normalize(vec2(1.0, -TWIST));
-      float along = dot(ds, dir) / (w * 5.0);
-      float across = dot(ds, vec2(-dir.y, dir.x)) / w;
-      acc += (0.6 + 1.2 * hash(c + 1.3)) * exp(-(along * along + across * across));
-    }
-  }
-  return acc;
+/* One aurora ribbon, like the ones in the page background, but bent into a spiral arm:
+   "along" is the distance to the centre (log scale), "across" is the angle. Its streaks and
+   pulses flow inwards, so the light visibly travels to the centre. */
+float arm(float ang, float lr, float seed, float t, float width){
+  float center = seed
+    + 0.22 * sin(lr * 2.4 + t * 0.9 + seed * 2.1)
+    + 0.14 * sin(lr * 5.1 - t * 0.6 + seed)
+    + 0.30 * (fbm(vec2(lr * 1.3 + seed, t * 0.25 + seed)) - 0.5);
+  float d = mod(ang - center + PI, TAU) - PI;
+  float body = exp(-d * d / (width * width));
+  float core = exp(-d * d / (width * width * 0.06));
+  float flow = fbm(vec2(d * 7.0 + seed * 3.0, lr * 2.2 + t * 1.8));
+  float streaks = 0.35 + 1.15 * pow(flow, 1.4);
+  float pulse = 0.75 + 0.25 * sin(lr * 7.0 + t * 3.0 + seed * 4.0);
+  return body * streaks * pulse * 0.9 + core * 0.55 * pulse;
 }
 
 float sdRoundBox(vec2 p, vec2 b, float r){
@@ -159,78 +143,72 @@ void main(){
   float t = uT;
   float L = uLogo;
   /* A slow push-in that lands exactly on the symbol's size when it forms. */
-  float zoom = mix(1.07, 1.0, smoothstep(0.0, 2.45, t));
+  float zoom = mix(1.06, 1.0, smoothstep(0.0, 2.45, t));
   vec2 p = (gl_FragCoord.xy - uC) / uUnit * zoom;
-  float r = length(p);
+  float r = max(length(p), 1e-4);
+  float lr = log(r);
   float a = atan(p.y, p.x);
 
-  vec3 hot = vec3(1.0, 0.88, 0.74);
-  vec3 orange = vec3(1.0, 0.36, 0.08);
-  vec3 cool = vec3(0.30, 0.55, 0.85);
+  vec3 orange = vec3(1.0, 0.357, 0.078);
+  vec3 teal = vec3(0.18, 0.46, 0.62);
+  vec3 ivory = vec3(0.97, 0.96, 0.95);
+  vec3 warm = vec3(1.0, 0.78, 0.56);
   vec3 col = vec3(0.0);
 
-  float Rd = L * 1.42;
-  float fill = smoothstep(0.2, 2.0, t);
-  float m = smoothstep(1.95, 2.45, t);
+  float Rd = L * 1.45;
+  float gather = smoothstep(0.15, 2.0, t);
+  float m = smoothstep(1.9, 2.45, t);
 
-  /* The shape: a circle of light that bends into the square of the symbol. */
-  float sw = t * 1.2;
+  /* 1 · Aurora arms curling in from the edges. The spiral tightens a little as time goes on. */
+  float spin = 1.9 + 0.5 * smoothstep(0.0, 2.4, t);
+  float ang = a + spin * lr - t * 0.55;
+  float a1 = arm(ang, lr, 0.0, t, 0.42);
+  float a2 = arm(ang, lr, 2.1, t * 0.9, 0.34) * 0.85;
+  float a3 = arm(ang, lr, 4.2, t * 1.1, 0.26) * 0.7;
+  float a4 = arm(ang * -1.0 + 0.6, lr, 1.0, t * 0.8, 0.22) * 0.35;
+  vec3 aur = orange * a1 + teal * a2 + mix(ivory, orange, 0.5) * a3 + warm * a4;
+  /* Where the light is: it enters softly from the edges and is absorbed into the circle. */
+  float front = mix(0.55, Rd * 1.2, smoothstep(0.0, 1.7, t));
+  float reach = smoothstep(front - 0.35, front + 0.25, r);
+  float absorb = smoothstep(Rd * 0.7, Rd * 2.2, r);
+  float level = smoothstep(0.0, 0.35, t) * mix(1.0, 0.45, smoothstep(2.2, 3.0, t));
+  /* The arms get brighter and thinner as they near the centre, like light being funnelled. */
+  float funnel = 0.75 + 0.6 * exp(-r * 2.0);
+  col += aur * reach * absorb * level * funnel * 0.95;
+
+  /* 2 · The gathered light: a soft glowing circle that builds up, with a gentle inner motion. */
+  float sw = t * 0.9;
   vec2 q = mat2(cos(sw), -sin(sw), sin(sw), cos(sw)) * p;
-  float n = fbm(q / L * 1.4 + vec2(t * 0.3, -t * 0.2));
+  float n = fbm(q / L * 1.3 + vec2(0.0, t * 0.2));
   float size = mix(Rd, L, m);
   float corner = mix(Rd, 0.0, m);
-  float sd = sdRoundBox(p, vec2(size), corner) + sin(m * 3.14159) * 0.02 * (n - 0.5) * L / 0.11;
-  float inside = 1.0 - smoothstep(-0.002, 0.003, sd);
+  float sd = sdRoundBox(p, vec2(size), corner);
+  /* The edge starts very soft (a glow) and sharpens into the symbol's crisp square. */
+  float feather = mix(Rd * 0.55, 0.0015, m);
+  float shape = 1.0 - smoothstep(-feather * 0.4, feather, sd);
+  float charge = gather * gather;
+  vec3 inner = mix(warm, ivory, 0.45 + 0.25 * n) * (0.8 + 0.2 * n);
+  col += inner * shape * charge * 1.6;
+  /* Its halo, which also warms the arms that feed it. */
+  col += mix(orange, warm, 0.3) * exp(-max(sd, 0.0) / (L * 0.9)) * charge * 0.55;
 
-  /* 1 · Points of light spiralling in from the edges, with colour fringes. */
-  float front = mix(0.5, Rd, smoothstep(0.0, 1.4, t));
-  float phase = 2.0 * t + 1.6 * t * t;
-  float stream = smoothstep(front - 0.05, front + 0.25, r) * (1.0 - smoothstep(2.0, 2.6, t));
-  stream *= smoothstep(Rd * 0.95, Rd * 1.5, r);
-  if (stream > 0.001){
-    float vr = vortex(p * 1.004, phase);
-    float vg = vortex(p, phase);
-    float vb = vortex(p * 0.996, phase);
-    float tint = hash(floor(vec2(a * 3.0, r * 8.0)));
-    vec3 pc = vec3(vr * 1.3, vg * 0.8, vb * 0.5);
-    pc = mix(pc, vec3(vr * 0.5, vg * 0.75, vb * 1.2), step(0.82, tint));
-    col += pc * stream * 2.2;
-  }
-  /* The air around the circle warms up as the light gathers. */
-  col += orange * exp(-max(r - Rd, 0.0) * 9.0) * fill * 0.35 * (1.0 - m * 0.5);
+  /* 3 · A soft swell of light at the moment it becomes the symbol. */
+  float swell = exp(-pow((t - 2.2) / 0.3, 2.0));
+  col += warm * exp(-r / (L * 2.5)) * swell * 0.7;
 
-  /* 2 · The circle charges up: it fills with light from the centre, unevenly, like a liquid. */
-  float level = r / Rd * 0.7 + n * 0.55;
-  float lit = 1.0 - smoothstep(fill * 1.35 - 0.22, fill * 1.35 + 0.04, level);
-  lit = max(lit, m);
-  vec3 charge = mix(vec3(1.0, 0.55, 0.22), hot, smoothstep(0.3, 0.75, n * 0.6 + fill * 0.45 + (1.0 - r / Rd) * 0.3));
-  col += charge * lit * inside * (0.85 + 0.35 * n) * 1.7;
-  /* A loading arc runs around the rim, clockwise from the top. */
-  float around = fract(0.25 - a / TAU);
-  float arc = step(around, fill) * (1.0 - m);
-  float rim = exp(-pow((r - Rd) / 0.005, 2.0));
-  col += hot * rim * arc * (0.45 + 1.6 * exp(-max(fill - around, 0.0) * 30.0));
-
-  /* 3 · The moment it becomes the symbol: a burst and an anamorphic flare. */
-  float flare = exp(-pow((t - 2.18) / 0.16, 2.0));
-  col += hot * exp(-r * 7.0) * flare * 1.3;
-  col += mix(cool, hot, 0.35) * exp(-abs(p.y) * 120.0) * exp(-abs(p.x) * 1.8) * flare * 1.6;
-
-  /* 4 · Afterwards: a soft halo behind the symbol and a few slow points still orbiting. */
+  /* 4 · Afterwards: a warm halo behind the symbol. */
   float after = smoothstep(2.3, 2.9, t);
-  if (after > 0.0){
-    float box = sdRoundBox(p, vec2(L), 0.0);
-    col += orange * exp(-max(box, 0.0) * 11.0) * 0.55 * after;
-    col += vec3(1.0, 0.6, 0.35) * vortex(p, 2.0 * t + 9.0) * 0.35 * after * smoothstep(L * 1.4, L * 3.0, r);
-  }
+  float box = sdRoundBox(p, vec2(L), 0.0);
+  col += orange * exp(-max(box, 0.0) / (L * 0.7)) * 0.45 * after;
 
-  col = 1.0 - exp(-col * 1.1);
+  col = 1.0 - exp(-col * 1.05);
   /* The symbol's square ends in the exact brand orange, so the real symbol takes over seamlessly. */
-  col = mix(col, vec3(1.0, 0.357, 0.078), inside * smoothstep(2.15, 2.45, t));
-  float vignette = 1.0 - smoothstep(0.55, 1.4, length((gl_FragCoord.xy - uC) / uUnit));
-  col *= mix(0.75, 1.0, vignette);
+  float crisp = 1.0 - smoothstep(-0.0015, 0.0015, sd);
+  col = mix(col, orange, crisp * smoothstep(2.05, 2.45, t));
+  float vignette = 1.0 - smoothstep(0.6, 1.5, length((gl_FragCoord.xy - uC) / uUnit));
+  col *= mix(0.8, 1.0, vignette);
   col += vec3(0.0196);
-  col += (hash(gl_FragCoord.xy + fract(t) * 17.0) - 0.5) * 0.02;
+  col += (hash(gl_FragCoord.xy + fract(t) * 17.0) - 0.5) * 0.012;
   gl_FragColor = vec4(col, 1.0);
 }
 `;
