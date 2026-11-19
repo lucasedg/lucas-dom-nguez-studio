@@ -13,8 +13,10 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AcuerdoRouteImport } from './routes/acuerdo'
 import { Route as AvisoLegalRouteImport } from './routes/aviso-legal'
 import { Route as CookiesRouteImport } from './routes/cookies'
+import { Route as DesistirRouteImport } from './routes/desistir'
 import { Route as PrivacidadRouteImport } from './routes/privacidad'
 import { Route as ApiAcuerdoRouteImport } from './routes/api/acuerdo'
+import { Route as ApiDesistimientoRouteImport } from './routes/api/desistimiento'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -36,6 +38,11 @@ const CookiesRoute = CookiesRouteImport.update({
   path: '/cookies',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DesistirRoute = DesistirRouteImport.update({
+  id: '/desistir',
+  path: '/desistir',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrivacidadRoute = PrivacidadRouteImport.update({
   id: '/privacidad',
   path: '/privacidad',
@@ -46,22 +53,31 @@ const ApiAcuerdoRoute = ApiAcuerdoRouteImport.update({
   path: '/api/acuerdo',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiDesistimientoRoute = ApiDesistimientoRouteImport.update({
+  id: '/api/desistimiento',
+  path: '/api/desistimiento',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/acuerdo': typeof AcuerdoRoute
   '/aviso-legal': typeof AvisoLegalRoute
   '/cookies': typeof CookiesRoute
+  '/desistir': typeof DesistirRoute
   '/privacidad': typeof PrivacidadRoute
   '/api/acuerdo': typeof ApiAcuerdoRoute
+  '/api/desistimiento': typeof ApiDesistimientoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/acuerdo': typeof AcuerdoRoute
   '/aviso-legal': typeof AvisoLegalRoute
   '/cookies': typeof CookiesRoute
+  '/desistir': typeof DesistirRoute
   '/privacidad': typeof PrivacidadRoute
   '/api/acuerdo': typeof ApiAcuerdoRoute
+  '/api/desistimiento': typeof ApiDesistimientoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -69,8 +85,10 @@ export interface FileRoutesById {
   '/acuerdo': typeof AcuerdoRoute
   '/aviso-legal': typeof AvisoLegalRoute
   '/cookies': typeof CookiesRoute
+  '/desistir': typeof DesistirRoute
   '/privacidad': typeof PrivacidadRoute
   '/api/acuerdo': typeof ApiAcuerdoRoute
+  '/api/desistimiento': typeof ApiDesistimientoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -79,24 +97,30 @@ export interface FileRouteTypes {
     | '/acuerdo'
     | '/aviso-legal'
     | '/cookies'
+    | '/desistir'
     | '/privacidad'
     | '/api/acuerdo'
+    | '/api/desistimiento'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/acuerdo'
     | '/aviso-legal'
     | '/cookies'
+    | '/desistir'
     | '/privacidad'
     | '/api/acuerdo'
+    | '/api/desistimiento'
   id:
     | '__root__'
     | '/'
     | '/acuerdo'
     | '/aviso-legal'
     | '/cookies'
+    | '/desistir'
     | '/privacidad'
     | '/api/acuerdo'
+    | '/api/desistimiento'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -104,8 +128,10 @@ export interface RootRouteChildren {
   AcuerdoRoute: typeof AcuerdoRoute
   AvisoLegalRoute: typeof AvisoLegalRoute
   CookiesRoute: typeof CookiesRoute
+  DesistirRoute: typeof DesistirRoute
   PrivacidadRoute: typeof PrivacidadRoute
   ApiAcuerdoRoute: typeof ApiAcuerdoRoute
+  ApiDesistimientoRoute: typeof ApiDesistimientoRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -138,6 +164,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CookiesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/desistir': {
+      id: '/desistir'
+      path: '/desistir'
+      fullPath: '/desistir'
+      preLoaderRoute: typeof DesistirRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/privacidad': {
       id: '/privacidad'
       path: '/privacidad'
@@ -152,6 +185,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAcuerdoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/desistimiento': {
+      id: '/api/desistimiento'
+      path: '/api/desistimiento'
+      fullPath: '/api/desistimiento'
+      preLoaderRoute: typeof ApiDesistimientoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -160,8 +200,10 @@ const rootRouteChildren: RootRouteChildren = {
   AcuerdoRoute: AcuerdoRoute,
   AvisoLegalRoute: AvisoLegalRoute,
   CookiesRoute: CookiesRoute,
+  DesistirRoute: DesistirRoute,
   PrivacidadRoute: PrivacidadRoute,
   ApiAcuerdoRoute: ApiAcuerdoRoute,
+  ApiDesistimientoRoute: ApiDesistimientoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

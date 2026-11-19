@@ -6,6 +6,7 @@ const legalLinks = [
   ["Aviso legal", "/aviso-legal"],
   ["Privacidad", "/privacidad"],
   ["Cookies", "/cookies"],
+  ["Desistir del contrato", "/desistir"],
 ] as const;
 
 export function LegalSection({ title, children }: { title: string; children: ReactNode }) {

@@ -6,10 +6,14 @@ import { LEGAL_OWNER } from "./legal";
  * public/documentos whenever the wording below changes, so every acceptance points to the
  * exact text the client read.
  */
-export const TERMS_VERSION = "1.0";
-export const TERMS_DATE = "5 de noviembre de 2026";
-export const TERMS_PDF = "/documentos/condiciones-generales-v1-0.pdf";
+export const TERMS_VERSION = "1.1";
+export const TERMS_DATE = "20 de noviembre de 2026";
+export const TERMS_PDF = "/documentos/condiciones-generales-v1-1.pdf";
 export const ACUERDO_PATH = "/acuerdo";
+/** Public page with the withdrawal function (Directive (EU) 2023/2673, art. 11a). */
+export const DESISTIR_PATH = "/desistir";
+/** Withdrawal period for consumers, in calendar days from acceptance. */
+export const WITHDRAWAL_DAYS = 14;
 /** Public domain used in the links the client receives by email. */
 export const ACUERDO_SITE = "https://lucasdominguezstudio.es";
 
@@ -202,9 +206,31 @@ export const TERMS: TermsSection[] = [
   {
     id: "consumidores",
     title: "Si contratas como particular",
-    short: "Si contratas como particular, tienes 14 días para desistir.",
+    short: "Tienes 14 días para desistir sin dar motivos, y el precio incluye el IVA.",
     body: [
-      "Estas condiciones están pensadas para negocios y profesionales. Si contratas como consumidor, mantienes todos los derechos que te da la ley, incluido desistir en 14 días naturales desde la aceptación sin dar motivos. Si me pides empezar antes de que pase ese plazo, pagarás la parte del trabajo ya hecha si después desistes.",
+      "Trabajo con negocios, profesionales y particulares. Si contratas como particular (consumidor), además de lo anterior se aplica lo siguiente, y prevalece sobre cualquier otro apartado de estas condiciones:",
+      [
+        {
+          lead: "Derecho a desistir.",
+          text: "Tienes 14 días naturales desde que aceptas para desistir del contrato, sin dar motivos y sin ningún coste.",
+        },
+        {
+          lead: "Cómo.",
+          text: "Con el botón «Desistir del contrato» de lucasdominguezstudio.es/desistir, escribiéndome al correo, o con el formulario modelo que te envío junto con tu copia. Basta con que me lo comuniques antes de que acaben los 14 días. Te confirmo la recepción por correo.",
+        },
+        {
+          lead: "Devolución.",
+          text: "Te devuelvo todo lo que hayas pagado en un máximo de 14 días desde que me avisas, por el mismo medio de pago y sin coste para ti.",
+        },
+        {
+          lead: "Cuándo empiezo.",
+          text: "No empiezo el trabajo hasta que pasen los 14 días, salvo que me pidas expresamente empezar antes al aceptar. Si lo pides y después desistes, pagas solo la parte del trabajo hecha hasta ese momento. Si el trabajo se termina del todo dentro de esos 14 días, ya no podrás desistir.",
+        },
+        {
+          lead: "Precio.",
+          text: "El precio final que pagas incluye el IVA.",
+        },
+      ],
     ],
   },
   {
@@ -234,7 +260,7 @@ export const ACUERDO_PRIVACY: TermsItem[] = [
   },
   {
     lead: "Quién interviene.",
-    text: "Resend envía los correos desde mi web, Vercel la aloja y Google (Gmail) es mi correo. No vendo ni cedo tus datos.",
+    text: "Resend envía los correos desde mi web, Cloudflare la aloja y Google (Gmail) es mi correo. No vendo ni cedo tus datos.",
   },
   {
     lead: "Justificante.",
@@ -249,6 +275,30 @@ export const ACUERDO_PRIVACY: TermsItem[] = [
     text: `Acceso, rectificación, supresión, oposición, limitación y portabilidad escribiendo a ${LEGAL_OWNER.email}. Puedes reclamar ante la AEPD (aepd.es).`,
   },
 ];
+
+/** Model withdrawal form (Anexo B, Real Decreto Legislativo 1/2007), filled with the studio's data. */
+export const MODEL_FORM = [
+  "Modelo de formulario de desistimiento",
+  "(solo debe cumplimentar y enviar el presente formulario si desea desistir del contrato)",
+  "",
+  `A la atención de ${LEGAL_OWNER.name} (${LEGAL_OWNER.brand}), ${LEGAL_OWNER.location}, ${LEGAL_OWNER.email}:`,
+  "",
+  "Por la presente le comunico que desisto de mi contrato de prestación del siguiente servicio:",
+  "Referencia del presupuesto: ____________________",
+  "Aceptado el: ____________________",
+  "Nombre del consumidor: ____________________",
+  "Domicilio del consumidor: ____________________",
+  "Firma del consumidor (solo si el formulario se presenta en papel): ____________________",
+  "Fecha: ____________________",
+];
+
+/** Last day to withdraw, as a long Spanish date (Europe/Madrid). */
+export function withdrawalDeadline(from = new Date()) {
+  const end = new Date(from.getTime() + WITHDRAWAL_DAYS * 24 * 60 * 60 * 1000);
+  return new Intl.DateTimeFormat("es-ES", { dateStyle: "long", timeZone: "Europe/Madrid" }).format(
+    end,
+  );
+}
 
 export function madridTimestamp(date = new Date()) {
   return new Intl.DateTimeFormat("es-ES", {

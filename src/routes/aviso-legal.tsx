@@ -50,8 +50,8 @@ function AvisoLegal() {
           funcionamiento.
         </p>
         <p>
-          Los precios que aparecen en la sección de servicios son orientativos, no incluyen IVA y no
-          constituyen una oferta vinculante. Cada encargo se concreta por escrito antes de comenzar,
+          Los precios que aparecen en la sección de servicios son orientativos y se muestran sin IVA
+          y con el IVA (21 %) incluido. No constituyen una oferta vinculante. Cada encargo se concreta por escrito antes de comenzar,
           con sus piezas, plazos y presupuesto.
         </p>
       </LegalSection>

@@ -2315,6 +2315,13 @@ button,
 .creative-plan-price span {
   font: 400 0.95rem / 1 var(--font-sans);
 }
+/* Final price for consumers (art. 20 TRLGDCU): always shown next to the price without VAT. */
+.creative-plan-vat {
+  margin-top: 0.5rem;
+  color: color-mix(in srgb, currentColor 72%, transparent);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
 .creative-plan-units {
   margin-top: 0.65rem;
   color: var(--studio-gold);
@@ -3672,6 +3679,35 @@ html {
 .ac-field[data-error="true"] input { border-color: var(--ac-error); box-shadow: 0 0 0 4px rgb(180 35 24 / 10%); }
 .ac-field[data-error="true"] .ac-field-msg { color: var(--ac-error); }
 .ac-field[data-error="true"] label { color: var(--ac-error); }
+
+/* Step 2 · business or consumer */
+.ac-tipo { display: grid; gap: var(--s2); margin: 0 0 var(--s5); padding: 0; border: 0; min-width: 0; }
+@media (min-width: 640px) { .ac-tipo { grid-template-columns: 1fr 1fr; } .ac-tipo legend, .ac-tipo-msg { grid-column: 1 / -1; } }
+.ac-tipo legend { margin-bottom: var(--s3); }
+.ac-tipo-option {
+  position: relative; display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: var(--s3); align-items: center;
+  padding: var(--s4); border: 1px solid var(--ac-line-strong); border-radius: 12px; background: var(--ac-paper); cursor: pointer;
+  transition: border-color 0.25s ease, background-color 0.25s ease;
+}
+.ac-tipo-option:hover { border-color: rgb(22 19 15 / 38%); }
+.ac-tipo-option:has(input:checked) { border-color: var(--ac-accent); background: rgb(255 91 20 / 6%); }
+.ac-tipo[data-missing="true"] .ac-tipo-option { border-color: var(--ac-error); }
+.ac-tipo-option input { position: absolute; opacity: 0; width: 1px; height: 1px; scroll-margin-top: calc(var(--ac-top) + 32px); }
+.ac-tipo-dot { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--ac-line-strong); background: var(--ac-bg); transition: border 0.25s ease; }
+.ac-tipo-option input:checked + .ac-tipo-dot { border: 7px solid var(--ac-accent); }
+.ac-tipo-option input:focus-visible + .ac-tipo-dot { outline: 2px solid var(--ac-focus); outline-offset: 3px; }
+.ac-tipo-option strong { display: block; font-size: 15px; color: var(--ac-ink); }
+.ac-tipo-option small { display: block; margin-top: 2px; font-size: 13px; color: var(--ac-muted); }
+.ac-tipo-msg { font-size: 13px; color: var(--ac-error); }
+
+/* Step 3 · consumer rights */
+.ac-consumer {
+  display: grid; gap: var(--s3); margin: 0 0 var(--s6); padding: var(--s5);
+  border-radius: var(--ac-radius); background: var(--ac-sunken);
+  font-size: 15px; line-height: 1.6; color: var(--ac-ink-2);
+}
+.ac-consumer a { color: var(--ac-accent-ink); text-decoration: underline; text-underline-offset: 3px; }
+.ac-consumer strong { color: var(--ac-ink); }
 
 /* Step 3 · summary, checks, signature */
 .ac-summary {

@@ -4,6 +4,7 @@
  * request is answered straight from the prerendered files in .output/public.
  */
 import { handleAcuerdo, type AcuerdoEnv } from "../src/lib/acuerdo-mail";
+import { handleDesistir } from "../src/lib/desistir-mail";
 
 type Env = AcuerdoEnv & {
   ASSETS: { fetch: (request: Request) => Promise<Response> };
@@ -29,6 +30,20 @@ export default {
         ip: request.headers.get("CF-Connecting-IP") ?? "desconocida",
         agent: request.headers.get("User-Agent") ?? "desconocido",
         origin: url.origin,
+        allowDryRun: false,
+      });
+      return json(result, result.ok ? 200 : result.reason === "invalid" ? 400 : 500);
+    }
+
+    if (url.pathname === "/api/desistimiento") {
+      if (request.method !== "POST") return json({ ok: false, reason: "method" }, 405);
+      const origin = request.headers.get("Origin");
+      if (origin && origin !== url.origin) return json({ ok: false, reason: "origin" }, 403);
+      const input: unknown = await request.json().catch(() => null);
+      const result = await handleDesistir(input, {
+        env,
+        ip: request.headers.get("CF-Connecting-IP") ?? "desconocida",
+        agent: request.headers.get("User-Agent") ?? "desconocido",
         allowDryRun: false,
       });
       return json(result, result.ok ? 200 : result.reason === "invalid" ? 400 : 500);

@@ -416,6 +416,7 @@ const creativePlans = [
   {
     name: "Básico",
     price: "390 €",
+    priceWithVat: "471,90 €",
     units: "6 unidades de diseño al mes",
     description: "Para mantener tus materiales visuales al día.",
     valueNote: "Una forma sencilla de empezar con diseño continuo.",
@@ -430,6 +431,7 @@ const creativePlans = [
   {
     name: "Pro",
     price: "690 €",
+    priceWithVat: "834,90 €",
     units: "12 unidades de diseño al mes",
     description: "Para avanzar con una dirección creativa constante.",
     valueNote: "+6 unidades frente a Básico por 300 € más al mes.",
@@ -445,6 +447,7 @@ const creativePlans = [
   {
     name: "Premium",
     price: "1.090 €",
+    priceWithVat: "1.318,90 €",
     units: "20 unidades de diseño al mes",
     description: "Para marcas con varias necesidades de comunicación cada mes.",
     valueNote: "+8 unidades frente a Pro por 400 € más al mes.",
@@ -854,8 +857,9 @@ function Services() {
                 <h4>{plan.name}</h4>
                 <p className="creative-plan-description">{plan.description}</p>
                 <p className="creative-plan-price">
-                  {plan.price} <span>/ mes</span>
+                  {plan.price} <span>/ mes + IVA</span>
                 </p>
+                <p className="creative-plan-vat">{plan.priceWithVat} al mes con IVA incluido</p>
                 <p className="creative-plan-units">{plan.units}</p>
 
                 <ul className="mobile-content-desktop">
@@ -893,8 +897,9 @@ function Services() {
             </ul>
           </SmoothDetails>
           <p className="creative-plans-notes">
-            Planes mes a mes, precios sin IVA. Alta inicial: 290 € cuando sea necesaria; no se
-            aplica si ya hemos creado tu identidad. Las piezas se acuerdan al comenzar cada mes.
+            Planes mes a mes. Debajo de cada precio tienes el total con IVA (21 %). Alta inicial:
+            290 € + IVA (350,90 € con IVA) cuando sea necesaria; no se aplica si ya hemos creado tu
+            identidad. Las piezas se acuerdan al comenzar cada mes.
             <br />
             Incluye diseño y entrega; tú publicas y gestionas tus cuentas. Foto, vídeo, desarrollo
             web y gestión de redes se presupuestan aparte.
@@ -1381,6 +1386,9 @@ function Footer() {
             </a>
             <a href="/cookies" className="hover:text-studio-ivory">
               Cookies
+            </a>
+            <a href="/desistir" className="hover:text-studio-ivory">
+              Desistir del contrato
             </a>
           </nav>
         </div>

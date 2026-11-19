@@ -51,6 +51,12 @@ function Privacidad() {
           y el tipo de navegador.
         </p>
         <p>
+          Si desistes de un contrato desde la página Desistir del contrato, recojo tu nombre, tu
+          correo, la referencia del contrato, la fecha en que lo aceptaste y tu comentario si lo
+          escribes, además de la fecha y la hora, tu dirección IP y el tipo de navegador como
+          justificante.
+        </p>
+        <p>
           Esta web no usa herramientas de analítica ni publicidad, y no crea perfiles de las
           personas que la visitan.
         </p>
@@ -72,6 +78,16 @@ function Privacidad() {
             <strong>Registrar que aceptas las condiciones del encargo y enviarte una copia</strong>{" "}
             por correo. La base legal es la ejecución del contrato y mi interés legítimo en poder
             demostrar lo acordado.
+          </li>
+          <li>
+            <strong>Tramitar tu desistimiento y tu devolución</strong> si contrataste como
+            particular y desistes. La base legal es el cumplimiento de una obligación legal (la ley
+            de consumidores).
+          </li>
+          <li>
+            <strong>Enviarte novedades del estudio</strong>, solo si lo marcas al aceptar las
+            condiciones de un encargo. La base legal es tu consentimiento, que puedes retirar cuando
+            quieras.
           </li>
         </ul>
         <p>No usaré tus datos para enviarte publicidad sin tu permiso.</p>
